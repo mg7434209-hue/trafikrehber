@@ -17,6 +17,7 @@ import GizlilikPage from './pages/GizlilikPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ChatWidget from './components/ChatWidget';
 import AdminPage from './pages/AdminPage';
+import CezaListesiPage from './pages/CezaListesiPage';
 import './App.css';
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
                   <Route path="/dilekce-ornekleri" element={<DilekceListPage />} />
                   <Route path="/dilekce-ornekleri/:slug" element={<DilekceDetailPage />} />
                   <Route path="/araclar/ceza-hesapla" element={<CezaHesaplaPage />} />
+                  <Route path="/trafik-cezalari-2026" element={<CezaListesiPage />} />
                   <Route path="/trafik-cezalari" element={<CategoryPage category="ceza" />} />
                   <Route path="/trafik-cezalari/:sub" element={<CategoryPage category="ceza" />} />
                   <Route path="/sigorta" element={<CategoryPage category="sigorta" />} />
