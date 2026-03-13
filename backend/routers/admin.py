@@ -116,6 +116,120 @@ def create_ceza(data: CezaCreate, db: Session = Depends(get_db), _=Depends(requi
     return {"success": True, "id": str(ceza.id)}
 
 
+# --- YDO ile Ceza Güncelleme ---
+class YdoGuncelleRequest(BaseModel):
+    oran: float  # Örnek: 25.49 → %25.49 artış
+    yil: Optional[int] = None
+
+@router.post("/ceza-ydo-guncelle")
+def ceza_ydo_guncelle(req: YdoGuncelleRequest, db: Session = Depends(get_db), _=Depends(require_admin)):
+    if req.oran <= 0 or req.oran > 200:
+        raise HTTPException(status_code=400, detail="Geçersiz oran. 0-200 arasında olmalı.")
+    cezalar = db.query(CezaTuru).all()
+    if not cezalar:
+        raise HTTPException(status_code=404, detail="Güncellenecek ceza kaydı bulunamadı.")
+    carpan = 1 + (req.oran / 100)
+    guncellenen = []
+    for c in cezalar:
+        eski = c.taban_ceza_tl
+        c.taban_ceza_tl = round(eski * carpan, 2)
+        guncellenen.append({"kod": c.kod, "aciklama": c.aciklama, "eski": eski, "yeni": c.taban_ceza_tl})
+    db.commit()
+    return {
+        "success": True,
+        "oran": req.oran,
+        "guncellenen_sayisi": len(guncellenen),
+        "detay": guncellenen
+    }
+
+
+# --- 2026 Güncel Ceza Değerlerini Yükle ---
+@router.post("/ceza-2026-yukle")
+def ceza_2026_yukle(db: Session = Depends(get_db), _=Depends(require_admin)):
+    """
+    27 Şubat 2026 tarihli 7574 sayılı Kanun ve YDO %25.49 ile güncel 2026 ceza tutarları.
+    Mevcut kayıtları günceller, yoksa ekler.
+    """
+    CEZALAR_2026 = [
+        {"kod": "H1",  "aciklama": "Kırmızı ışık ihlali",             "taban_ceza_tl": 5000.00, "puan": 20, "kanun_maddesi": "KTK Madde 47/1-a"},
+        {"kod": "H2",  "aciklama": "Hız sınırı ihlali (%10-30)",       "taban_ceza_tl": 2719.00, "puan": 5,  "kanun_maddesi": "KTK Madde 51/1-a"},
+        {"kod": "H3",  "aciklama": "Hız sınırı ihlali (%30-50)",       "taban_ceza_tl": 5661.00, "puan": 10, "kanun_maddesi": "KTK Madde 51/1-b"},
+        {"kod": "H3B", "aciklama": "Hız sınırı ihlali (%50+)",         "taban_ceza_tl": 11631.00,"puan": 20, "kanun_maddesi": "KTK Madde 51/1-c"},
+        {"kod": "H4",  "aciklama": "Emniyet kemeri takmama",           "taban_ceza_tl": 1246.00, "puan": 5,  "kanun_maddesi": "KTK Madde 70/1"},
+        {"kod": "H5",  "aciklama": "Cep telefonu kullanımı",           "taban_ceza_tl": 5000.00, "puan": 10, "kanun_maddesi": "KTK Madde 65/a"},
+        {"kod": "H6",  "aciklama": "Park ihlali",                      "taban_ceza_tl": 828.00,  "puan": 0,  "kanun_maddesi": "KTK Madde 61"},
+        {"kod": "H7",  "aciklama": "Alkollü araç kullanımı (0.51-1.00 promil)", "taban_ceza_tl": 11631.00, "puan": 20, "kanun_maddesi": "KTK Madde 48/5"},
+        {"kod": "H7B", "aciklama": "Alkollü araç kullanımı (1.00+ promil)",      "taban_ceza_tl": 23263.00, "puan": 25, "kanun_maddesi": "KTK Madde 48/5"},
+        {"kod": "H8",  "aciklama": "Sollama ihlali",                   "taban_ceza_tl": 3310.00, "puan": 10, "kanun_maddesi": "KTK Madde 52"},
+        {"kod": "H9",  "aciklama": "Zorunlu sigorta yaptırmama",       "taban_ceza_tl": 4963.00, "puan": 0,  "kanun_maddesi": "KTK Madde 91"},
+        {"kod": "H10", "aciklama": "Araç muayenesi yaptırmama",        "taban_ceza_tl": 1654.00, "puan": 0,  "kanun_maddesi": "KTK Madde 35"},
+        {"kod": "H11", "aciklama": "Ehliyetsiz araç kullanma",         "taban_ceza_tl": 23410.00,"puan": 0,  "kanun_maddesi": "KTK Madde 36"},
+        {"kod": "H12", "aciklama": "Trafikte saldırgan davranış",      "taban_ceza_tl": 180000.00,"puan": 0, "kanun_maddesi": "KTK 7574/Madde 1"},
+        {"kod": "H13", "aciklama": "Trafikte yarış / drift",           "taban_ceza_tl": 46000.00, "puan": 0, "kanun_maddesi": "KTK 7574/Madde 2"},
+        {"kod": "H14", "aciklama": "Kask takmama (motosiklet)",        "taban_ceza_tl": 1246.00, "puan": 5,  "kanun_maddesi": "KTK Madde 70/2"},
+        {"kod": "H15", "aciklama": "Yaya geçidinde yol vermeme",       "taban_ceza_tl": 1246.00, "puan": 10, "kanun_maddesi": "KTK Madde 74"},
+    ]
+
+    guncellenen, eklenen = 0, 0
+    for c in CEZALAR_2026:
+        existing = db.query(CezaTuru).filter(CezaTuru.kod == c["kod"]).first()
+        if existing:
+            for k, v in c.items():
+                setattr(existing, k, v)
+            guncellenen += 1
+        else:
+            db.add(CezaTuru(**c))
+            eklenen += 1
+    db.commit()
+    return {
+        "success": True,
+        "mesaj": f"2026 ceza tutarları yüklendi. {eklenen} eklendi, {guncellenen} güncellendi.",
+        "toplam": len(CEZALAR_2026)
+    }
+
+
+# --- Ceza Listesi (admin görünümü) ---
+@router.get("/ceza-listesi")
+def get_ceza_listesi(db: Session = Depends(get_db), _=Depends(require_admin)):
+    cezalar = db.query(CezaTuru).order_by(CezaTuru.kod).all()
+    return {
+        "success": True,
+        "cezalar": [
+            {
+                "id": str(c.id),
+                "kod": c.kod,
+                "aciklama": c.aciklama,
+                "taban_ceza_tl": c.taban_ceza_tl,
+                "indirimli_tl": round(c.taban_ceza_tl * 0.75, 2),
+                "puan": c.puan,
+                "kanun_maddesi": c.kanun_maddesi
+            }
+            for c in cezalar
+        ]
+    }
+
+
+# --- Ceza Güncelle (tekil) ---
+class CezaGuncelleRequest(BaseModel):
+    taban_ceza_tl: float
+    puan: Optional[int] = None
+    aciklama: Optional[str] = None
+
+@router.put("/ceza-turleri/{ceza_id}")
+def update_ceza(ceza_id: str, data: CezaGuncelleRequest, db: Session = Depends(get_db), _=Depends(require_admin)):
+    ceza = db.query(CezaTuru).filter(CezaTuru.id == ceza_id).first()
+    if not ceza:
+        raise HTTPException(status_code=404, detail="Ceza bulunamadı")
+    if data.taban_ceza_tl:
+        ceza.taban_ceza_tl = data.taban_ceza_tl
+    if data.puan is not None:
+        ceza.puan = data.puan
+    if data.aciklama:
+        ceza.aciklama = data.aciklama
+    db.commit()
+    return {"success": True}
+
+
 # --- İstatistikler ---
 @router.get("/stats")
 def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
