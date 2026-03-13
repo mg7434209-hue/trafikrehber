@@ -199,10 +199,10 @@ def get_ceza_listesi(db: Session = Depends(get_db), _=Depends(require_admin)):
                 "id": str(c.id),
                 "kod": c.kod,
                 "aciklama": c.aciklama,
-                "taban_ceza_tl": c.taban_ceza_tl,
-                "indirimli_tl": round(c.taban_ceza_tl * 0.75, 2),
-                "puan": c.puan,
-                "kanun_maddesi": c.kanun_maddesi
+                "taban_ceza_tl": float(c.taban_ceza_tl),
+                "indirimli_tl": round(float(c.taban_ceza_tl) * 0.75, 2),
+                "puan": c.puan or 0,
+                "kanun_maddesi": c.kanun_maddesi or ""
             }
             for c in cezalar
         ]
