@@ -3,24 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi, statsApi } from '../services/api';
 
-const CATEGORIES = [
-  { id: 'ceza', label: 'Trafik Cezaları', icon: '🚦', path: '/trafik-cezalari', desc: 'Ceza sorgulama, itiraz, tutarlar' },
-  { id: 'sigorta', label: 'Sigorta Rehberi', icon: '🛡️', path: '/sigorta', desc: 'Zorunlu sigorta, kasko bilgileri' },
-  { id: 'ehliyet', label: 'Ehliyet İşlemleri', icon: '🪪', path: '/ehliyet', desc: 'Sınav, puan sistemi, yenileme' },
-  { id: 'arac-islemleri', label: 'Araç İşlemleri', icon: '🚗', path: '/arac-islemleri', desc: 'Muayene, tescil, plaka işlemleri' },
-];
-
-const QUICK_TOOLS = [
-  { label: 'Ceza Hesapla', icon: '🧮', path: '/araclar/ceza-hesapla', color: '#e65c00' },
-  { label: 'Dilekçe İndir', icon: '📄', path: '/dilekce-ornekleri', color: '#1a3a6b' },
-  { label: 'Trafik Cezaları', icon: '🚦', path: '/trafik-cezalari', color: '#2d7a2d' },
-];
-
 const SSS = [
-  { s: 'Trafik cezasına kaç günde itiraz edilebilir?', c: 'Trafik cezasına tebliğ tarihinden itibaren 15 gün içinde Sulh Ceza Hâkimliği\'ne itiraz edilebilir.' },
-  { s: 'E-devlet ile trafik cezası nasıl sorgulanır?', c: 'E-devlet.gov.tr\'ye giriş yapın, "Trafik İdari Para Cezası Sorgulama" hizmetini aratın ve TC kimlik numaranız ile sorgulayın.' },
-  { s: 'Zorunlu trafik sigortası olmadan araç kullanılabilir mi?', c: 'Hayır, zorunlu trafik sigortası (ZMSS) olmadan araç kullanmak yasaktır ve ciddi para cezasına yol açar.' },
-  { s: 'Ehliyet puanı nasıl sorgulanır?', c: 'E-devlet üzerinden "Sürücü Puan Durumu Sorgulama" hizmetiyle TC kimlik numaranızla anlık puan durumunuzu görebilirsiniz.' },
+  { s: 'Trafik cezasına kaç günde itiraz edilebilir?', c: 'Trafik cezasına tebliğ tarihinden itibaren 15 gün içinde Sulh Ceza Hâkimliği\'ne itiraz edilebilir. Bu süre kaçırılırsa ceza kesinleşir.' },
+  { s: '2026 yılında trafik cezaları ne kadar arttı?', c: '1 Ocak 2026 itibarıyla %25,49 Yeniden Değerleme Oranı uygulandı. Ayrıca 27 Şubat 2026 tarihli 7574 sayılı Kanun ile kırmızı ışık ihlali 5.000 TL, cep telefonu kullanımı 5.000 TL, trafikte saldırgan davranış 180.000 TL oldu.' },
+  { s: 'Trafik cezasını erken ödesem indirim var mı?', c: 'Evet. Tebliğden itibaren 15 gün içinde ödenirse cezanın %25\'i indirimli uygulanır. Örneğin 5.000 TL\'lik ceza 3.750 TL\'ye düşer.' },
+  { s: 'E-devlet ile trafik cezası nasıl sorgulanır?', c: 'E-devlet.gov.tr\'ye giriş yapın, "Trafik İdari Para Cezası Sorgulama" hizmetini aratın. TC kimlik numaranızla tüm cezalarınızı görüntüleyebilirsiniz.' },
+  { s: '100 ceza puanı dolunca ne olur?', c: '1 yıl içinde 100 ceza puanına ulaşan sürücünün ehliyetine geçici olarak el konulur. Ehliyetin iadesi için psikoteknik değerlendirme zorunludur.' },
+];
+
+const KATEGORILER = [
+  { label: 'Trafik Cezaları', icon: '🚦', path: '/trafik-cezalari', desc: 'Ceza tutarları, itiraz yolları, güncel rehber', renk: '#1a3a6b' },
+  { label: 'Sigorta Rehberi', icon: '🛡️', path: '/sigorta', desc: 'Zorunlu sigorta, kasko, tazminat bilgileri', renk: '#0e7490' },
+  { label: 'Ehliyet İşlemleri', icon: '🪪', path: '/ehliyet', desc: 'Sınav rehberi, puan sistemi, yenileme', renk: '#7c3aed' },
+  { label: 'Araç İşlemleri', icon: '🚗', path: '/arac-islemleri', desc: 'Muayene, tescil, noter işlemleri', renk: '#059669' },
 ];
 
 export default function HomePage() {
@@ -43,71 +38,107 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title>TrafikRehber — Trafik Cezaları, Sigorta ve Ehliyet Rehberi</title>
-        <meta name="description" content="Trafik cezası itiraz, sorgulama, sigorta rehberi, ehliyet işlemleri ve araç muayene bilgilerine buradan ulaşın." />
+        <title>TrafikRehber — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi</title>
+        <meta name="description" content="2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. 7574 sayılı Kanun ile güncellendi." />
+        <meta name="keywords" content="trafik cezası 2026, trafik cezası itiraz, trafik cezası sorgulama, kırmızı ışık cezası, hız cezası, trafik sigortası" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "TrafikRehber",
+          "url": "https://www.cezarehberi.com",
+          "description": "Trafik cezaları, itiraz rehberi ve sigorta bilgileri",
+          "potentialAction": { "@type": "SearchAction", "target": "https://www.cezarehberi.com/blog?q={search_term_string}", "query-input": "required name=search_term_string" }
+        })}</script>
       </Helmet>
 
-      {/* HERO */}
-      <section style={{ background: 'linear-gradient(135deg, #1a3a6b 0%, #2d5a9e 100%)', color: '#fff', padding: '80px 20px' }}>
-        <div className="container" style={{ textAlign: 'center' }}>
-          <h1 style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 800, marginBottom: 16, lineHeight: 1.2 }}>
-            Trafik Sorunlarınıza<br />Hızlı ve Güvenilir Çözüm
+      {/* ─── HERO ─── */}
+      <section style={{ background: 'linear-gradient(135deg, #0f2347 0%, #1a3a6b 60%, #1e4d8c 100%)', color: '#fff', padding: '60px 20px 52px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
+
+          {/* Güncellik bandı */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(230,92,0,0.9)', borderRadius: 20, padding: '5px 16px', fontSize: 13, fontWeight: 700, marginBottom: 20 }}>
+            <span>🔴</span> 7574 sayılı Kanun — 27 Şubat 2026 güncel
+          </div>
+
+          <h1 style={{ fontSize: 'clamp(26px, 5vw, 46px)', fontWeight: 900, margin: '0 0 16px', lineHeight: 1.2 }}>
+            Trafik Cezası mı Aldınız?<br />
+            <span style={{ color: '#fbbf24' }}>Doğru Adımı Öğrenin.</span>
           </h1>
-          <p style={{ fontSize: 18, opacity: 0.85, marginBottom: 40, maxWidth: 600, margin: '0 auto 40px' }}>
-            Trafik cezası itirazından sigorta rehberine, ehliyet işlemlerinden araç muayenesine — tüm bilgiler burada.
+          <p style={{ fontSize: 17, opacity: 0.85, margin: '0 auto 36px', maxWidth: 580, lineHeight: 1.6 }}>
+            2026 güncel ceza tutarları, erken ödeme indirimi hesaplayıcı, itiraz dilekçeleri ve hukuki rehber — hepsi ücretsiz.
           </p>
 
-          <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8, maxWidth: 560, margin: '0 auto 40px', background: '#fff', borderRadius: 12, padding: 6 }}>
+          {/* Arama */}
+          <form onSubmit={handleSearch} style={{ display: 'flex', gap: 0, maxWidth: 540, margin: '0 auto 32px', background: '#fff', borderRadius: 10, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Trafik cezası itiraz, ehliyet puan, sigorta..."
-              style={{ flex: 1, border: 'none', outline: 'none', padding: '10px 16px', fontSize: 15, borderRadius: 8, color: '#1a1a2e' }}
+              placeholder="Trafik cezası itiraz, sigorta, ehliyet puan..."
+              style={{ flex: 1, border: 'none', outline: 'none', padding: '14px 18px', fontSize: 14, color: '#1e293b', background: 'transparent' }}
             />
-            <button type="submit" className="btn btn-primary" style={{ whiteSpace: 'nowrap' }}>Ara 🔍</button>
+            <button type="submit" style={{ background: '#e65c00', color: '#fff', border: 'none', padding: '14px 22px', fontWeight: 700, fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              Ara →
+            </button>
           </form>
 
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            {QUICK_TOOLS.map(t => (
-              <Link key={t.path} to={t.path} className="btn" style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.25)' }}>
-                {t.icon} {t.label}
+          {/* Hızlı linkler */}
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {[
+              { label: '2026 Ceza Listesi', path: '/trafik-cezalari-2026', bg: '#e65c00' },
+              { label: 'İtiraz Dilekçesi', path: '/dilekce-ornekleri', bg: 'rgba(255,255,255,0.15)' },
+              { label: 'Ceza Hesapla', path: '/araclar/ceza-hesapla', bg: 'rgba(255,255,255,0.15)' },
+            ].map(t => (
+              <Link key={t.path} to={t.path} style={{
+                background: t.bg, color: '#fff', textDecoration: 'none',
+                padding: '9px 18px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                border: '1px solid rgba(255,255,255,0.2)',
+              }}>
+                {t.label}
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* STATS BAND */}
-      {stats && (
-        <div style={{ background: '#e65c00', color: '#fff', padding: '16px 20px' }}>
-          <div className="container" style={{ display: 'flex', gap: 40, justifyContent: 'center', flexWrap: 'wrap', textAlign: 'center' }}>
-            {[
-              ['📰', stats.total_articles + '+', 'Makale'],
-              ['📄', stats.total_dilekce + '+', 'Dilekçe Şablonu'],
-              ['⬇️', stats.total_downloads + '+', 'İndirme'],
-            ].map(([icon, val, label]) => (
-              <div key={label} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ fontSize: 20 }}>{icon}</span>
-                <span style={{ fontWeight: 700, fontSize: 18 }}>{val}</span>
-                <span style={{ opacity: 0.85, fontSize: 14 }}>{label}</span>
-              </div>
-            ))}
+      {/* ─── 2026 ACİL BİLGİ KUTUSU ─── */}
+      <section style={{ background: '#fff8e6', borderBottom: '2px solid #fbbf24', padding: '20px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: 22 }}>⚡</span>
+          <div style={{ fontSize: 14, color: '#92400e', lineHeight: 1.5 }}>
+            <strong>2026 yeni ceza tutarları yürürlükte:</strong> Kırmızı ışık <strong>5.000 ₺</strong> · Cep telefonu <strong>5.000 ₺</strong> · Trafikte saldırgan davranış <strong>180.000 ₺</strong> · 15 günde ödeyin <strong>%25 indirim</strong> alın.
           </div>
+          <Link to="/trafik-cezalari-2026" style={{ background: '#e65c00', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', flexShrink: 0 }}>
+            Tüm Liste →
+          </Link>
         </div>
-      )}
+      </section>
 
-      {/* KATEGORİLER */}
-      <section style={{ padding: '64px 20px', background: '#f4f7fc' }}>
-        <div className="container">
-          <h2 style={{ textAlign: 'center', fontSize: 28, fontWeight: 700, color: '#1a3a6b', marginBottom: 8 }}>Ne Arıyorsunuz?</h2>
-          <p style={{ textAlign: 'center', color: '#666', marginBottom: 40 }}>İhtiyacınıza göre kategori seçin</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
-            {CATEGORIES.map(cat => (
-              <Link key={cat.id} to={cat.path} style={{ textDecoration: 'none' }}>
-                <div className="card" style={{ padding: 28, textAlign: 'center' }}>
-                  <div style={{ fontSize: 44, marginBottom: 12 }}>{cat.icon}</div>
-                  <h3 style={{ color: '#1a3a6b', fontWeight: 700, marginBottom: 8 }}>{cat.label}</h3>
-                  <p style={{ color: '#666', fontSize: 14 }}>{cat.desc}</p>
+      {/* ─── HIZLI ARAÇLAR ─── */}
+      <section style={{ padding: '52px 20px', background: '#f4f7fc' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1a3a6b', marginBottom: 6, textAlign: 'center' }}>Hızlı Araçlar</h2>
+          <p style={{ textAlign: 'center', color: '#64748b', fontSize: 14, marginBottom: 28 }}>En çok ihtiyaç duyulan işlemler — hızlı ve ücretsiz</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+            {[
+              { icon: '📋', label: '2026 Ceza Listesi', desc: 'Tüm güncel tutarlar', path: '/trafik-cezalari-2026', renk: '#1a3a6b' },
+              { icon: '🧮', label: 'Ceza Hesapla', desc: 'Erken ödeme indirimi', path: '/araclar/ceza-hesapla', renk: '#e65c00' },
+              { icon: '📄', label: 'İtiraz Dilekçesi', desc: 'Hazır şablonlar', path: '/dilekce-ornekleri', renk: '#059669' },
+              { icon: '🛡️', label: 'Sigorta Rehberi', desc: 'ZMSS ve kasko', path: '/sigorta', renk: '#0e7490' },
+            ].map(t => (
+              <Link key={t.path} to={t.path} style={{ textDecoration: 'none' }}>
+                <div style={{
+                  background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12,
+                  padding: '20px 18px', display: 'flex', gap: 14, alignItems: 'center',
+                  transition: 'box-shadow 0.15s, transform 0.15s',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(26,58,107,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+                >
+                  <div style={{ background: t.renk + '15', borderRadius: 10, padding: '10px', fontSize: 22, flexShrink: 0 }}>{t.icon}</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#1e293b', fontSize: 14 }}>{t.label}</div>
+                    <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{t.desc}</div>
+                  </div>
                 </div>
               </Link>
             ))}
@@ -115,26 +146,71 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SON MAKALELER */}
+      {/* ─── İSTATİSTİKLER ─── */}
+      {stats && (
+        <section style={{ background: '#1a3a6b', color: '#fff', padding: '28px 20px' }}>
+          <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', gap: 0, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {[
+              { val: stats.total_articles + '+', label: 'Güncel Makale', icon: '📰' },
+              { val: stats.total_dilekce + '+', label: 'Dilekçe Şablonu', icon: '📄' },
+              { val: '17', label: 'Ceza Türü', icon: '⚖️' },
+              { val: '%100', label: 'Ücretsiz', icon: '✅' },
+            ].map(s => (
+              <div key={s.label} style={{ padding: '12px 32px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: 24 }}>{s.icon}</div>
+                <div style={{ fontSize: 22, fontWeight: 800, marginTop: 4 }}>{s.val}</div>
+                <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ─── KATEGORİLER ─── */}
+      <section style={{ padding: '52px 20px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1a3a6b', marginBottom: 6, textAlign: 'center' }}>Tüm Kategoriler</h2>
+          <p style={{ textAlign: 'center', color: '#64748b', fontSize: 14, marginBottom: 28 }}>İhtiyacınıza göre kategori seçin</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 14 }}>
+            {KATEGORILER.map(k => (
+              <Link key={k.path} to={k.path} style={{ textDecoration: 'none' }}>
+                <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '24px 20px', textAlign: 'center', transition: 'box-shadow 0.15s, transform 0.15s' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(26,58,107,0.1)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+                >
+                  <div style={{ fontSize: 36, marginBottom: 10 }}>{k.icon}</div>
+                  <div style={{ fontWeight: 700, color: k.renk, fontSize: 15, marginBottom: 6 }}>{k.label}</div>
+                  <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{k.desc}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── MAKALELER ─── */}
       {featuredArticles.length > 0 && (
-        <section style={{ padding: '64px 20px' }}>
-          <div className="container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-              <h2 style={{ fontSize: 26, fontWeight: 700, color: '#1a3a6b' }}>Popüler Makaleler</h2>
-              <Link to="/blog" className="btn btn-outline" style={{ fontSize: 14, padding: '8px 16px' }}>Tümünü Gör →</Link>
+        <section style={{ padding: '52px 20px', background: '#f4f7fc' }}>
+          <div style={{ maxWidth: 860, margin: '0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1a3a6b', margin: 0 }}>Güncel Rehberler</h2>
+              <Link to="/blog" style={{ fontSize: 13, color: '#1a3a6b', fontWeight: 700, textDecoration: 'none' }}>Tümü →</Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
               {featuredArticles.slice(0, 6).map(a => (
                 <Link key={a.slug} to={`/blog/${a.slug}`} style={{ textDecoration: 'none' }}>
-                  <div className="card" style={{ padding: 24, height: '100%' }}>
-                    <span className={`badge badge-${a.category === 'ceza' ? 'orange' : 'blue'}`} style={{ marginBottom: 12, display: 'inline-block' }}>
+                  <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '20px', height: '100%', boxSizing: 'border-box', transition: 'box-shadow 0.15s' }}
+                    onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(26,58,107,0.1)'}
+                    onMouseLeave={e => e.currentTarget.style.boxShadow = ''}
+                  >
+                    <span style={{ background: a.category === 'ceza' ? '#fff0e6' : '#e0f2fe', color: a.category === 'ceza' ? '#e65c00' : '#0e7490', fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 12, display: 'inline-block', marginBottom: 10 }}>
                       {a.category}
                     </span>
-                    <h3 style={{ color: '#1a1a2e', fontWeight: 600, marginBottom: 8, lineHeight: 1.4, fontSize: 15 }}>{a.title}</h3>
-                    <p style={{ color: '#666', fontSize: 13, marginBottom: 12 }}>{a.meta_description}</p>
-                    <div style={{ fontSize: 12, color: '#999', display: 'flex', gap: 12 }}>
-                      <span>⏱ {a.reading_time_min} dk okuma</span>
-                      <span>👁 {a.view_count} görüntülenme</span>
+                    <h3 style={{ color: '#1e293b', fontWeight: 700, fontSize: 14, lineHeight: 1.5, marginBottom: 8 }}>{a.title}</h3>
+                    <p style={{ color: '#64748b', fontSize: 13, lineHeight: 1.5, marginBottom: 12 }}>{a.meta_description?.slice(0, 90)}…</p>
+                    <div style={{ fontSize: 11, color: '#94a3b8', display: 'flex', gap: 10 }}>
+                      <span>⏱ {a.reading_time_min} dk</span>
+                      <span>👁 {a.view_count}</span>
                     </div>
                   </div>
                 </Link>
@@ -144,40 +220,45 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* HIZLI ARAÇLAR */}
-      <section style={{ padding: '64px 20px', background: '#1a3a6b', color: '#fff' }}>
-        <div className="container" style={{ textAlign: 'center' }}>
-          <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Ücretsiz Araçlar</h2>
-          <p style={{ opacity: 0.8, marginBottom: 40 }}>Hızlıca hesaplayın, indirin, öğrenin</p>
-          <div style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/araclar/ceza-hesapla" className="btn" style={{ background: '#e65c00', color: '#fff', fontSize: 16, padding: '16px 32px' }}>
-              🧮 Trafik Cezası Hesapla
-            </Link>
-            <Link to="/dilekce-ornekleri" className="btn" style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', fontSize: 16, padding: '16px 32px' }}>
-              📄 Dilekçe Şablonu İndir
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* SSS */}
-      <section style={{ padding: '64px 20px', background: '#f4f7fc' }}>
-        <div className="container-sm">
-          <h2 style={{ textAlign: 'center', fontSize: 26, fontWeight: 700, color: '#1a3a6b', marginBottom: 32 }}>Sık Sorulan Sorular</h2>
+      {/* ─── SSS ─── */}
+      <section style={{ padding: '52px 20px' }}>
+        <div style={{ maxWidth: 700, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1a3a6b', marginBottom: 6, textAlign: 'center' }}>Sık Sorulan Sorular</h2>
+          <p style={{ textAlign: 'center', color: '#64748b', fontSize: 14, marginBottom: 28 }}>Trafik cezaları hakkında merak edilenler</p>
           {SSS.map((item, i) => (
-            <div key={i} className="card" style={{ marginBottom: 12, overflow: 'visible' }}>
+            <div key={i} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, marginBottom: 8, overflow: 'hidden' }}>
               <button
                 onClick={() => setOpenSss(openSss === i ? null : i)}
-                style={{ width: '100%', background: 'none', border: 'none', padding: '18px 24px', textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 600, fontSize: 15, color: '#1a3a6b' }}
+                style={{ width: '100%', background: 'none', border: 'none', padding: '16px 20px', textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 700, fontSize: 14, color: '#1a3a6b' }}
               >
-                {item.s}
-                <span style={{ fontSize: 20, marginLeft: 12, flexShrink: 0 }}>{openSss === i ? '−' : '+'}</span>
+                <span>{item.s}</span>
+                <span style={{ fontSize: 18, marginLeft: 12, flexShrink: 0, color: '#94a3b8' }}>{openSss === i ? '−' : '+'}</span>
               </button>
               {openSss === i && (
-                <div style={{ padding: '0 24px 18px', color: '#444', fontSize: 15, lineHeight: 1.7 }}>{item.c}</div>
+                <div style={{ padding: '0 20px 16px', color: '#475569', fontSize: 14, lineHeight: 1.7, borderTop: '1px solid #f1f5f9' }}>
+                  {item.c}
+                </div>
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ─── CTA ─── */}
+      <section style={{ background: '#1a3a6b', color: '#fff', padding: '44px 20px', textAlign: 'center' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 10 }}>Cezanıza Haksız mı Kaldınız?</h2>
+          <p style={{ opacity: 0.8, fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
+            15 gün içinde itiraz hakkınız var. Hazır dilekçe şablonlarımızla hemen başlayın.
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/dilekce-ornekleri" style={{ background: '#e65c00', color: '#fff', textDecoration: 'none', padding: '13px 28px', borderRadius: 9, fontWeight: 700, fontSize: 15 }}>
+              📄 İtiraz Dilekçesi Hazırla
+            </Link>
+            <Link to="/trafik-cezalari-2026" style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', textDecoration: 'none', padding: '13px 28px', borderRadius: 9, fontWeight: 700, fontSize: 15, border: '1px solid rgba(255,255,255,0.3)' }}>
+              📋 2026 Ceza Tutarları
+            </Link>
+          </div>
         </div>
       </section>
     </>
