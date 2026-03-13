@@ -22,7 +22,7 @@ export default function DilekceListPage() {
   const [arama, setArama] = useState('');
 
   useEffect(() => {
-    fetch(`${API}/api/dilekce-sablonlari`)
+   fetch(`${API}/api/dilekce`)
       .then(r => r.json())
       .then(data => {
         if (data.sablonlar) setDilekce(data.sablonlar);
