@@ -1,24 +1,40 @@
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 const api = {
-  async get(path) {
-    const res = await fetch(`${API_URL}${path}`);
+  async get(path, token = null) {
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const res = await fetch(`${API_URL}${path}`, { headers });
     if (!res.ok) throw new Error(`API Error: ${res.status}`);
     return res.json();
   },
 
-  async post(path, body) {
+  async post(path, body, token = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     const res = await fetch(`${API_URL}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(`API Error: ${res.status}`);
     return res.json();
   },
 
-  async delete(path) {
-    const res = await fetch(`${API_URL}${path}`, { method: 'DELETE' });
+  async put(path, body, token = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error(`API Error: ${res.status}`);
+    return res.json();
+  },
+
+  async delete(path, token = null) {
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const res = await fetch(`${API_URL}${path}`, { method: 'DELETE', headers });
     return res.json();
   }
 };
@@ -53,6 +69,28 @@ export const chatApi = {
 
 export const statsApi = {
   getPublic: () => api.get('/api/stats/public'),
+};
+
+export const adminApi = {
+  login: (email, password) =>
+    api.post('/api/admin/login', { email, password }),
+
+  getStats: (token) =>
+    api.get('/api/admin/stats', token),
+
+  // Makaleler
+  articles2026Guncelle: (token) =>
+    api.post('/api/admin/articles-2026-guncelle', {}, token),
+
+  // Ceza türleri
+  getCezaListesi: (token) =>
+    api.get('/api/admin/ceza-listesi', token),
+  updateCeza: (token, id, data) =>
+    api.put(`/api/admin/ceza-turleri/${id}`, data, token),
+  ceza2026Yukle: (token) =>
+    api.post('/api/admin/ceza-2026-yukle', {}, token),
+  cezaYdoGuncelle: (token, oran) =>
+    api.post('/api/admin/ceza-ydo-guncelle', { oran }, token),
 };
 
 export default api;
