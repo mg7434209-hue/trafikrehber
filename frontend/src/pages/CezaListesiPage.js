@@ -107,7 +107,6 @@ export default function CezaListesiPage() {
       </Helmet>
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
-
         <div style={{ marginBottom: 24 }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1a3a6b', margin: '0 0 8px' }}>
             2026 Trafik Cezaları Güncel Liste
@@ -115,7 +114,6 @@ export default function CezaListesiPage() {
           <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
             27 Şubat 2026 tarihli 7574 sayılı Kanun ve %25,49 Yeniden Değerleme Oranı kapsamında güncellenmiştir.
             Tebliğden itibaren <strong>15 gün içinde ödeme</strong> yapıldığında <strong>%25 indirim</strong> uygulanır.
-            💰 simgesine tıklayarak erken ödeme tutarını hesaplayın, 📄 simgesiyle itiraz dilekçesi hazırlayın.
           </p>
         </div>
 
@@ -131,9 +129,7 @@ export default function CezaListesiPage() {
         </div>
 
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
-
-          {/* Tablo başlığı */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 70px 80px 70px', padding: '10px 16px', background: '#f8faff', borderBottom: '2px solid #e2e8f0', fontSize: 11, fontWeight: 700, color: '#64748b', letterSpacing: 0.5 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 70px 80px 140px', padding: '10px 16px', background: '#f8faff', borderBottom: '2px solid #e2e8f0', fontSize: 11, fontWeight: 700, color: '#64748b', letterSpacing: 0.5 }}>
             <div>İHLAL</div>
             <div style={{ textAlign: 'right' }}>TAM CEZA</div>
             <div style={{ textAlign: 'right' }}>15 GÜNDE</div>
@@ -152,7 +148,7 @@ export default function CezaListesiPage() {
               return (
                 <div
                   key={c.id || c.kod}
-                  style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 70px 80px 70px', padding: '11px 16px', borderBottom: i < filtreliCezalar.length - 1 ? '1px solid #f1f5f9' : 'none', alignItems: 'center', background: i % 2 === 0 ? '#fff' : '#fafbff', cursor: 'default' }}
+                  style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 70px 80px 140px', padding: '11px 16px', borderBottom: i < filtreliCezalar.length - 1 ? '1px solid #f1f5f9' : 'none', alignItems: 'center', background: i % 2 === 0 ? '#fff' : '#fafbff' }}
                   onMouseEnter={e => e.currentTarget.style.background = '#f0f4ff'}
                   onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? '#fff' : '#fafbff'}
                 >
@@ -175,9 +171,19 @@ export default function CezaListesiPage() {
                   <div style={{ textAlign: 'center' }}>
                     <span style={{ background: sv.bg, color: sv.color, fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12 }}>{sv.label}</span>
                   </div>
-                  <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
-                    <button onClick={() => setHesaplaModal(c)} title="Erken ödeme hesapla" style={{ background: '#f0f4ff', color: '#1a3a6b', border: 'none', borderRadius: 6, padding: '5px 8px', fontSize: 14, cursor: 'pointer' }}>💰</button>
-                    <Link to="/dilekce-ornekleri" title="İtiraz dilekçesi" style={{ background: '#f0fdf4', color: '#16a34a', borderRadius: 6, padding: '5px 8px', fontSize: 14, textDecoration: 'none' }}>📄</Link>
+                  <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                    <button
+                      onClick={() => setHesaplaModal(c)}
+                      style={{ background: '#f0f4ff', color: '#1a3a6b', border: 'none', borderRadius: 6, padding: '5px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      Hesapla
+                    </button>
+                    <Link
+                      to="/dilekce-ornekleri"
+                      style={{ background: '#f0fdf4', color: '#16a34a', borderRadius: 6, padding: '5px 10px', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
+                    >
+                      İtiraz →
+                    </Link>
                   </div>
                 </div>
               );
