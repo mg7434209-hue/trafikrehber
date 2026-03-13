@@ -12,73 +12,67 @@ const NAV_ITEMS = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   useEffect(() => setMenuOpen(false), [location]);
+
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
     <nav style={{
       position: 'sticky', top: 0, zIndex: 100,
-      background: scrolled ? '#fff' : '#1a3a6b',
-      boxShadow: scrolled ? '0 2px 16px rgba(0,0,0,0.1)' : 'none',
-      transition: 'all 0.3s'
+      background: '#1a3a6b',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
     }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+
         {/* Logo */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
             width: 36, height: 36, borderRadius: 8,
-            background: scrolled ? '#1a3a6b' : '#fff',
+            background: '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 18, fontWeight: 800, color: scrolled ? '#fff' : '#1a3a6b'
+            fontSize: 18, fontWeight: 800, color: '#1a3a6b',
+            flexShrink: 0,
           }}>T</div>
-          <span style={{
-            fontSize: 18, fontWeight: 700,
-            color: scrolled ? '#1a3a6b' : '#fff'
-          }}>TrafikRehber</span>
+          <span style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>TrafikRehber</span>
         </Link>
 
         {/* Desktop nav */}
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }} className="desktop-nav">
+        <div style={{ display: 'flex', gap: 2, alignItems: 'center' }} className="desktop-nav">
           {NAV_ITEMS.map(item => (
             <Link key={item.path} to={item.path} style={{
               padding: '8px 12px', borderRadius: 6, textDecoration: 'none',
               fontSize: 14, fontWeight: 500,
-              color: location.pathname.startsWith(item.path)
-                ? (scrolled ? '#e65c00' : '#ffd700')
-                : (scrolled ? '#1a3a6b' : '#fff'),
-              background: location.pathname.startsWith(item.path)
-                ? (scrolled ? '#fff0e6' : 'rgba(255,255,255,0.15)')
-                : 'transparent',
-            }}>{item.label}</Link>
+              color: isActive(item.path) ? '#ffd700' : '#e2e8f0',
+              background: isActive(item.path) ? 'rgba(255,255,255,0.12)' : 'transparent',
+              transition: 'background 0.15s, color 0.15s',
+            }}
+              onMouseEnter={e => { if (!isActive(item.path)) { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#fff'; }}}
+              onMouseLeave={e => { if (!isActive(item.path)) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#e2e8f0'; }}}
+            >{item.label}</Link>
           ))}
         </div>
 
         {/* Mobile hamburger */}
-        <button onClick={() => setMenuOpen(!menuOpen)} style={{
-          display: 'none', background: 'none', border: 'none',
-          color: scrolled ? '#1a3a6b' : '#fff', fontSize: 24, cursor: 'pointer'
-        }} className="hamburger">☰</button>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{ display: 'none', background: 'none', border: 'none', color: '#fff', fontSize: 24, cursor: 'pointer', padding: 4 }}
+          className="hamburger"
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div style={{
-          background: '#1a3a6b', padding: '12px 20px 20px',
-          borderTop: '1px solid rgba(255,255,255,0.1)'
-        }}>
+        <div style={{ background: '#0f2347', padding: '8px 20px 16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
           {NAV_ITEMS.map(item => (
             <Link key={item.path} to={item.path} style={{
-              display: 'block', padding: '12px 0',
-              color: '#fff', textDecoration: 'none', fontWeight: 500,
-              borderBottom: '1px solid rgba(255,255,255,0.1)'
+              display: 'block', padding: '12px 4px',
+              color: isActive(item.path) ? '#ffd700' : '#e2e8f0',
+              textDecoration: 'none', fontWeight: 500, fontSize: 15,
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
             }}>{item.label}</Link>
           ))}
         </div>
