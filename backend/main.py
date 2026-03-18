@@ -33,6 +33,10 @@ def health():
 @app.get("/google26e8a302ff887c04.html", response_class=PlainTextResponse)
 async def google_verify():
     return "google-site-verification: google26e8a302ff887c04.html"
+
+@app.get("/google32637b0bab066255.html", response_class=PlainTextResponse)
+async def google_verify():
+    return "google-site-verification: google32637b0bab066255.html"
 # ─────────────────────────────────────────────────────────
 
 @app.post("/api/seed")
