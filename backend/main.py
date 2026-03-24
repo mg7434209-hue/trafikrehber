@@ -1,5 +1,3 @@
-
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
@@ -12,8 +10,13 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="TrafikRehber API", version="1.0.0")
 
-origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(articles.router, prefix="/api/articles", tags=["Makaleler"])
 app.include_router(dilekce.router, prefix="/api/dilekce", tags=["Dilekçeler"])
@@ -33,11 +36,11 @@ def health():
 
 # ── Google Search Console Doğrulama ──────────────────────
 @app.get("/google26e8a302ff887c04.html", response_class=PlainTextResponse)
-async def google_verify():
+async def google_verify_1():
     return "google-site-verification: google26e8a302ff887c04.html"
 
 @app.get("/google32637b0bab066255.html", response_class=PlainTextResponse)
-async def google_verify():
+async def google_verify_2():
     return "google-site-verification: google32637b0bab066255.html"
 # ─────────────────────────────────────────────────────────
 
@@ -89,7 +92,7 @@ def run_rich_seed():
     results = {"articles_added": 0, "articles_updated": 0, "dilekce_added": 0, "dilekce_updated": 0}
     AF = {'slug','title','meta_description','content','category','tags','is_published','is_featured','reading_time_min','schema_type','author'}
     DF = {'slug','baslik','aciklama','sablon_icerik','kategori','ilgili_kanun','premium'}
-    articles = [
+    articles_data = [
         {"slug":"trafik-cezasi-itiraz-nasil-yapilir","title":"Trafik Cezasına İtiraz Nasıl Yapılır? (2025 Güncel Rehber)","meta_description":"Trafik cezasına itiraz nasıl yapılır? 15 günlük süre, Sulh Ceza Hâkimliği başvurusu ve dilekçe örneği.","category":"ceza","tags":["itiraz","trafik cezası","sulh ceza"],"reading_time_min":8,"schema_type":"HowTo","is_published":True,"is_featured":True,"content":"<h2>Trafik Cezasına İtiraz Hakkınız</h2><p>Tebliğden itibaren <strong>15 gün içinde</strong> Sulh Ceza Hâkimliği'ne itiraz edebilirsiniz.</p><h2>İtiraz Adımları</h2><ol><li>Tutanağı inceleyin</li><li>Gerekçenizi belirleyin</li><li>Dilekçe hazırlayın</li><li>Sulh Ceza Hâkimliği'ne başvurun</li></ol><div style='background:#fff8e6;border-left:4px solid #f59e0b;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0'>⚖️ Genel bilgilendirme amaçlıdır.</div>"},
         {"slug":"trafik-cezasi-tutarlari-2025","title":"2025 Trafik Cezası Tutarları — Güncel Tam Liste","meta_description":"2025 yılı güncel trafik cezası tutarları. Hız ihlali, kırmızı ışık, emniyet kemeri — tablolu liste.","category":"ceza","tags":["ceza tutarları","2025","hız ihlali"],"reading_time_min":6,"schema_type":"Article","is_published":True,"is_featured":True,"content":"<h2>2025 Trafik Cezası Tutarları</h2><p><strong>15 gün içinde ödemede %25 indirim</strong> uygulanır.</p><table border='1' style='border-collapse:collapse;width:100%'><tr style='background:#1e3a5f;color:white'><th style='padding:8px'>İhlal</th><th>Taban Ceza</th><th>%25 İndirimli</th></tr><tr><td style='padding:8px'>Kırmızı ışık</td><td>3.956 TL</td><td>2.967 TL</td></tr><tr style='background:#f9f9f9'><td style='padding:8px'>Hız (%10-30)</td><td>2.637 TL</td><td>1.978 TL</td></tr></table><div style='background:#fff8e6;border-left:4px solid #f59e0b;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0'>⚖️ 2025 yeniden değerleme oranına göre güncellenmiştir.</div>"},
         {"slug":"trafik-cezasi-e-devlet-sorgulama","title":"Trafik Cezası E-Devlet Sorgulama ve Ödeme Rehberi 2025","meta_description":"E-devlet üzerinden trafik cezası sorgulama ve ödeme rehberi.","category":"ceza","tags":["sorgulama","e-devlet","ödeme"],"reading_time_min":5,"schema_type":"HowTo","is_published":True,"is_featured":True,"content":"<h2>E-Devlet ile Sorgulama</h2><ol><li>e-devlet.gov.tr adresine gidin</li><li>TC Kimlik ile giriş yapın</li><li>'Trafik İdari Para Cezası Sorgulama' aratın</li></ol><div style='background:#fff8e6;border-left:4px solid #f59e0b;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0'>⚖️ Genel bilgilendirme amaçlıdır.</div>"},
@@ -108,7 +111,7 @@ def run_rich_seed():
         {"slug":"arac-cekme-itiraz-dilekce","baslik":"Araç Çekme Kararına İtiraz Dilekçesi","aciklama":"Aracın çekilmesi veya trafikten men kararına itiraz dilekçesi.","kategori":"itiraz","ilgili_kanun":"KTK Madde 78","sablon_icerik":"[İL] TRAFİK ŞUBE MÜDÜRLÜĞÜ'NE\n\nBAŞVURAN: [AD SOYAD]\nARAÇ PLAKASI: [PLAKA]\n\nAracımın iadesini talep ederim.\n[TARİH] - [AD SOYAD]\n\n⚖️ Örnek amaçlıdır."},
         {"slug":"kaza-tazminat-talep-dilekce","baslik":"Trafik Kazası Tazminat Talep Dilekçesi","aciklama":"Sigorta şirketinden tazminat talep etmek için resmi dilekçe.","kategori":"sigorta","ilgili_kanun":"KTK Madde 97 / BK Madde 49","sablon_icerik":"[SİGORTA ŞİRKETİ] GENEL MÜDÜRLÜĞÜ'NE\n\nTALEP EDEN: [AD SOYAD]\nIBAN: [IBAN]\n\n30 gün içinde ödeme yapılmasını talep ederim.\n[TARİH] - [AD SOYAD]\n\n⚖️ Yüksek tutarlarda avukat desteği önerilir."},
     ]
-    for a in articles:
+    for a in articles_data:
         clean = {k: v for k, v in a.items() if k in AF}
         existing = db.query(Article).filter(Article.slug == clean["slug"]).first()
         if existing:
