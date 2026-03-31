@@ -34,6 +34,12 @@ def root():
 def health():
     return {"status": "healthy"}
 
+# ── Google AdSense ads.txt ────────────────────────────────
+@app.get("/ads.txt", response_class=PlainTextResponse)
+async def ads_txt():
+    return "google.com, pub-9741235138417122, DIRECT, f08c47fec0942fa0"
+# ─────────────────────────────────────────────────────────
+
 # ── Google Search Console Doğrulama ──────────────────────
 @app.get("/google26e8a302ff887c04.html", response_class=PlainTextResponse)
 async def google_verify_1():
