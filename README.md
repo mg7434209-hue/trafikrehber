@@ -27,7 +27,7 @@ trafikrehber/
   ADMIN_PASSWORD=<güçlü şifre>
 
   # Ziyaretçi sayacı
-  VISITORS_BASE=0          # gösterilen toplamın tabanı (veritabanı sıfırlanırsa buradan taşınır)
+  VISITORS_BASE=1000       # gösterilen toplamın tabanı (varsayılan 1000; veritabanı sıfırlanırsa buradan taşınır)
   VISITOR_SALT=<random>    # tekillik karması için tuz; boşsa JWT_SECRET kullanılır
   ```
 
@@ -64,6 +64,7 @@ beslenir:
   `sha256(IP + UA + gün + VISITOR_SALT)` karması saklanır — **ham IP
   kaydedilmez**, kayıtlar 7 gün sonra otomatik silinir (KVKK).
 - Botlar User-Agent süzgeciyle elenir; çerez kullanılmaz.
-- Gösterilen toplam = `VISITORS_BASE` + veritabanı sayacı. Veritabanı
-  sıfırlanırsa `VISITORS_BASE`'i güncel toplama çekerek sayacı taşıyın.
+- Gösterilen toplam = `VISITORS_BASE` + veritabanı sayacı; taban varsayılanı
+  **1000**'dir, yani sayaç 1.000 ziyaretçiden başlar. Veritabanı sıfırlanırsa
+  `VISITORS_BASE`'i güncel toplama çekerek sayacı taşıyın.
 - Yönetim: `/admin` → toplam / bugün / şu an sitede kartları + son 7 gün grafiği.

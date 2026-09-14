@@ -8,7 +8,7 @@ SAYAÇ MANTIĞI (gespaenerji.com'daki footer sayacıyla AYNI mantık):
   • Bot/tarayıcı olmayan istekler User-Agent süzgeciyle elenir.
   • "Şu an sitede" = son 5 dakikada ping atan tekil anahtar sayısı
     (yalnız bellekte tutulur, veritabanına yazılmaz).
-  • Gösterilen toplam = VISITORS_BASE (taban) + veritabanı sayacı.
+  • Gösterilen toplam = VISITORS_BASE (taban, varsayılan 1000) + veritabanı sayacı.
     Veritabanı sıfırlansa bile sayaç geriye düşmesin diye taban
     ortam değişkeniyle taşınır (Railway → Variables → VISITORS_BASE).
   • Toplamlar 30 sn bellekte önbelleklenir; ping trafiği veritabanını
@@ -51,7 +51,10 @@ CACHE_TTL_SEC = 30                  # toplamlar bu süre boyunca bellekten okunu
 KEY_RETENTION_DAYS = 7              # tekillik anahtarlarının saklama süresi
 PRUNE_EVERY_SEC = 3600              # temizlik en fazla saatte bir çalışır
 
-VISITORS_BASE = int(os.getenv("VISITORS_BASE", "0") or 0)
+# Sayacın başlangıç tabanı. Site 1.000 ziyaretçiden saymaya başlar;
+# Railway → Variables → VISITORS_BASE ile ezilebilir (veritabanı
+# sıfırlanırsa güncel toplam buraya yazılarak sayaç taşınır).
+VISITORS_BASE = int(os.getenv("VISITORS_BASE", "1000") or 1000)
 VISITOR_SALT = os.getenv("VISITOR_SALT") or os.getenv("JWT_SECRET", "trafikrehber-salt")
 
 _online: dict = {}                  # anahtar → son istek zamanı (bellek)

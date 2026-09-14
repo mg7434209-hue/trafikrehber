@@ -53,7 +53,8 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   (tek uvicorn işçisi varsayılır; çoklu işçide sayı bölünür).
 - Günlük toplamlar `site_visits` (gun · tekil · goruntulenme) tablosunda,
   `ON CONFLICT` ile yarış koşulsuz artırılır. Toplamlar 30 sn önbelleklidir.
-- **Gösterilen toplam = `VISITORS_BASE` + veritabanı toplamı.** Veritabanı
+- **Gösterilen toplam = `VISITORS_BASE` + veritabanı toplamı.** Taban varsayılanı
+  **1000**'dir (sayaç 1.000 ziyaretçiden başlar). Veritabanı
   sıfırlanırsa sayaç geriye düşmesin diye taban ortam değişkeniyle taşınır
   (Railway → Variables → `VISITORS_BASE`). KURAL: tabanı büyütmek geçmişi
   taşımak içindir, sayıyı şişirmek için değil.
@@ -85,7 +86,7 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
 ## Ortam değişkenleri (Railway)
 Backend: `DATABASE_URL` · `JWT_SECRET` (+`JWT_ALGORITHM`, `JWT_EXPIRE_HOURS`) ·
 `GEMINI_API_KEY` · `SITE_URL` · `ADMIN_EMAIL` / `ADMIN_PASSWORD` ·
-`VISITORS_BASE` (sayaç tabanı, varsayılan 0) · `VISITOR_SALT` (karma tuzu;
+`VISITORS_BASE` (sayaç tabanı, varsayılan 1000) · `VISITOR_SALT` (karma tuzu;
 boşsa `JWT_SECRET` kullanılır — **değiştirilirse o günün tekilliği sıfırlanır**).
 Frontend: `REACT_APP_BACKEND_URL` · `REACT_APP_SITE_URL`.
 
