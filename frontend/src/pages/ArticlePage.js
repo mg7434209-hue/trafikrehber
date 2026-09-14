@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi } from '../services/api';
+import { abs } from '../seo';
 
 export default function ArticlePage() {
   const { slug } = useParams();
@@ -30,7 +31,9 @@ export default function ArticlePage() {
       <Helmet>
         <title>{article.title} — TrafikRehber</title>
         <meta name="description" content={article.meta_description} />
-        <link rel="canonical" href={`https://trafikrehber.com/blog/${article.slug}`} />
+        <meta property="og:title" content={article.title} />
+        <meta property="og:description" content={article.meta_description || ''} />
+        <meta property="og:type" content="article" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": article.schema_type || "Article",
@@ -66,8 +69,8 @@ export default function ArticlePage() {
         {/* Sosyal paylaşım */}
         <div style={{ marginTop: 40, padding: '20px', background: '#f4f7fc', borderRadius: 12, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ fontWeight: 600, color: '#1a3a6b' }}>Bu sayfayı paylaş:</span>
-          <a href={`https://twitter.com/intent/tweet?url=https://trafikrehber.com/blog/${article.slug}&text=${encodeURIComponent(article.title)}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>Twitter</a>
-          <a href={`https://wa.me/?text=${encodeURIComponent(article.title + ' https://trafikrehber.com/blog/' + article.slug)}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>WhatsApp</a>
+          <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(abs('/blog/' + article.slug))}&text=${encodeURIComponent(article.title)}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>Twitter</a>
+          <a href={`https://wa.me/?text=${encodeURIComponent(article.title + ' ' + abs('/blog/' + article.slug))}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>WhatsApp</a>
         </div>
 
         {/* İlgili makaleler */}

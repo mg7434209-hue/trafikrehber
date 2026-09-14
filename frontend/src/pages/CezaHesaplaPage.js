@@ -26,8 +26,8 @@ export default function CezaHesaplaPage() {
   return (
     <>
       <Helmet>
-        <title>Trafik Cezası Hesaplama Aracı 2025 — TrafikRehber</title>
-        <meta name="description" content="2025 yılı güncel trafik cezası tutarlarını hesaplayın. Erken ödeme indirimi ve taksit seçeneklerini görün." />
+        <title>Trafik Cezası Hesaplama Aracı 2026 — TrafikRehber</title>
+        <meta name="description" content="2026 yılı güncel trafik cezası tutarlarını hesaplayın. 1 ay içinde ödemede %25 erken ödeme indirimi ve taksitlendirme seçenekleri." />
       </Helmet>
       <div className="container-sm" style={{ padding: '40px 20px' }}>
         <div className="breadcrumb">
@@ -64,9 +64,8 @@ export default function CezaHesaplaPage() {
             <div style={{ display: 'grid', gap: 16 }}>
               {[
                 ['💰 Taban Ceza Tutarı', `₺${sonuc.hesaplama.taban_tutar.toLocaleString('tr-TR')}`, '#1a3a6b'],
-                ['⚡ Erken Ödeme (%25 indirimli)', `₺${sonuc.hesaplama.erken_odeme_indirimi.toLocaleString('tr-TR')}`, '#2d7a2d'],
-                ['📅 2 Taksit', `₺${sonuc.hesaplama.taksit_2.toLocaleString('tr-TR')} / taksit`, '#666'],
-                ['📅 3 Taksit', `₺${sonuc.hesaplama.taksit_3.toLocaleString('tr-TR')} / taksit`, '#666'],
+                [`⚡ 1 Ay İçinde Ödeme (%25 indirimli)`, `₺${sonuc.hesaplama.erken_odeme_indirimi.toLocaleString('tr-TR')}`, '#2d7a2d'],
+                [`📅 ${sonuc.hesaplama.taksit_adedi || 4} Eşit Taksit`, `₺${(sonuc.hesaplama.taksit_tutari || 0).toLocaleString('tr-TR')} / taksit`, '#666'],
               ].map(([label, value, color]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: '#f4f7fc', borderRadius: 10 }}>
                   <span style={{ fontSize: 15 }}>{label}</span>
@@ -74,6 +73,18 @@ export default function CezaHesaplaPage() {
                 </div>
               ))}
             </div>
+
+            {sonuc.ceza.kademe_notu && (
+              <div style={{ marginTop: 16, padding: '12px 16px', background: '#fff8e6', border: '1px solid #fde68a', borderRadius: 10, fontSize: 13, color: '#92400e', lineHeight: 1.6 }}>
+                ⚠️ {sonuc.ceza.kademe_notu}
+              </div>
+            )}
+
+            {sonuc.hesaplama.taksit_aciklama && (
+              <div style={{ marginTop: 12, fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>
+                📅 {sonuc.hesaplama.taksit_aciklama}
+              </div>
+            )}
 
             {sonuc.ceza.puan > 0 && (
               <div style={{ marginTop: 16, padding: '12px 16px', background: '#fff0e6', borderRadius: 10, fontSize: 14 }}>
@@ -95,7 +106,8 @@ export default function CezaHesaplaPage() {
         )}
 
         <div className="warning-box" style={{ marginTop: 32 }}>
-          ⚖️ Tutarlar 2024-2025 yılı için geçerlidir. Güncel tutarlar için resmi kaynakları kontrol ediniz.
+          ⚖️ Tutarlar 27.02.2026 tarihli 7574 sayılı Kanun ve 2026 yeniden değerleme oranına göredir; bilgilendirme amaçlıdır.
+          <strong> Ödeme indirimi süresi 1 ay, itiraz süresi 15 gündür.</strong> Kesin tutar için e-Devlet'teki ceza kaydınızı esas alın.
         </div>
       </div>
     </>

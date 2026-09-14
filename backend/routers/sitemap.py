@@ -7,10 +7,13 @@ import os
 
 router = APIRouter()
 
-SITE_URL = os.getenv("SITE_URL", "https://trafikrehber.com")
+# Yayındaki alan adı. Railway → Variables → SITE_URL ile ezilir.
+SITE_URL = os.getenv("SITE_URL", "https://www.cezarehberi.com").rstrip("/")
 
 STATIC_URLS = [
     "/",
+    "/trafik-cezalari-2026",
+    "/blog",
     "/trafik-cezalari",
     "/trafik-cezalari/sorgulama",
     "/trafik-cezalari/itiraz",
@@ -78,7 +81,7 @@ def robots():
 Allow: /
 
 Disallow: /api/
-Disallow: /admin/
+Disallow: /admin
 
 Sitemap: {SITE_URL}/sitemap.xml
 """

@@ -28,8 +28,9 @@ Yeni rota eklerken: `App.js` + `Navbar.js`/`Footer.js` bağlantıları +
 `backend/routers/sitemap.py` → `STATIC_URLS`.
 
 ## Backend (`backend/`)
-- `main.py` — router kaydı, `Base.metadata.create_all` (migration YOK; yeni
-  tablo eklemek yeterli), `ads.txt` + Google doğrulama HTML'leri,
+- `main.py` — router kaydı, `Base.metadata.create_all` + `_eksik_kolonlari_ekle()`
+  (var olan tabloya kolon eklemek için `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`;
+  yeni kolon eklerken oradaki listeye bir satır ekle), `ads.txt` + Google doğrulama HTML'leri,
   `POST /api/seed` ve `POST /api/seed-rich` (içerik tohumlama; **veri gövdede
   gömülüdür**, düzenlerken `seed.py` ile karıştırma).
 - `models.py` — `Article`, `DilecceSablon`, `CezaTuru`, `PageStat`,
@@ -67,6 +68,40 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   tahmini/uydurma sayı basılmaz.** Admin panelinde toplam/bugün/online kartları
   ve son 7 gün grafiği vardır.
 
+## Ceza Verisi — DOĞRULUK KURALLARI (`routers/admin.py` · `routers/ceza.py`)
+Site hukuki bilgi verdiği için tutarlar **tek kaynaktan** ve **tarihli** gider:
+- Liste `admin.py` → `CEZALAR_2026`; `POST /api/admin/ceza-2026-yukle` ile
+  veritabanına basılır ve **listede olmayan eski kodlar SİLİNİR** (7574 ile
+  kaldırılan yüzde bazlı hız kademeleri gibi kayıtlar yayında kalmasın).
+- Her satırda `kademe_notu` olabilir: 27.02.2026 tarihli **7574 sayılı Kanun**
+  kırmızı ışık, cep telefonu, alkol ve hız cezalarını **kademeli** yaptı
+  (ilk ihlal / tekrar / belge men süresi) — tek tutar yetmez, notu doldur.
+  Bu cezalar SABİT tutarlıdır, yeniden değerleme oranına tabi DEĞİLDİR;
+  `ceza-ydo-guncelle` ile toplu zam YAPMA (diğerleri için kullanılır).
+- `CEZA_SON_DOGRULAMA` tarihi API'den döner ve liste sayfasının altında
+  gösterilir. Tutar değiştirdiğinde bu tarihi de değiştir.
+- **İKİ SÜREYİ KARIŞTIRMA** (`routers/ceza.py` sabitleri):
+  `ODEME_SURESI_GUN = 30` → peşin ödeme %25 indirimi **1 ay** içindedir
+  (31.01.2024 yönetmelik değişikliği; öncesinde 15 gündü).
+  `ITIRAZ_SURESI_GUN = 15` → Sulh Ceza Hâkimliği'ne itiraz süresi 15 gündür.
+  `TAKSIT_ADEDI = 4` → Kabahatler Kanunu m.17/3: ilk taksit ödeme süresinde,
+  kalan 3 taksit 1 yıl içinde; taksitte indirim uygulanmaz.
+- Nihai kaynak: Resmî Gazete / mevzuat.gov.tr (7574 s.K.) ve EGM listesi.
+  `articles-2026-guncelle` yalnız YIL ETİKETİNİ değiştirir, TUTARLARI değil —
+  çalıştırdıktan sonra makale içindeki rakamları elle gözden geçir.
+
+## SEO altyapısı
+- `frontend/src/seo.js` — `SITE_URL` (env `REACT_APP_SITE_URL`, varsayılan
+  `https://www.cezarehberi.com`) ve `<SeoDefaults>`: App.js'te bir kez render
+  edilir, her rotaya **canonical + og:url/og:type/og:site_name/twitter:card**
+  basar. KURAL: sayfalara elle alan adı yazma, `abs('/yol')` kullan.
+- `frontend/scripts/build-sitemap.js` — `npm run build` öncesi (prebuild)
+  çalışır: alan adının kökünü frontend servisi yayınladığı için
+  `/sitemap.xml` STATİK dosyadır; betik derleme anında backend'in dinamik
+  sitemap'ini çeker, ulaşamazsa statik rota listesine düşer (derlemeyi
+  düşürmez). Yeni sayfa eklerken `ROTALAR` listesine de ekle.
+- `frontend/public/robots.txt` `/admin` ve `/api/` engellidir.
+
 ## Konvansiyonlar
 - Rotalar UZANTISIZ; `.html` yok. Tüm arayüz metinleri Türkçe.
 - Renk paleti: lacivert `#1a3a6b` (+`#0f2347` footer), turuncu `#e65c00`,
@@ -77,15 +112,14 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   makalede Article/HowTo JSON-LD. Yeni sayfa = SEO etiketi + sitemap satırı.
 - Hukuki içeriklerin sonunda `⚖️ genel bilgilendirme amaçlıdır` uyarısı
   bulunur — yeni içerikte de koru.
-- Ceza tutarları veritabanındadır (`ceza_turleri`), koda gömme; güncelleme
-  admin panelinden (`/api/admin/ceza-ydo-guncelle` yeniden değerleme oranı ile
-  toplu zam, `ceza-2026-yukle` liste yükleme).
-- Migration aracı yok: model değişince alan EKLE (ALTER gerektiren dönüşümleri
-  elle SQL ile yap), `create_all` yalnız yeni tablo oluşturur.
+- Ceza tutarları veritabanındadır (`ceza_turleri`), arayüze gömme — bkz.
+  “Ceza Verisi” bölümü.
+- Migration aracı yok: yeni KOLON `main.py` → `_eksik_kolonlari_ekle()` listesine
+  yazılır (ALTER ... IF NOT EXISTS); tip değişimi gibi dönüşümleri elle SQL ile yap.
 
 ## Ortam değişkenleri (Railway)
 Backend: `DATABASE_URL` · `JWT_SECRET` (+`JWT_ALGORITHM`, `JWT_EXPIRE_HOURS`) ·
-`GEMINI_API_KEY` · `SITE_URL` · `ADMIN_EMAIL` / `ADMIN_PASSWORD` ·
+`GEMINI_API_KEY` · `SITE_URL` (varsayılan https://www.cezarehberi.com) · `ADMIN_EMAIL` / `ADMIN_PASSWORD` ·
 `VISITORS_BASE` (sayaç tabanı, varsayılan 1000) · `VISITOR_SALT` (karma tuzu;
 boşsa `JWT_SECRET` kullanılır — **değiştirilirse o günün tekilliği sıfırlanır**).
 Frontend: `REACT_APP_BACKEND_URL` · `REACT_APP_SITE_URL`.

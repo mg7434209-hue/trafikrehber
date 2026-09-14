@@ -71,6 +71,10 @@ class CezaTuru(Base):
     taban_ceza_tl = Column(Numeric(10, 2))
     puan = Column(Integer, default=0)
     kanun_maddesi = Column(String)
+    # 7574 sayılı Kanun'la gelen KADEMELİ cezalar tek bir tutara sığmaz
+    # (ilk ihlal / tekrar / belge men süreleri). Serbest metin olarak burada
+    # tutulur ve listede tutarın altında gösterilir.
+    kademe_notu = Column(Text)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
