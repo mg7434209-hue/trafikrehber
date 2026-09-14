@@ -139,6 +139,9 @@ export default function AdminPage() {
               ['📄', stats.total_dilekce, 'Dilekçe Şablonu'],
               ['👁', stats.total_views, 'Toplam Görüntülenme'],
               ['⚖️', stats.total_ceza || 17, 'Ceza Türü'],
+              ['👥', (stats.ziyaretci_toplam ?? 0).toLocaleString('tr-TR'), 'Toplam Ziyaretçi'],
+              ['📅', stats.ziyaretci_bugun ?? 0, 'Bugün (tekil)'],
+              ['🟢', stats.ziyaretci_online ?? 0, 'Şu An Sitede'],
             ].map(([icon, val, label]) => (
               <div key={label} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '18px 16px', textAlign: 'center' }}>
                 <div style={{ fontSize: 22 }}>{icon}</div>
@@ -148,6 +151,38 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+
+        {/* Son 7 gün ziyaret grafiği */}
+        {stats && stats.ziyaretci_son7 && stats.ziyaretci_son7.length > 0 && (() => {
+          const gunler = stats.ziyaretci_son7;
+          const enYuksek = Math.max(...gunler.map(g => g.tekil), 1);
+          return (
+            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '16px 18px', marginBottom: 24 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#1a3a6b', marginBottom: 14 }}>
+                Son 7 Gün — Tekil Ziyaretçi
+                <span style={{ fontWeight: 400, color: '#94a3b8', marginLeft: 8 }}>
+                  (taban: {(stats.ziyaretci_base ?? 0).toLocaleString('tr-TR')})
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, height: 110 }}>
+                {gunler.map(g => (
+                  <div key={g.gun} style={{ flex: 1, textAlign: 'center' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#1a3a6b', marginBottom: 4 }}>{g.tekil}</div>
+                    <div style={{
+                      height: Math.max(4, Math.round((g.tekil / enYuksek) * 70)),
+                      background: 'linear-gradient(180deg,#2d5a9e,#1a3a6b)',
+                      borderRadius: '4px 4px 0 0',
+                    }} />
+                    <div style={{ fontSize: 10, color: '#64748b', marginTop: 6 }}>
+                      {g.gun.slice(8)}.{g.gun.slice(5, 7)}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#94a3b8' }}>👁 {g.goruntulenme}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Sekmeler */}
         <div style={{ display: 'flex', gap: 4, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: 4, marginBottom: 20 }}>

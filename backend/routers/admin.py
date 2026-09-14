@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db
-from models import Article, DilecceSablon, CezaTuru, PageStat
+from models import Article, DilecceSablon, CezaTuru, PageStat, SiteVisit
 from utils.auth import create_token, require_admin
 import os
 import re
@@ -259,6 +259,16 @@ def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
         Article.view_count.desc()
     ).limit(10).all()
 
+    # --- Ziyaretçi sayacı (routers/stats.py ile aynı kaynak) ---
+    from datetime import date, timedelta
+    from routers.stats import VISITORS_BASE, _online_count
+
+    ziyaret_toplam = db.query(func.coalesce(func.sum(SiteVisit.tekil), 0)).scalar() or 0
+    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == date.today()).first()
+    son7 = db.query(SiteVisit).filter(
+        SiteVisit.gun >= date.today() - timedelta(days=6)
+    ).order_by(SiteVisit.gun).all()
+
     return {
         "success": True,
         "stats": {
@@ -266,6 +276,14 @@ def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
             "total_dilekce": total_dilekce,
             "total_views": total_views,
             "total_ceza": total_ceza,
-            "top_pages": [{"slug": s, "title": t, "views": v} for s, t, v in top_pages]
+            "top_pages": [{"slug": s, "title": t, "views": v} for s, t, v in top_pages],
+            "ziyaretci_toplam": VISITORS_BASE + int(ziyaret_toplam),
+            "ziyaretci_base": VISITORS_BASE,
+            "ziyaretci_bugun": int(bugun_row.tekil) if bugun_row else 0,
+            "ziyaretci_online": _online_count(),
+            "ziyaretci_son7": [
+                {"gun": v.gun.isoformat(), "tekil": v.tekil, "goruntulenme": v.goruntulenme}
+                for v in son7
+            ],
         }
     }

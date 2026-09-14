@@ -155,6 +155,10 @@ export default function HomePage() {
               { val: stats.total_dilekce + '+', label: 'Dilekçe Şablonu', icon: '📄' },
               { val: '17', label: 'Ceza Türü', icon: '⚖️' },
               { val: '%100', label: 'Ücretsiz', icon: '✅' },
+              // Ziyaretçi sayacı (backend /api/stats/public) — veri yoksa gizlenir
+              ...(stats.ziyaretci_toplam
+                ? [{ val: stats.ziyaretci_toplam.toLocaleString('tr-TR'), label: 'Ziyaretçi', icon: '👥' }]
+                : []),
             ].map(s => (
               <div key={s.label} style={{ padding: '12px 32px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ fontSize: 24 }}>{s.icon}</div>

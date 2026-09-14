@@ -1,0 +1,21 @@
+# Bağımlılıklar / derleme çıktıları (Railway'de build koşar, commit EDİLMEZ)
+node_modules/
+frontend/build/
+frontend/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Ortam
+.env
+.env.local
+
+# Editör / işletim sistemi
+.DS_Store
+*.log
+
+# Kilit dosyası repoda tutulmuyor (Railway derlemesi npm install ile çalışır)
+frontend/package-lock.json

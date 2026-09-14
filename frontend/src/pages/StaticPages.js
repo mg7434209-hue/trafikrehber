@@ -53,6 +53,13 @@ export function GizlilikPage() {
         <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
           Sitemizde Google Analytics gibi analitik araçlar için çerezler kullanılmaktadır. Bu çerezler yalnızca onayınız ile aktif hale gelir.
         </p>
+        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Ziyaretçi Sayacı</h2>
+        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
+          Sayfa altındaki ziyaretçi sayacı çerez kullanmaz ve kimlik bilgisi saklamaz. Aynı ziyaretçinin
+          gün içinde bir kez sayılabilmesi için IP adresi ve tarayıcı bilgisinden geri döndürülemez bir
+          karma (hash) üretilir; <strong>ham IP adresi hiçbir şekilde kaydedilmez</strong> ve bu kayıtlar
+          7 gün sonra otomatik silinir.
+        </p>
         <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Veri Toplama</h2>
         <p style={{ color: '#444', lineHeight: 1.8 }}>
           Dilekçe indirme veya iletişim formu aracılığıyla toplanan e-posta adresleri yalnızca belirtilen amaçla kullanılır, üçüncü taraflarla paylaşılmaz.
