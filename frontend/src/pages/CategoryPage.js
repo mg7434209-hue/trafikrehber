@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { SITE_URL } from '../services/site';
 import { articlesApi } from '../services/api';
 
 const CATEGORY_META = {
@@ -34,38 +35,27 @@ const CATEGORY_META = {
   },
 };
 
-const CATEGORY_ROUTES = {
-  '/trafik-cezalari': 'ceza',
-  '/sigorta': 'sigorta',
-  '/ehliyet': 'ehliyet',
-  '/arac-islemleri': 'arac-islemleri',
-};
-
-export default function CategoryPage() {
-  const { category } = useParams();
+export default function CategoryPage({ category }) {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [retry, setRetry] = useState(0);
 
-  // URL'den kategori id'sini bul
-  const catId = category || Object.entries(CATEGORY_ROUTES).find(
-    ([path]) => window.location.pathname === path
-  )?.[1] || 'ceza';
+  const catId = category || 'ceza';
 
   const meta = CATEGORY_META[catId] || CATEGORY_META['ceza'];
 
   useEffect(() => {
-    setLoading(true);
-    articlesApi.getByCategory(catId)
-      .then(d => setArticles(d.articles || []))
-      .catch(() => setArticles([]))
-      .finally(() => setLoading(false));
-  }, [catId]);
+    let active = true; setLoading(true); setError(''); setArticles([]);
+    articlesApi.getByCategory(catId).then(d => { if (active) setArticles(d.articles || []); }).catch(e => { if (active) setError(e.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [catId, retry]);
 
   return (
     <>
       <Helmet>
         <title>{meta.label} — TrafikRehber 2026</title>
-        <meta name="description" content={meta.desc} />
+        <meta name="description" content={meta.desc} /><link rel="canonical" href={`${SITE_URL}/${catId === 'ceza' ? 'trafik-cezalari' : catId}`} />
       </Helmet>
 
       {/* Hero */}
@@ -97,7 +87,7 @@ export default function CategoryPage() {
               <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
               <p>Yükleniyor...</p>
             </div>
-          ) : articles.length === 0 ? (
+          ) : error ? (<div className="state-message error-state" role="alert"><p>{error}</p><button className="btn btn-secondary" onClick={() => setRetry(r => r + 1)}>Tekrar dene</button></div>) : articles.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 60, color: '#94a3b8' }}>
               <div style={{ fontSize: 40, marginBottom: 12 }}>{meta.icon}</div>
               <p>Bu kategoride henüz makale yok.</p>
@@ -153,7 +143,7 @@ export default function CategoryPage() {
                         <div style={{
                           fontWeight: 700, color: '#1e293b', fontSize: 15,
                           lineHeight: 1.4, marginBottom: 4,
-                          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+                          overflowWrap: 'anywhere'
                         }}>
                           {a.title}
                         </div>

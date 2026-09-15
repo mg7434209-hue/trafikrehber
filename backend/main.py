@@ -31,7 +31,7 @@ app.include_router(stats.router, prefix="/api/stats", tags=["İstatistikler"])
 
 @app.get("/")
 def root():
-    return {"status": "ok", "service": "TrafikRehber API", "version": "1.0.0"}
+    return {"status": "ok", "service": "TrafikRehber API", "version": "1.1.0"}
 
 @app.get("/health")
 def health():

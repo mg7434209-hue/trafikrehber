@@ -1,9 +1,15 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://www.cezarehberi.com/</loc>
-    <lastmod>2026-03-19</lastmod>
-    <priority>1.0</priority>
-  </url>
-  </urlset>
+  <url><loc>https://www.cezarehberi.com/</loc></url>
+  <url><loc>https://www.cezarehberi.com/blog</loc></url>
+  <url><loc>https://www.cezarehberi.com/trafik-cezalari-2026</loc></url>
+  <url><loc>https://www.cezarehberi.com/trafik-cezalari</loc></url>
+  <url><loc>https://www.cezarehberi.com/sigorta</loc></url>
+  <url><loc>https://www.cezarehberi.com/ehliyet</loc></url>
+  <url><loc>https://www.cezarehberi.com/arac-islemleri</loc></url>
+  <url><loc>https://www.cezarehberi.com/dilekce-ornekleri</loc></url>
+  <url><loc>https://www.cezarehberi.com/araclar/ceza-hesapla</loc></url>
+  <url><loc>https://www.cezarehberi.com/hakkimizda</loc></url>
+  <url><loc>https://www.cezarehberi.com/iletisim</loc></url>
+  <url><loc>https://www.cezarehberi.com/gizlilik-politikasi</loc></url>
+</urlset>

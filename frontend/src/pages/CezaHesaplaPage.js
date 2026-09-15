@@ -1,103 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { cezaApi } from '../services/api';
-
+import { PAYMENT_URL } from '../services/site';
+const money = value => Number(value).toLocaleString('tr-TR', { style:'currency', currency:'TRY' });
 export default function CezaHesaplaPage() {
-  const [cezalar, setCezalar] = useState([]);
-  const [selected, setSelected] = useState('');
-  const [sonuc, setSonuc] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    cezaApi.getAll().then(d => setCezalar(d.cezalar || [])).catch(() => {});
-  }, []);
-
-  const hesapla = async () => {
-    if (!selected) return;
-    setLoading(true);
-    try {
-      const d = await cezaApi.hesapla(selected);
-      setSonuc(d);
-    } catch (e) {}
-    setLoading(false);
-  };
-
-  return (
-    <>
-      <Helmet>
-        <title>Trafik Cezası Hesaplama Aracı 2025 — TrafikRehber</title>
-        <meta name="description" content="2025 yılı güncel trafik cezası tutarlarını hesaplayın. Erken ödeme indirimi ve taksit seçeneklerini görün." />
-      </Helmet>
-      <div className="container-sm" style={{ padding: '40px 20px' }}>
-        <div className="breadcrumb">
-          <Link to="/">Ana Sayfa</Link><span>/</span>
-          <span>Ceza Hesapla</span>
-        </div>
-
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a3a6b', marginBottom: 8 }}>Trafik Cezası Hesapla</h1>
-        <p style={{ color: '#666', marginBottom: 32 }}>Ceza türünü seçin, güncel tutarı ve ödeme seçeneklerini görün.</p>
-
-        <div style={{ background: '#f4f7fc', borderRadius: 16, padding: 32, marginBottom: 32 }}>
-          <label style={{ display: 'block', fontWeight: 600, color: '#1a3a6b', marginBottom: 10 }}>
-            Ceza Türü Seçin
-          </label>
-          <select
-            value={selected}
-            onChange={e => { setSelected(e.target.value); setSonuc(null); }}
-            style={{ width: '100%', padding: '12px 16px', borderRadius: 8, border: '2px solid #e2e8f0', fontSize: 15, outline: 'none', marginBottom: 16 }}
-          >
-            <option value="">-- Ceza türü seçin --</option>
-            {cezalar.map(c => (
-              <option key={c.id} value={c.id}>{c.aciklama}</option>
-            ))}
-          </select>
-          <button onClick={hesapla} disabled={!selected || loading} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: 16, padding: 14 }}>
-            {loading ? '⏳ Hesaplanıyor...' : '🧮 Hesapla'}
-          </button>
-        </div>
-
-        {sonuc && (
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: 32 }}>
-            <h2 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 20 }}>{sonuc.ceza.aciklama}</h2>
-
-            <div style={{ display: 'grid', gap: 16 }}>
-              {[
-                ['💰 Taban Ceza Tutarı', `₺${sonuc.hesaplama.taban_tutar.toLocaleString('tr-TR')}`, '#1a3a6b'],
-                ['⚡ Erken Ödeme (%25 indirimli)', `₺${sonuc.hesaplama.erken_odeme_indirimi.toLocaleString('tr-TR')}`, '#2d7a2d'],
-                ['📅 2 Taksit', `₺${sonuc.hesaplama.taksit_2.toLocaleString('tr-TR')} / taksit`, '#666'],
-                ['📅 3 Taksit', `₺${sonuc.hesaplama.taksit_3.toLocaleString('tr-TR')} / taksit`, '#666'],
-              ].map(([label, value, color]) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: '#f4f7fc', borderRadius: 10 }}>
-                  <span style={{ fontSize: 15 }}>{label}</span>
-                  <span style={{ fontWeight: 700, fontSize: 18, color }}>{value}</span>
-                </div>
-              ))}
-            </div>
-
-            {sonuc.ceza.puan > 0 && (
-              <div style={{ marginTop: 16, padding: '12px 16px', background: '#fff0e6', borderRadius: 10, fontSize: 14 }}>
-                ⚠️ Bu ceza ehliyet puanınızdan <strong>{sonuc.ceza.puan} puan</strong> düşürür.
-              </div>
-            )}
-
-            <div style={{ marginTop: 16, fontSize: 13, color: '#888' }}>
-              {sonuc.hesaplama.erken_odeme_aciklama}
-            </div>
-
-            <div style={{ marginTop: 24, padding: '16px', background: '#dce6f1', borderRadius: 10 }}>
-              <p style={{ fontSize: 14, color: '#1a3a6b' }}>
-                Bu cezaya itiraz etmek ister misiniz?{' '}
-                <Link to="/trafik-cezalari/itiraz" style={{ fontWeight: 600, color: '#e65c00' }}>İtiraz Rehberini Okuyun →</Link>
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div className="warning-box" style={{ marginTop: 32 }}>
-          ⚖️ Tutarlar 2024-2025 yılı için geçerlidir. Güncel tutarlar için resmi kaynakları kontrol ediniz.
-        </div>
-      </div>
-    </>
-  );
+  const [params] = useSearchParams();
+  const [cezalar, setCezalar] = useState([]), [selected, setSelected] = useState(params.get('ceza') || ''), [result, setResult] = useState(null), [loading, setLoading] = useState(true), [calculating, setCalculating] = useState(false), [error, setError] = useState(''), [retry, setRetry] = useState(0);
+  useEffect(() => { let active = true; setLoading(true); setError(''); cezaApi.getAll().then(d => { if (active) setCezalar(d.cezalar || []); }).catch(e => { if (active) setError(e.message); }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, [retry]);
+  async function calculate(e) { e.preventDefault(); setCalculating(true); setResult(null); setError(''); try { setResult(await cezaApi.hesapla(selected)); } catch (err) { setError(err.message); } finally { setCalculating(false); } }
+  const valid = cezalar.some(c => c.id === selected);
+  return <><Helmet><title>Trafik Cezası Hesaplama — TrafikRehber</title><meta name="description" content="Trafik cezası türünü seçin. Kayıtlı tutarı ve yüzde 25 indirim uygulanması halinde ödeme örneğini karşılaştırın." /></Helmet><div className="container-sm page-content"><div className="page-intro"><div className="breadcrumb"><Link to="/">Ana Sayfa</Link><span>›</span><span>Ceza Hesapla</span></div><h1>Trafik cezası hesapla</h1><p>Ceza türünü seçin, kayıtlı tutarı ve indirimli ödeme örneğini görün.</p></div>{error && <div className="state-message error-state" role="alert"><p>{error}</p>{!cezalar.length && <button className="btn btn-secondary" onClick={() => setRetry(r => r + 1)}>Listeyi yeniden yükle</button>}</div>}<form className="calculator-panel" onSubmit={calculate}><label htmlFor="ceza-type">Ceza türü</label><select id="ceza-type" value={valid ? selected : ''} disabled={loading || calculating} required onChange={e => { setSelected(e.target.value); setResult(null); }}><option value="">{loading ? 'Ceza türleri yükleniyor…' : 'Ceza türü seçin'}</option>{cezalar.map(c => <option key={c.id} value={c.id}>{c.aciklama}</option>)}</select><button type="submit" className="btn btn-primary" disabled={!valid || calculating}>{calculating ? 'Hesaplanıyor…' : 'Ödeme örneğini hesapla'}</button>{!loading && !error && !cezalar.length && <p role="status">Henüz ceza türü eklenmemiş.</p>}</form>{result && <div className="calculation-result" role="status"><h2>{result.ceza.aciklama}</h2><dl className="amount-grid"><div><dt>Kayıtlı ceza tutarı</dt><dd>{money(result.hesaplama.taban_tutar)}</dd></div><div><dt>%25 indirim uygulanırsa</dt><dd>{money(result.hesaplama.erken_odeme_indirimi)}</dd></div></dl><p>Bu hesaplama indirim hakkı veya taksit onayı oluşturmaz. Ödeme tutarını, indirim koşullarını ve son ödeme tarihini tebligatınızdan ya da resmi sorgulama ekranından kontrol edin.</p><p><a href={PAYMENT_URL} target="_blank" rel="noopener noreferrer">e-Devlet’te sorgula ↗</a> · <Link to="/dilekce-ornekleri">Dilekçe örnekleri</Link></p></div>}<p className="warning-box">Tutarlar sitede kayıtlı verilere dayanır. İşleminize özel koşullar için resmi kaynakları esas alın.</p></div></>;
 }

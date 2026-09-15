@@ -1,29 +1,36 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
 import HomePage from './pages/HomePage';
-import ArticlePage from './pages/ArticlePage';
-import ArticleListPage from './pages/ArticleListPage';
-import DilekceListPage from './pages/DilekceListPage';
-import DilekceDetailPage from './pages/DilekceDetailPage';
-import CezaHesaplaPage from './pages/CezaHesaplaPage';
-import CategoryPage from './pages/CategoryPage';
-import HakkimizdaPage from './pages/HakkimizdaPage';
-import IletisimPage from './pages/IletisimPage';
-import GizlilikPage from './pages/GizlilikPage';
-import NotFoundPage from './pages/NotFoundPage';
+const ArticlePage = lazy(() => import('./pages/ArticlePage'));
+const ArticleListPage = lazy(() => import('./pages/ArticleListPage'));
+const DilekceListPage = lazy(() => import('./pages/DilekceListPage'));
+const DilekceDetailPage = lazy(() => import('./pages/DilekceDetailPage'));
+const CezaHesaplaPage = lazy(() => import('./pages/CezaHesaplaPage'));
+const CategoryPage = lazy(() => import('./pages/CategoryPage'));
+const HakkimizdaPage = lazy(() => import('./pages/HakkimizdaPage'));
+const IletisimPage = lazy(() => import('./pages/IletisimPage'));
+const GizlilikPage = lazy(() => import('./pages/GizlilikPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 import ChatWidget from './components/ChatWidget';
-import AdminPage from './pages/AdminPage';
-import CezaListesiPage from './pages/CezaListesiPage';
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const CezaListesiPage = lazy(() => import('./pages/CezaListesiPage'));
 import './App.css';
+import { SITE_URL } from './services/site';
+import ErrorBoundary from './components/ErrorBoundary';
 
+function RouteMeta() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return <Helmet><link rel="canonical" href={`${SITE_URL}${pathname}`} /><meta name="description" content="Trafik cezaları, sigorta, ehliyet ve araç işlemleri için TrafikRehber rehberlerini keşfedin." /><meta property="og:site_name" content="TrafikRehber" /><meta property="og:locale" content="tr_TR" /><meta property="og:type" content="website" /><meta property="og:url" content={`${SITE_URL}${pathname}`} /><meta name="robots" content={pathname.startsWith('/admin') ? 'noindex, nofollow' : 'index, follow'} /></Helmet>;
+}
 function App() {
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <BrowserRouter><RouteMeta /><ErrorBoundary><Suspense fallback={<div className="loading" role="status"><span className="sr-only">Sayfa yükleniyor</span><div className="spinner" /></div>}>
         <Routes>
 
           {/* ── Admin (Navbar/Footer yok) ── */}
@@ -32,8 +39,8 @@ function App() {
           {/* ── Normal site ── */}
           <Route path="*" element={
             <div className="app">
-              <Navbar />
-              <main>
+              <a className="skip-link" href="#main-content">İçeriğe geç</a><Navbar />
+              <main id="main-content" tabIndex={-1}>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/blog" element={<ArticleListPage />} />
@@ -63,7 +70,7 @@ function App() {
           } />
 
         </Routes>
-      </BrowserRouter>
+      </Suspense></ErrorBoundary></BrowserRouter>
     </HelmetProvider>
   );
 }

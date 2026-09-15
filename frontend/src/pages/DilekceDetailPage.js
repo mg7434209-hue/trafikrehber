@@ -56,7 +56,7 @@ function fillTemplate(template, values) {
   let result = template;
   for (const [key, val] of Object.entries(values)) {
     if (val) {
-      result = result.replace(new RegExp(`\\[${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]`, 'g'), val);
+      result = result.replace(new RegExp(`\\[${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]`, 'g'), () => val);
     }
   }
   return result;
@@ -79,7 +79,7 @@ function openPdfPrint(content, baslik) {
   const escaped = content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   pw.document.write(`<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"/>
-<title>${baslik}</title>
+<title>${baslik.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Times New Roman',serif;font-size:12pt;color:#000;background:#fff}
@@ -117,13 +117,19 @@ export default function DilekceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [values, setValues] = useState({});
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(null);
+  const [retry, setRetry] = useState(0);
   const previewRef = useRef(null);
 
   useEffect(() => {
+    let active = true;
+    setLoading(true); setData(null); setValues({}); setCopied(false); setError(null);
     dilekceApi.getBySlug(slug)
-      .then(d => { setData(d); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, [slug]);
+      .then(d => { if (active) setData(d); })
+      .catch(e => { if (active) setError(e); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [slug, retry]);
 
   if (loading) return (
     <div style={{ display:'flex', justifyContent:'center', alignItems:'center', minHeight:'60vh' }}>
@@ -136,7 +142,9 @@ export default function DilekceDetailPage() {
 
   if (!data?.sablon) return (
     <div className="container" style={{ padding:'60px 20px', textAlign:'center' }}>
-      <h2>Şablon bulunamadı</h2>
+      <Helmet><meta name="robots" content="noindex,follow" /></Helmet>
+      <h1>{error?.status === 404 ? "Şablon bulunamadı" : "Şablon yüklenemedi"}</h1>
+      {error?.status !== 404 && <button className="btn btn-primary" onClick={() => setRetry(r => r + 1)}>Yeniden dene</button>}
       <Link to="/dilekce-ornekleri" className="btn btn-primary">Tüm Şablonlar</Link>
     </div>
   );
@@ -158,10 +166,9 @@ export default function DilekceDetailPage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(filledContent).then(() => {
-      setCopied(true); setTimeout(() => setCopied(false), 2000);
-    });
+  const handleCopy = async () => {
+    try { await navigator.clipboard.writeText(filledContent); setCopied(true); setTimeout(() => setCopied(false), 2000); }
+    catch { alert('Metin kopyalanamadı. TXT olarak indirebilirsiniz.'); }
   };
 
   return (
@@ -196,7 +203,7 @@ export default function DilekceDetailPage() {
           ⚖️ Bu şablon örnek amaçlıdır. Hukuki danışmanlık yerine geçmez. Önemli davalarda avukata danışmanız önerilir.
         </div>
 
-        <div style={{ display:'grid', gridTemplateColumns: placeholders.length > 0 ? '1fr 1fr' : '1fr', gap:24, alignItems:'start' }}>
+        <div className="petition-editor" style={{ display:'grid', gridTemplateColumns: placeholders.length > 0 ? '1fr 1fr' : '1fr', gap:24, alignItems:'start' }}>
 
           {/* SOL: Form */}
           {placeholders.length > 0 && (
@@ -219,6 +226,7 @@ export default function DilekceDetailPage() {
                     </label>
                     {isTextarea(key) ? (
                       <textarea
+                        aria-label={getLabel(key)}
                         value={values[key] || ''}
                         onChange={e => handleChange(key, e.target.value)}
                         placeholder={`${getLabel(key)} yazın...`}
@@ -227,6 +235,7 @@ export default function DilekceDetailPage() {
                       />
                     ) : (
                       <input
+                        aria-label={getLabel(key)}
                         type={getInputType(key)}
                         value={values[key] || ''}
                         onChange={e => handleChange(key, e.target.value)}

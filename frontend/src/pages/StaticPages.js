@@ -51,11 +51,13 @@ export function GizlilikPage() {
         </p>
         <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Çerezler</h2>
         <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
-          Sitemizde Google Analytics gibi analitik araçlar için çerezler kullanılmaktadır. Bu çerezler yalnızca onayınız ile aktif hale gelir.
+          Çerez tercihiniz tarayıcınızda saklanır. Google AdSense reklam betiği yalnızca reklam çerezlerini kabul ettiğinizde yüklenir. Tercihinizi değiştirmek için bu siteye ait tarayıcı verilerini temizleyebilirsiniz.
         </p>
+        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Ziyaretçi sayacı</h2>
+        <p style={{ color: '#444', lineHeight: 1.8 }}>Sayaç 1.000 başlangıç değerine yeni tarayıcı ziyaretlerini ekler. Tarayıcınıza rastgele bir kimlik kaydedilir; sunucuda yalnızca bu kimliğin özeti tutulur. Sayaç için IP adresi veya cihaz parmak izi kaydedilmez. Aynı tarayıcıdan yenilemeler tekrar sayılmaz; tarayıcı verilerinin silinmesi ya da başka cihaz kullanımı yeni ziyaret sayılabilir.</p>
         <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Veri Toplama</h2>
         <p style={{ color: '#444', lineHeight: 1.8 }}>
-          Dilekçe indirme veya iletişim formu aracılığıyla toplanan e-posta adresleri yalnızca belirtilen amaçla kullanılır, üçüncü taraflarla paylaşılmaz.
+          Dilekçeye girdiğiniz bilgiler tarayıcınızda işlenir; form bilgileri sunucuya gönderilmez. Rehber AI ile paylaştığınız mesajlar yanıt üretmek için sunucuda saklanır ve yapılandırılmış yapay zekâ hizmetine iletilebilir. Mesajlarınıza kimlik numarası veya hassas bilgi eklemeyin.
         </p>
         <p style={{ color: '#444', lineHeight: 1.8, marginTop: 16 }}>
           KVKK kapsamındaki talepleriniz için: info@trafikrehber.com
@@ -68,7 +70,7 @@ export function GizlilikPage() {
 export function NotFoundPage() {
   return (
     <>
-      <Helmet><title>Sayfa Bulunamadı — TrafikRehber</title></Helmet>
+      <Helmet><title>Sayfa Bulunamadı — TrafikRehber</title><meta name="robots" content="noindex,follow" /></Helmet>
       <div className="container" style={{ padding: '80px 20px', textAlign: 'center' }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>🚦</div>
         <h1 style={{ color: '#1a3a6b', fontSize: 32, marginBottom: 8 }}>404 — Sayfa Bulunamadı</h1>

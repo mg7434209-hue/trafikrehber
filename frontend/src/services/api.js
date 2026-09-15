@@ -1,58 +1,45 @@
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
-
+const API_URL = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/$/, '');
+async function request(path, method = 'GET', body, token) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), path.startsWith('/api/chat') ? 45000 : 15000);
+  try {
+    const headers = { Accept: 'application/json' };
+    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const res = await fetch(`${API_URL}${path}`, { method, headers, signal: controller.signal, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data) {
+      const error = new Error(typeof data?.detail === 'string' ? data.detail : 'Veriler yüklenemedi. Lütfen yeniden deneyin.');
+      error.status = res.status;
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error('Bağlantı zaman aşımına uğradı. Lütfen yeniden deneyin.');
+    throw error;
+  } finally { clearTimeout(timer); }
+}
 const api = {
-  async get(path, token = null) {
-    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    const res = await fetch(`${API_URL}${path}`, { headers });
-    if (!res.ok) throw new Error(`API Error: ${res.status}`);
-    return res.json();
-  },
-
-  async post(path, body, token = null) {
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    const res = await fetch(`${API_URL}${path}`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) throw new Error(`API Error: ${res.status}`);
-    return res.json();
-  },
-
-  async put(path, body, token = null) {
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    const res = await fetch(`${API_URL}${path}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) throw new Error(`API Error: ${res.status}`);
-    return res.json();
-  },
-
-  async delete(path, token = null) {
-    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    const res = await fetch(`${API_URL}${path}`, { method: 'DELETE', headers });
-    return res.json();
-  }
+  get: (path, token) => request(path, 'GET', undefined, token),
+  post: (path, body, token) => request(path, 'POST', body, token),
+  put: (path, body, token) => request(path, 'PUT', body, token),
+  delete: (path, token) => request(path, 'DELETE', undefined, token),
 };
 
 export const articlesApi = {
   getAll: (page = 1, category = null) =>
-    api.get(`/api/articles?page=${page}${category ? `&category=${category}` : ''}`),
+    api.get(`/api/articles?page=${page}${category ? `&category=${encodeURIComponent(category)}` : ''}`),
   getFeatured: () => api.get('/api/articles/featured'),
-  getBySlug: (slug) => api.get(`/api/articles/${slug}`),
-  getByCategory: (cat) => api.get(`/api/articles/category/${cat}`),
+  getBySlug: (slug) => api.get(`/api/articles/${encodeURIComponent(slug)}`),
+  getByCategory: (cat) => api.get(`/api/articles/category/${encodeURIComponent(cat)}`),
   search: (q) => api.get(`/api/articles/search?q=${encodeURIComponent(q)}`),
 };
 
 export const dilekceApi = {
   getAll: (kategori = null) =>
-    api.get(`/api/dilekce${kategori ? `?kategori=${kategori}` : ''}`),
-  getBySlug: (slug) => api.get(`/api/dilekce/${slug}`),
-  downloadUrl: (slug) => `${API_URL}/api/dilekce/${slug}/download`,
+    api.get(`/api/dilekce${kategori ? `?kategori=${encodeURIComponent(kategori)}` : ''}`),
+  getBySlug: (slug) => api.get(`/api/dilekce/${encodeURIComponent(slug)}`),
+  downloadUrl: (slug) => `${API_URL}/api/dilekce/${encodeURIComponent(slug)}/download`,
 };
 
 export const cezaApi = {
@@ -69,6 +56,8 @@ export const chatApi = {
 
 export const statsApi = {
   getPublic: () => api.get('/api/stats/public'),
+  getVisitors: () => api.get('/api/stats/visitors'),
+  recordVisit: visitor_id => api.post('/api/stats/visit', { visitor_id }),
 };
 
 export const adminApi = {
