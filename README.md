@@ -69,7 +69,7 @@ Frontend kök dizini `frontend`, build komutu `npm ci && npm run build`, start k
 - `REACT_APP_BACKEND_URL` tanımlıysa tarayıcı doğrudan bu API'ye gider. Tanımlı değilse aynı origin `/api/` proxy'sini kullanır.
 - `PORT` Railway tarafından sağlanır.
 
-Node sunucusu SPA rotalarını, gerçek 404 statik dosya yanıtlarını, sıkıştırılmış derleme varlıkları için cache başlıklarını, robots.txt ve API'den gelen dinamik sitemap.xml dosyasını sunar. Google doğrulama dosyaları ve AdSense yayıncı kimliği korunmuştur. Reklam betiği yalnızca çerez kabulünden sonra yüklenir.
+Node sunucusu SPA rotalarını, gerçek 404 statik dosya yanıtlarını, içerik özetiyle adlandırılan derleme varlıkları için cache başlıklarını, robots.txt ve API'den gelen dinamik sitemap.xml dosyasını sunar. Google doğrulama dosyaları ve AdSense yayıncı kimliği korunmuştur. Reklam betiği yalnızca çerez kabulünden sonra yüklenir.
 
 ## Doğrulama
 
