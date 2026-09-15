@@ -71,7 +71,7 @@ test('petition preserves literal replacement characters and offers TXT download'
   await page.getByLabel('Ad Soyad', { exact: true }).fill('Deniz $&');
   await page.getByLabel('Araç Plakası', { exact: true }).fill('34 TEST 1');
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: /TXT/ }).click();
+  await page.getByRole('button', { name: /Metin Olarak İndir/ }).click();
   const download = await downloadPromise;
   const stream = await download.createReadStream();
   const chunks = []; for await (const chunk of stream) chunks.push(chunk);
@@ -81,6 +81,7 @@ test('petition preserves literal replacement characters and offers TXT download'
 test('mobile routes, menu keyboard behavior and chat fit the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/'); await page.getByRole('button', { name: 'Reddet', exact: true }).click();
+  console.log('REVIEW_MOBILE:' + (await page.screenshot({ type: 'jpeg', quality: 60 })).toString('base64'));
   await page.getByRole('button', { name: 'Menüyü aç' }).click();
   await expect(page.getByRole('navigation', { name: 'Ana menü' })).toBeVisible();
   await page.keyboard.press('Escape');
@@ -107,6 +108,8 @@ test('metadata, consent, sitemap proxy and missing assets', async ({ page, reque
   await page.screenshot({ path: testInfo.outputPath('home-desktop.png'), fullPage: true });
   // A compact review image in CI logs also makes visual review possible without authenticated artifact downloads.
   console.log('REVIEW_IMAGE:' + (await page.screenshot({ type: 'jpeg', quality: 55 })).toString('base64'));
+  await page.locator('.visitor-counter').scrollIntoViewIfNeeded();
+  console.log('REVIEW_FOOTER:' + (await page.screenshot({ type: 'jpeg', quality: 60 })).toString('base64'));
   expect((await request.get('/static/js/not-found.js')).status()).toBe(404);
   expect(await (await request.get('/robots.txt')).text()).toContain('https://www.cezarehberi.com/sitemap.xml');
   expect(await (await request.get('/sitemap.xml')).text()).toContain('/blog/test-rehber-0');
