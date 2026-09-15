@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import VisitCounter from './VisitCounter';
 
 export default function Footer() {
   return (
@@ -80,6 +81,7 @@ export default function Footer() {
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '16px 20px' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
           <p style={{ fontSize: 12, color: '#64748b' }}>© 2026 TrafikRehber. Tüm hakları saklıdır.</p>
+          <VisitCounter />
           <p style={{ fontSize: 12, color: '#64748b', textAlign: 'right' }}>
             ⚖️ Bu site genel bilgilendirme amaçlıdır. Hukuki danışmanlık yerine geçmez.
           </p>

@@ -6,7 +6,7 @@ import { articlesApi, statsApi } from '../services/api';
 const SSS = [
   { s: 'Trafik cezasına kaç günde itiraz edilebilir?', c: 'Trafik cezasına tebliğ tarihinden itibaren 15 gün içinde Sulh Ceza Hâkimliği\'ne itiraz edilebilir. Bu süre kaçırılırsa ceza kesinleşir.' },
   { s: '2026 yılında trafik cezaları ne kadar arttı?', c: '1 Ocak 2026 itibarıyla %25,49 Yeniden Değerleme Oranı uygulandı. Ayrıca 27 Şubat 2026 tarihli 7574 sayılı Kanun ile kırmızı ışık ihlali 5.000 TL, cep telefonu kullanımı 5.000 TL, trafikte saldırgan davranış 180.000 TL oldu.' },
-  { s: 'Trafik cezasını erken ödesem indirim var mı?', c: 'Evet. Tebliğden itibaren 15 gün içinde ödenirse cezanın %25\'i indirimli uygulanır. Örneğin 5.000 TL\'lik ceza 3.750 TL\'ye düşer.' },
+  { s: 'Trafik cezasını erken ödesem indirim var mı?', c: 'Evet. Tebliğden itibaren 1 ay (30 gün) içinde ödenirse cezanın %25\'i indirimli uygulanır — örneğin 5.000 TL\'lik ceza 3.750 TL\'ye düşer. Bu süre 31.01.2024 yönetmelik değişikliğiyle 15 günden 1 aya çıkarıldı; itiraz süresi ise ayrıdır ve 15 gündür.' },
   { s: 'E-devlet ile trafik cezası nasıl sorgulanır?', c: 'E-devlet.gov.tr\'ye giriş yapın, "Trafik İdari Para Cezası Sorgulama" hizmetini aratın. TC kimlik numaranızla tüm cezalarınızı görüntüleyebilirsiniz.' },
   { s: '100 ceza puanı dolunca ne olur?', c: '1 yıl içinde 100 ceza puanına ulaşan sürücünün ehliyetine geçici olarak el konulur. Ehliyetin iadesi için psikoteknik değerlendirme zorunludur.' },
 ];
@@ -105,7 +105,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontSize: 22 }}>⚡</span>
           <div style={{ fontSize: 14, color: '#92400e', lineHeight: 1.5 }}>
-            <strong>2026 yeni ceza tutarları yürürlükte:</strong> Kırmızı ışık <strong>5.000 ₺</strong> · Cep telefonu <strong>5.000 ₺</strong> · Trafikte saldırgan davranış <strong>180.000 ₺</strong> · 15 günde ödeyin <strong>%25 indirim</strong> alın.
+            <strong>2026 yeni ceza tutarları yürürlükte:</strong> Kırmızı ışık <strong>5.000 ₺</strong> · Cep telefonu <strong>5.000 ₺</strong> · Trafikte saldırgan davranış <strong>180.000 ₺</strong> · 1 ay içinde ödeyin <strong>%25 indirim</strong> alın.
           </div>
           <Link to="/trafik-cezalari-2026" style={{ background: '#e65c00', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', flexShrink: 0 }}>
             Tüm Liste →
@@ -155,6 +155,10 @@ export default function HomePage() {
               { val: stats.total_dilekce + '+', label: 'Dilekçe Şablonu', icon: '📄' },
               { val: '17', label: 'Ceza Türü', icon: '⚖️' },
               { val: '%100', label: 'Ücretsiz', icon: '✅' },
+              // Ziyaretçi sayacı (backend /api/stats/public) — veri yoksa gizlenir
+              ...(stats.ziyaretci_toplam
+                ? [{ val: stats.ziyaretci_toplam.toLocaleString('tr-TR'), label: 'Ziyaretçi', icon: '👥' }]
+                : []),
             ].map(s => (
               <div key={s.label} style={{ padding: '12px 32px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ fontSize: 24 }}>{s.icon}</div>

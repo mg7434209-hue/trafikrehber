@@ -28,11 +28,15 @@ export function IletisimPage() {
       <Helmet><title>İletişim — TrafikRehber</title></Helmet>
       <div className="container-sm" style={{ padding: '60px 20px' }}>
         <h1 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 }}>İletişim</h1>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 24 }}>Görüş, öneri ve şikayetleriniz için bizimle iletişime geçebilirsiniz.</p>
+        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 24 }}>
+          Görüş, öneri ve sorularınız için sayfanın sağ alt köşesindeki <strong>yardım asistanını</strong> kullanabilirsiniz.
+        </p>
         <div style={{ background: '#f4f7fc', borderRadius: 12, padding: 24 }}>
-          <p style={{ marginBottom: 8 }}><strong>E-posta:</strong> info@trafikrehber.com</p>
           <p style={{ marginBottom: 8 }}><strong>Veri Sorumlusu:</strong> TrafikRehber / Göksoylar İletişim</p>
-          <p style={{ fontSize: 13, color: '#666', marginTop: 16 }}>KVKK kapsamındaki talepleriniz için aynı e-posta adresini kullanabilirsiniz.</p>
+          <p style={{ fontSize: 13, color: '#666', marginTop: 16 }}>
+            E-posta iletişim kanalımız kurulum aşamasındadır; hazır olduğunda bu sayfada yayımlanacaktır.
+            KVKK kapsamındaki talepleriniz için de aynı adres duyurulacaktır.
+          </p>
         </div>
       </div>
     </>
@@ -53,12 +57,20 @@ export function GizlilikPage() {
         <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
           Sitemizde Google Analytics gibi analitik araçlar için çerezler kullanılmaktadır. Bu çerezler yalnızca onayınız ile aktif hale gelir.
         </p>
+        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Ziyaretçi Sayacı</h2>
+        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
+          Sayfa altındaki ziyaretçi sayacı çerez kullanmaz ve kimlik bilgisi saklamaz. Aynı ziyaretçinin
+          gün içinde bir kez sayılabilmesi için IP adresi ve tarayıcı bilgisinden geri döndürülemez bir
+          karma (hash) üretilir; <strong>ham IP adresi hiçbir şekilde kaydedilmez</strong> ve bu kayıtlar
+          7 gün sonra otomatik silinir.
+        </p>
         <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Veri Toplama</h2>
         <p style={{ color: '#444', lineHeight: 1.8 }}>
           Dilekçe indirme veya iletişim formu aracılığıyla toplanan e-posta adresleri yalnızca belirtilen amaçla kullanılır, üçüncü taraflarla paylaşılmaz.
         </p>
         <p style={{ color: '#444', lineHeight: 1.8, marginTop: 16 }}>
-          KVKK kapsamındaki talepleriniz için: info@trafikrehber.com
+          KVKK kapsamındaki başvuru kanalı kurulum aşamasındadır; hazır olduğunda{' '}
+          <a href="/iletisim" style={{ color: '#1a3a6b' }}>İletişim</a> sayfasında yayımlanacaktır.
         </p>
       </div>
     </>

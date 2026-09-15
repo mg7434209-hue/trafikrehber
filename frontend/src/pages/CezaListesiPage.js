@@ -15,10 +15,10 @@ function severity(tl) {
   return              { label: 'Hafif',     color: '#166534', bg: '#dcfce7' };
 }
 
-function HesaplaModal({ ceza, onClose }) {
+function HesaplaModal({ ceza, onClose, odemeSuresi = 30 }) {
   const [gun, setGun] = useState(10);
   if (!ceza) return null;
-  const erken = gun <= 15;
+  const erken = gun <= odemeSuresi;
   const odenecek = erken ? ceza.indirimli_tl : ceza.taban_ceza_tl;
   const tasarruf = erken ? (ceza.taban_ceza_tl - ceza.indirimli_tl) : 0;
 
@@ -30,14 +30,19 @@ function HesaplaModal({ ceza, onClose }) {
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#94a3b8', lineHeight: 1 }}>×</button>
         </div>
         <div style={{ fontWeight: 700, color: '#1a3a6b', marginBottom: 4 }}>{ceza.aciklama}</div>
-        {ceza.kanun_maddesi && <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>{ceza.kanun_maddesi}</div>}
+        {ceza.kanun_maddesi && <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: ceza.kademe_notu ? 10 : 16 }}>{ceza.kanun_maddesi}</div>}
+        {ceza.kademe_notu && (
+          <div style={{ background: '#fff8e6', border: '1px solid #fde68a', borderRadius: 8, padding: '10px 12px', fontSize: 12, color: '#92400e', lineHeight: 1.6, marginBottom: 16 }}>
+            ⚠️ {ceza.kademe_notu}
+          </div>
+        )}
         <label style={{ fontSize: 13, color: '#374151', display: 'block', marginBottom: 8, fontWeight: 600 }}>Kaçıncı günde ödeyeceksiniz?</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <input type="range" min={1} max={60} value={gun} onChange={e => setGun(Number(e.target.value))} style={{ flex: 1, accentColor: '#1a3a6b' }} />
+          <input type="range" min={1} max={45} value={gun} onChange={e => setGun(Number(e.target.value))} style={{ flex: 1, accentColor: '#1a3a6b' }} />
           <span style={{ fontWeight: 800, fontSize: 18, color: erken ? '#16a34a' : '#b91c1c', minWidth: 40, textAlign: 'right' }}>{gun}.</span>
         </div>
         <div style={{ fontSize: 12, color: erken ? '#16a34a' : '#b91c1c', marginBottom: 20, fontWeight: 600 }}>
-          {erken ? '✅ İndirim süresi içinde (15 gün)' : '❌ İndirim süresi doldu'}
+          {erken ? `✅ İndirim süresi içinde (${odemeSuresi} gün)` : '❌ İndirim süresi doldu'}
         </div>
         <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
           <div style={{ flex: 1, background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '12px 14px' }}>
@@ -68,6 +73,7 @@ export default function CezaListesiPage() {
   const [loading, setLoading] = useState(true);
   const [arama, setArama] = useState('');
   const [hesaplaModal, setHesaplaModal] = useState(null);
+  const [meta, setMeta] = useState({ odeme_suresi_gun: 30, son_dogrulama: null });
 
   useEffect(() => {
     fetch(`${API}/api/ceza-turleri`)
@@ -80,6 +86,10 @@ export default function CezaListesiPage() {
             indirimli_tl: c.indirimli_tl ?? Math.round(parseFloat(c.taban_ceza_tl) * 0.75 * 100) / 100,
             puan: c.puan || 0,
           })));
+          setMeta({
+            odeme_suresi_gun: data.odeme_suresi_gun || 30,
+            son_dogrulama: data.son_dogrulama || null,
+          });
         }
         setLoading(false);
       })
@@ -113,7 +123,8 @@ export default function CezaListesiPage() {
           </h1>
           <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
             27 Şubat 2026 tarihli 7574 sayılı Kanun ve %25,49 Yeniden Değerleme Oranı kapsamında güncellenmiştir.
-            Tebliğden itibaren <strong>15 gün içinde ödeme</strong> yapıldığında <strong>%25 indirim</strong> uygulanır.
+            Tebliğden itibaren <strong>1 ay (30 gün) içinde ödeme</strong> yapıldığında <strong>%25 indirim</strong> uygulanır;{' '}
+            <strong>itiraz süresi</strong> ise tebliğden itibaren <strong>15 gündür</strong>.
           </p>
         </div>
 
@@ -132,7 +143,7 @@ export default function CezaListesiPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 70px 80px 140px', padding: '10px 16px', background: '#f8faff', borderBottom: '2px solid #e2e8f0', fontSize: 11, fontWeight: 700, color: '#64748b', letterSpacing: 0.5 }}>
             <div>İHLAL</div>
             <div style={{ textAlign: 'right' }}>TAM CEZA</div>
-            <div style={{ textAlign: 'right' }}>15 GÜNDE</div>
+            <div style={{ textAlign: 'right' }}>1 AY İÇİNDE</div>
             <div style={{ textAlign: 'center' }}>PUAN</div>
             <div style={{ textAlign: 'center' }}>SEVİYE</div>
             <div style={{ textAlign: 'center' }}>İŞLEM</div>
@@ -153,8 +164,18 @@ export default function CezaListesiPage() {
                   onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? '#fff' : '#fafbff'}
                 >
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>{c.aciklama}</div>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>
+                      {c.aciklama}{' '}
+                      {c.kademe_notu && (
+                        <span title={c.kademe_notu} style={{ marginLeft: 6, background: '#fff8e6', color: '#92400e', border: '1px solid #fde68a', fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 10, whiteSpace: 'nowrap' }}>
+                          kademeli
+                        </span>
+                      )}
+                    </div>
                     <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{c.kanun_maddesi} · {c.kod}</div>
+                    {c.kademe_notu && (
+                      <div style={{ fontSize: 11, color: '#92400e', marginTop: 4, lineHeight: 1.5 }}>{c.kademe_notu}</div>
+                    )}
                   </div>
                   <div style={{ textAlign: 'right', fontWeight: 700, fontSize: 15, color: c.taban_ceza_tl >= 10000 ? '#b91c1c' : '#1a3a6b' }}>
                     {formatTL(c.taban_ceza_tl)}
@@ -192,13 +213,14 @@ export default function CezaListesiPage() {
         </div>
 
         <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 16, lineHeight: 1.6 }}>
-          📌 Kaynak: 2918 sayılı KTK, 7574 sayılı Kanun (RG: 27.02.2026/33181). Bilgilendirme amaçlıdır.
+          📌 Kaynak: 2918 sayılı KTK, 7574 sayılı Kanun (RG: 27.02.2026).
+          {meta.son_dogrulama && <> Son doğrulama: <strong>{new Date(meta.son_dogrulama).toLocaleDateString('tr-TR')}</strong>.</>} Bilgilendirme amaçlıdır.
           Resmi kaynak: <a href="https://trafik.gov.tr" target="_blank" rel="noreferrer" style={{ color: '#1a3a6b' }}>trafik.gov.tr</a> ·{' '}
           Cezanıza itiraz için <Link to="/dilekce-ornekleri" style={{ color: '#1a3a6b' }}>dilekçe şablonlarımızı</Link> kullanabilirsiniz.
         </p>
       </div>
 
-      <HesaplaModal ceza={hesaplaModal} onClose={() => setHesaplaModal(null)} />
+      <HesaplaModal ceza={hesaplaModal} onClose={() => setHesaplaModal(null)} odemeSuresi={meta.odeme_suresi_gun} />
     </>
   );
 }

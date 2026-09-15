@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Integer, Text, DateTime, Enum, ARRAY, Numeric
+from sqlalchemy import Column, String, Boolean, Integer, Text, DateTime, Date, Enum, ARRAY, Numeric, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 import uuid
@@ -71,6 +71,10 @@ class CezaTuru(Base):
     taban_ceza_tl = Column(Numeric(10, 2))
     puan = Column(Integer, default=0)
     kanun_maddesi = Column(String)
+    # 7574 sayılı Kanun'la gelen KADEMELİ cezalar tek bir tutara sığmaz
+    # (ilk ihlal / tekrar / belge men süreleri). Serbest metin olarak burada
+    # tutulur ve listede tutarın altında gösterilir.
+    kademe_notu = Column(Text)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
@@ -100,3 +104,36 @@ class ChatMessage(Base):
     role = Column(String)  # user / assistant
     content = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class SiteVisit(Base):
+    """Günlük ziyaret toplamı (tek satır = tek gün).
+
+    Gösterilen site toplamı = VISITORS_BASE (taban) + SUM(tekil).
+    Veritabanı sıfırlanırsa sayaç geriye düşmesin diye taban ortam
+    değişkeniyle taşınır — bkz. routers/stats.py.
+    """
+    __tablename__ = "site_visits"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    gun = Column(Date, unique=True, index=True, nullable=False)
+    tekil = Column(Integer, default=0, nullable=False)          # o gün sayılan tekil ziyaretçi
+    goruntulenme = Column(Integer, default=0, nullable=False)   # o gün açılan sayfa sayısı
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class VisitorKey(Base):
+    """Günlük tekillik anahtarı — KVKK gereği ham IP DEĞİL, karma saklanır.
+
+    anahtar = sha256(ip + user-agent + gün + tuz)[:64]
+    (gun, anahtar) benzersizdir; aynı ziyaretçi gün içinde bir kez sayılır.
+    7 günden eski kayıtlar stats router'ında otomatik temizlenir.
+    """
+    __tablename__ = "visitor_keys"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    gun = Column(Date, index=True, nullable=False)
+    anahtar = Column(String(64), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (UniqueConstraint("gun", "anahtar", name="uq_visitor_gun_anahtar"),)

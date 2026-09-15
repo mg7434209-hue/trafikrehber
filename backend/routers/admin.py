@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db
-from models import Article, DilecceSablon, CezaTuru, PageStat
+from models import Article, DilecceSablon, CezaTuru, PageStat, SiteVisit
 from utils.auth import create_token, require_admin
 import os
 import re
@@ -79,6 +79,10 @@ def articles_2026_guncelle(db: Session = Depends(get_db), _=Depends(require_admi
     Tüm makalelerde title, meta_description ve content içinde
     geçen '2025' ifadelerini '2026' ile değiştirir.
     Slug'lara dokunmaz (SEO linkleri korunur).
+
+    DİKKAT: Bu uç yalnız YIL ETİKETİNİ değiştirir, ceza TUTARLARINI değiştirmez.
+    Çalıştırdıktan sonra makale içindeki tutarları elle gözden geçir; aksi hâlde
+    "2026" başlıklı ama eski tutarlı içerik yayında kalır.
     """
     articles = db.query(Article).all()
     guncellenen = 0
@@ -155,6 +159,7 @@ class CezaUpdate(BaseModel):
     taban_ceza_tl: Optional[float] = None
     puan: Optional[int] = None
     kanun_maddesi: Optional[str] = None
+    kademe_notu: Optional[str] = None
 
 @router.post("/ceza-turleri")
 def create_ceza(data: CezaCreate, db: Session = Depends(get_db), _=Depends(require_admin)):
@@ -168,7 +173,7 @@ def update_ceza(ceza_id: str, data: CezaUpdate, db: Session = Depends(get_db), _
     ceza = db.query(CezaTuru).filter(CezaTuru.id == ceza_id).first()
     if not ceza:
         raise HTTPException(status_code=404, detail="Ceza türü bulunamadı")
-    ALLOWED = {"aciklama", "taban_ceza_tl", "puan", "kanun_maddesi"}
+    ALLOWED = {"aciklama", "taban_ceza_tl", "puan", "kanun_maddesi", "kademe_notu"}
     for key, value in data.dict(exclude_unset=True).items():
         if key in ALLOWED:
             setattr(ceza, key, value)
@@ -187,6 +192,7 @@ def get_ceza_listesi(db: Session = Depends(get_db), _=Depends(require_admin)):
             "taban_ceza_tl": float(c.taban_ceza_tl),
             "puan": c.puan,
             "kanun_maddesi": c.kanun_maddesi,
+            "kademe_notu": c.kademe_notu,
         } for c in cezalar]
     }
 
@@ -208,31 +214,85 @@ def ceza_ydo_guncelle(req: YdoRequest, db: Session = Depends(get_db), _=Depends(
 
 
 # --- 2026 ceza değerleri yükle ---
+#
+# KAYNAK / DURUM (son doğrulama: 14.09.2026)
+#   27.02.2026 tarihli 7574 sayılı Kanun, KTK'nın ceza maddelerini köklü
+#   değiştirdi: kırmızı ışık, cep telefonu, alkol ve hız cezaları artık
+#   KADEMELİ ve SABİT tutarlıdır (yeniden değerleme oranına tabi değildir).
+#   Yüzde bazlı (%10-30 / %30-50 / %50+) hız kademeleri KALDIRILDI; yerine
+#   km/s bazlı 9 kademe geldi. Diğer ihlaller 2026 yeniden değerleme oranıyla
+#   (%25,49) güncellenen KTK tutarlarıdır.
+#   Tutarlar ikincil kaynaklardan (hukuk büroları, sigorta şirketleri, basın)
+#   çapraz doğrulandı; NİHAİ KAYNAK Resmî Gazete/mevzuat.gov.tr'deki 7574
+#   sayılı Kanun metni ve EGM listesidir. Değişiklikte bu listeyi güncelle,
+#   CEZA_SON_DOGRULAMA tarihini de birlikte değiştir.
+CEZA_SON_DOGRULAMA = "2026-09-14"
+
 CEZALAR_2026 = [
-    {"kod": "H1",  "aciklama": "Kırmızı ışık ihlali",                   "taban_ceza_tl": 5000.0,   "puan": -10, "kanun_maddesi": "KTK 7574/Madde 1"},
-    {"kod": "H2",  "aciklama": "Hız sınırı ihlali (%10-30)",             "taban_ceza_tl": 2719.0,   "puan": -5,  "kanun_maddesi": "KTK Madde 51/1-a"},
-    {"kod": "H3",  "aciklama": "Hız sınırı ihlali (%30-50)",             "taban_ceza_tl": 5661.0,   "puan": -10, "kanun_maddesi": "KTK Madde 51/1-b"},
-    {"kod": "H3B", "aciklama": "Hız sınırı ihlali (%50+)",               "taban_ceza_tl": 11631.0,  "puan": -20, "kanun_maddesi": "KTK Madde 51/1-c"},
-    {"kod": "H4",  "aciklama": "Emniyet kemeri takmama",                 "taban_ceza_tl": 1246.0,   "puan": -5,  "kanun_maddesi": "KTK Madde 77"},
-    {"kod": "H5",  "aciklama": "Cep telefonu kullanımı",                  "taban_ceza_tl": 5000.0,   "puan": -10, "kanun_maddesi": "KTK 7574/Madde 1"},
-    {"kod": "H6",  "aciklama": "Park ihlali",                             "taban_ceza_tl": 828.0,    "puan": 0,   "kanun_maddesi": "KTK Madde 61"},
-    {"kod": "H7",  "aciklama": "Alkollü araç kullanımı (0.51-1.00 promil)","taban_ceza_tl": 11631.0, "puan": -20, "kanun_maddesi": "KTK Madde 48/5"},
-    {"kod": "H7B", "aciklama": "Alkollü araç kullanımı (1.00+ promil)",   "taban_ceza_tl": 23263.0,  "puan": -25, "kanun_maddesi": "KTK Madde 48/5"},
-    {"kod": "H8",  "aciklama": "Yasak sollama",                           "taban_ceza_tl": 3310.0,   "puan": -10, "kanun_maddesi": "KTK Madde 47"},
-    {"kod": "H9",  "aciklama": "Zorunlu sigorta yaptırmama",              "taban_ceza_tl": 4963.0,   "puan": 0,   "kanun_maddesi": "KTK Madde 91"},
-    {"kod": "H10", "aciklama": "Muayenesiz araç kullanma",               "taban_ceza_tl": 1654.0,   "puan": 0,   "kanun_maddesi": "KTK Madde 35"},
-    {"kod": "H11", "aciklama": "Ehliyetsiz araç kullanma",               "taban_ceza_tl": 23410.0,  "puan": 0,   "kanun_maddesi": "KTK Madde 36"},
-    {"kod": "H12", "aciklama": "Trafikte saldırgan davranış",            "taban_ceza_tl": 180000.0, "puan": 0,   "kanun_maddesi": "KTK 7574/Madde 1"},
-    {"kod": "H13", "aciklama": "Trafikte yarış / drift",                 "taban_ceza_tl": 46000.0,  "puan": 0,   "kanun_maddesi": "KTK 7574/Madde 2"},
-    {"kod": "H14", "aciklama": "Kask takmama (motosiklet)",              "taban_ceza_tl": 1246.0,   "puan": -5,  "kanun_maddesi": "KTK Madde 77"},
-    {"kod": "H15", "aciklama": "Yaya geçidine uymama",                   "taban_ceza_tl": 1246.0,   "puan": -5,  "kanun_maddesi": "KTK Madde 74"},
+    {"kod": "H1", "aciklama": "Kırmızı ışık ihlali", "taban_ceza_tl": 5000.0, "puan": 20,
+     "kanun_maddesi": "KTK m.47 (7574 s.K. ile değişik)",
+     "kademe_notu": "Kademeli ceza: ilk ihlal 5.000 ₺; aynı yıl içinde tekrarında 10.000 ₺ · 15.000 ₺ · 20.000 ₺ · 30.000 ₺. 6. ihlalde 80.000 ₺ ve sürücü belgesi iptali. 3. ihlalden itibaren belge 30/60/90 gün geri alınır."},
+
+    {"kod": "H2", "aciklama": "Hız sınırı aşımı — yerleşim yeri içi", "taban_ceza_tl": 2000.0, "puan": 0,
+     "kanun_maddesi": "KTK m.51 (7574 s.K. ile değişik)",
+     "kademe_notu": "7574 ile yüzde bazlı kademeler (%10-30 / %30-50 / %50+) KALDIRILDI. Ceza aşılan km/s'ye göre 9 kademede 2.000 ₺'den 30.000 ₺'ye kadar uygulanır; yerleşim yeri içinde tolerans 5 km/s'dir (6 km/s aşımdan itibaren ceza)."},
+
+    {"kod": "H3", "aciklama": "Hız sınırı aşımı — yerleşim yeri dışı / otoyol", "taban_ceza_tl": 2000.0, "puan": 0,
+     "kanun_maddesi": "KTK m.51 (7574 s.K. ile değişik)",
+     "kademe_notu": "Tolerans 10 km/s. Kademeler: 11-15 km/s 2.000 ₺ · 16-20 km/s 4.000 ₺ · 21-25 km/s 6.000 ₺ · 26-30 km/s 8.000 ₺ · 31-40 km/s 12.000 ₺ · 41-50 km/s 15.000 ₺; üst kademelerde 30.000 ₺'ye kadar ve sürücü belgesine el koyma."},
+
+    {"kod": "H5", "aciklama": "Seyir hâlinde cep telefonu kullanma", "taban_ceza_tl": 5000.0, "puan": 0,
+     "kanun_maddesi": "KTK m.73 (7574 s.K. ile değişik)",
+     "kademe_notu": "Kademeli ceza: ilk ihlal 5.000 ₺, tekrarında 10.000 ₺, 3. ve sonraki ihlallerde 20.000 ₺. Her ihlalde sürücü belgesine 30 gün el konulur."},
+
+    {"kod": "H7", "aciklama": "Alkollü araç kullanma (0,50 promil üstü)", "taban_ceza_tl": 25000.0, "puan": 0,
+     "kanun_maddesi": "KTK m.48 (7574 s.K. ile değişik)",
+     "kademe_notu": "Kademeli ceza: 1. ihlal 25.000 ₺ + 6 ay belge geri alma, 2. ihlal 50.000 ₺ + 2 yıl, 3. ve sonraki ihlaller 150.000 ₺ + sürücü belgesi iptali."},
+
+    {"kod": "H12", "aciklama": "Trafikte saldırgan davranış", "taban_ceza_tl": 180000.0, "puan": 0,
+     "kanun_maddesi": "7574 s.K.",
+     "kademe_notu": "Araçtan inerek diğer sürücünün üzerine yürüme, taciz amaçlı ısrarlı takip gibi davranışlar. Sürücü belgesine el koyma da uygulanır."},
+
+    {"kod": "H13", "aciklama": "Drift / makas / trafikte yarış", "taban_ceza_tl": 58218.0, "puan": 0,
+     "kanun_maddesi": "KTK m.67 (7574 s.K. ile değişik)",
+     "kademe_notu": "Para cezasına ek olarak sürücü belgesi geri alınır ve araç trafikten men edilebilir."},
+
+    {"kod": "H11", "aciklama": "Ehliyetsiz araç kullanma", "taban_ceza_tl": 23437.0, "puan": 0,
+     "kanun_maddesi": "KTK m.36",
+     "kademe_notu": "Araç trafikten men edilir; tekrarı hâlinde tutar katlanır ve adli süreç gündeme gelebilir."},
+
+    {"kod": "H8", "aciklama": "Yasak yerde sollama", "taban_ceza_tl": 2721.0, "puan": 0,
+     "kanun_maddesi": "KTK m.54", "kademe_notu": None},
+
+    {"kod": "H10", "aciklama": "Muayenesiz araç kullanma", "taban_ceza_tl": 2721.0, "puan": 0,
+     "kanun_maddesi": "KTK m.34",
+     "kademe_notu": "Muayene süresi geçen araç trafikten men edilebilir; gecikme için ayrıca aylık gecikme zammı alınır."},
+
+    {"kod": "H4", "aciklama": "Emniyet kemeri takmama", "taban_ceza_tl": 1246.0, "puan": 10,
+     "kanun_maddesi": "KTK m.78", "kademe_notu": None},
+
+    {"kod": "H14", "aciklama": "Kask takmama (motosiklet)", "taban_ceza_tl": 1246.0, "puan": 0,
+     "kanun_maddesi": "KTK m.78", "kademe_notu": None},
+
+    {"kod": "H6", "aciklama": "Hatalı / yasak park", "taban_ceza_tl": 1246.0, "puan": 0,
+     "kanun_maddesi": "KTK m.61",
+     "kademe_notu": "Yaya geçidi, engelli rampası gibi yerlerde araç çekilebilir; çekme ve otopark ücreti ayrıca ödenir."},
+
+    {"kod": "H9", "aciklama": "Zorunlu trafik sigortası yaptırmama", "taban_ceza_tl": 1246.0, "puan": 0,
+     "kanun_maddesi": "KTK m.91",
+     "kademe_notu": "Sigortasız araç trafikten men edilir; poliçe yapılana kadar trafiğe çıkarılamaz."},
 ]
 
 @router.post("/ceza-2026-yukle")
 def ceza_2026_yukle(db: Session = Depends(get_db), _=Depends(require_admin)):
+    """2026 (7574 sayılı Kanun sonrası) ceza listesini yükler.
+
+    Listede olmayan ESKİ kodlar silinir — 7574 ile kaldırılan yüzde bazlı hız
+    kademeleri gibi kayıtlar veritabanında kalıp yanlış bilgi göstermesin.
+    """
     eklenen = 0
     guncellenen = 0
-    ALLOWED = {"aciklama", "taban_ceza_tl", "puan", "kanun_maddesi"}
+    ALLOWED = {"aciklama", "taban_ceza_tl", "puan", "kanun_maddesi", "kademe_notu"}
     for item in CEZALAR_2026:
         existing = db.query(CezaTuru).filter(CezaTuru.kod == item["kod"]).first()
         if existing:
@@ -243,8 +303,11 @@ def ceza_2026_yukle(db: Session = Depends(get_db), _=Depends(require_admin)):
         else:
             db.add(CezaTuru(**{k: v for k, v in item.items() if k in ALLOWED | {"kod"}}))
             eklenen += 1
+    gecerli_kodlar = {c["kod"] for c in CEZALAR_2026}
+    silinen = db.query(CezaTuru).filter(~CezaTuru.kod.in_(gecerli_kodlar)).delete(synchronize_session=False)
     db.commit()
-    return {"success": True, "eklenen": eklenen, "guncellenen": guncellenen}
+    return {"success": True, "eklenen": eklenen, "guncellenen": guncellenen,
+            "silinen_eski_kayit": silinen, "son_dogrulama": CEZA_SON_DOGRULAMA}
 
 
 # --- İstatistikler ---
@@ -259,6 +322,16 @@ def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
         Article.view_count.desc()
     ).limit(10).all()
 
+    # --- Ziyaretçi sayacı (routers/stats.py ile aynı kaynak) ---
+    from datetime import date, timedelta
+    from routers.stats import VISITORS_BASE, _online_count
+
+    ziyaret_toplam = db.query(func.coalesce(func.sum(SiteVisit.tekil), 0)).scalar() or 0
+    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == date.today()).first()
+    son7 = db.query(SiteVisit).filter(
+        SiteVisit.gun >= date.today() - timedelta(days=6)
+    ).order_by(SiteVisit.gun).all()
+
     return {
         "success": True,
         "stats": {
@@ -266,6 +339,14 @@ def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
             "total_dilekce": total_dilekce,
             "total_views": total_views,
             "total_ceza": total_ceza,
-            "top_pages": [{"slug": s, "title": t, "views": v} for s, t, v in top_pages]
+            "top_pages": [{"slug": s, "title": t, "views": v} for s, t, v in top_pages],
+            "ziyaretci_toplam": VISITORS_BASE + int(ziyaret_toplam),
+            "ziyaretci_base": VISITORS_BASE,
+            "ziyaretci_bugun": int(bugun_row.tekil) if bugun_row else 0,
+            "ziyaretci_online": _online_count(),
+            "ziyaretci_son7": [
+                {"gun": v.gun.isoformat(), "tekil": v.tekil, "goruntulenme": v.goruntulenme}
+                for v in son7
+            ],
         }
     }

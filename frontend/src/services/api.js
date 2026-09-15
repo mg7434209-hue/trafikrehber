@@ -69,6 +69,10 @@ export const chatApi = {
 
 export const statsApi = {
   getPublic: () => api.get('/api/stats/public'),
+  // Ziyaret bildirimi: sayfa dolu ise görüntülenme de sayılır,
+  // null ise yalnız "şu an sitede" tazeleme pingidir.
+  visit: (sayfa = null) => api.post('/api/stats/visit', { sayfa }),
+  getVisitors: () => api.get('/api/stats/visitors'),
 };
 
 export const adminApi = {

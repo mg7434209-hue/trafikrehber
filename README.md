@@ -25,6 +25,10 @@ trafikrehber/
   SITE_URL=https://trafikrehber.com
   ADMIN_EMAIL=admin@trafikrehber.com
   ADMIN_PASSWORD=<güçlü şifre>
+
+  # Ziyaretçi sayacı
+  VISITORS_BASE=1000       # gösterilen toplamın tabanı (varsayılan 1000; veritabanı sıfırlanırsa buradan taşınır)
+  VISITOR_SALT=<random>    # tekillik karması için tuz; boşsa JWT_SECRET kullanılır
   ```
 
 ### 2. Frontend Servisi
@@ -44,3 +48,23 @@ python seed.py
 
 ## Domain
 trafikrehber.com → Frontend Railway servisine CNAME
+
+## Ziyaretçi Sayacı
+
+Footer'daki rozet (`👥 1.234 ziyaretçi · 3 kişi şu an sitede`) backend'den
+beslenir:
+
+| Uç | Açıklama |
+|----|----------|
+| `POST /api/stats/visit` | Ziyaret bildirir. `{"sayfa":"/blog"}` → sayfa görüntülenmesi de sayılır; `{}` → yalnız "şu an sitede" tazeleme pingi. |
+| `GET /api/stats/visitors` | Yalnız okuma (sayım yapmaz). |
+| `GET /api/stats/public` | Site istatistikleri + ziyaretçi sayıları. |
+
+- Tekil ziyaretçi **günde 1 kez** sayılır; kimlik yerine
+  `sha256(IP + UA + gün + VISITOR_SALT)` karması saklanır — **ham IP
+  kaydedilmez**, kayıtlar 7 gün sonra otomatik silinir (KVKK).
+- Botlar User-Agent süzgeciyle elenir; çerez kullanılmaz.
+- Gösterilen toplam = `VISITORS_BASE` + veritabanı sayacı; taban varsayılanı
+  **1000**'dir, yani sayaç 1.000 ziyaretçiden başlar. Veritabanı sıfırlanırsa
+  `VISITORS_BASE`'i güncel toplama çekerek sayacı taşıyın.
+- Yönetim: `/admin` → toplam / bugün / şu an sitede kartları + son 7 gün grafiği.

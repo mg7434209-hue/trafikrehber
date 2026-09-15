@@ -18,6 +18,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import ChatWidget from './components/ChatWidget';
 import AdminPage from './pages/AdminPage';
 import CezaListesiPage from './pages/CezaListesiPage';
+import SeoDefaults from './seo';
 import './App.css';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           {/* ── Normal site ── */}
           <Route path="*" element={
             <div className="app">
+              <SeoDefaults />
               <Navbar />
               <main>
                 <Routes>
