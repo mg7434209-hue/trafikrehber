@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Integer, Text, DateTime, Enum, ARRAY, Numeric
+from sqlalchemy import Column, String, Boolean, Integer, Text, DateTime, Enum, ARRAY, Numeric, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 import uuid
@@ -35,7 +35,7 @@ class Article(Base):
     meta_description = Column(String(160))
     content = Column(Text)
     category = Column(String, default="genel")
-    tags = Column(ARRAY(String), default=[])
+    tags = Column(JSON().with_variant(ARRAY(String), "postgresql"), default=list)
     is_published = Column(Boolean, default=False)
     is_featured = Column(Boolean, default=False)
     view_count = Column(Integer, default=0)
@@ -99,4 +99,11 @@ class ChatMessage(Base):
     conversation_id = Column(String, index=True)
     role = Column(String)  # user / assistant
     content = Column(Text)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class SiteVisitor(Base):
+    __tablename__ = "site_visitors"
+    # Hash of a random browser ID, never an IP or fingerprint.
+    visitor_hash = Column(String(64), primary_key=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

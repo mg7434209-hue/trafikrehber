@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import DOMPurify from 'dompurify';
+import { SITE_URL } from '../services/site';
 import { articlesApi } from '../services/api';
 
 export default function ArticlePage() {
   const { slug } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
-    articlesApi.getBySlug(slug)
-      .then(d => { setData(d); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, [slug]);
+    let active = true; setLoading(true); setData(null); setError('');
+    articlesApi.getBySlug(slug).then(d => { if (active) setData(d); }).catch(e => { if (active) setError(e.status === 404 ? 'Makale bulunamadı' : e.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [slug, retry]);
 
   if (loading) return <div className="loading"><div className="spinner" /></div>;
   if (!data?.article) return (
     <div className="container" style={{ padding: '60px 20px', textAlign: 'center' }}>
-      <h2>Makale bulunamadı</h2>
+      <Helmet><title>Makale yüklenemedi — TrafikRehber</title><meta name="robots" content="noindex, follow" /></Helmet><h1>{error || 'Makale bulunamadı'}</h1><button className="btn btn-outline" onClick={() => setRetry(r => r + 1)}>Tekrar dene</button>
       <Link to="/blog" className="btn btn-secondary" style={{ marginTop: 16 }}>← Geri Dön</Link>
     </div>
   );
@@ -29,11 +32,14 @@ export default function ArticlePage() {
     <>
       <Helmet>
         <title>{article.title} — TrafikRehber</title>
-        <meta name="description" content={article.meta_description} />
-        <link rel="canonical" href={`https://trafikrehber.com/blog/${article.slug}`} />
+        <meta name="description" content={article.meta_description} /><meta property="og:type" content="article" /><meta property="og:title" content={article.title} /><meta property="og:description" content={article.meta_description} />
+        <link rel="canonical" href={`${SITE_URL}/blog/${article.slug}`} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
-          "@type": article.schema_type || "Article",
+          "@type": "Article",
+          "datePublished": article.created_at,
+          "dateModified": article.updated_at || article.created_at,
+          "mainEntityOfPage": `${SITE_URL}/blog/${article.slug}`,
           "headline": article.title,
           "author": { "@type": "Organization", "name": article.author },
           "publisher": { "@type": "Organization", "name": "TrafikRehber" },
@@ -61,13 +67,13 @@ export default function ArticlePage() {
           ⚖️ Bu içerik genel bilgilendirme amaçlıdır, hukuki danışmanlık yerine geçmez. Özel durumunuz için bir avukata danışmanız önerilir.
         </div>
 
-        <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }} />
+        <div className="article-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content || '', { FORBID_TAGS: ['style', 'form', 'iframe'], FORBID_ATTR: ['style'] }) }} />
 
         {/* Sosyal paylaşım */}
         <div style={{ marginTop: 40, padding: '20px', background: '#f4f7fc', borderRadius: 12, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ fontWeight: 600, color: '#1a3a6b' }}>Bu sayfayı paylaş:</span>
-          <a href={`https://twitter.com/intent/tweet?url=https://trafikrehber.com/blog/${article.slug}&text=${encodeURIComponent(article.title)}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>Twitter</a>
-          <a href={`https://wa.me/?text=${encodeURIComponent(article.title + ' https://trafikrehber.com/blog/' + article.slug)}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>WhatsApp</a>
+          <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`${SITE_URL}/blog/${article.slug}`)}&text=${encodeURIComponent(article.title)}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>Twitter</a>
+          <a href={`https://wa.me/?text=${encodeURIComponent(article.title + ' ' + SITE_URL + '/blog/' + article.slug)}`} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 13 }}>WhatsApp</a>
         </div>
 
         {/* İlgili makaleler */}

@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database import get_db
 from models import CezaTuru
+from uuid import UUID
+from decimal import Decimal, ROUND_HALF_UP
 
 router = APIRouter()
 
@@ -24,13 +26,13 @@ def get_ceza_turleri(db: Session = Depends(get_db)):
 
 
 @router.get("/{ceza_id}/hesapla")
-def hesapla_ceza(ceza_id: str, db: Session = Depends(get_db)):
+def hesapla_ceza(ceza_id: UUID, db: Session = Depends(get_db)):
     ceza = db.query(CezaTuru).filter(CezaTuru.id == ceza_id).first()
     if not ceza:
         raise HTTPException(status_code=404, detail="Ceza türü bulunamadı")
 
     taban = float(ceza.taban_ceza_tl) if ceza.taban_ceza_tl else 0
-    erken_odeme = round(taban * 0.75, 2)   # %25 indirim (15 gün içinde)
+    erken_odeme = float((Decimal(str(taban)) * Decimal("0.75")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
     taksit_2 = round(taban / 2, 2)
     taksit_3 = round(taban / 3, 2)
 
@@ -40,7 +42,7 @@ def hesapla_ceza(ceza_id: str, db: Session = Depends(get_db)):
         "hesaplama": {
             "taban_tutar": taban,
             "erken_odeme_indirimi": erken_odeme,
-            "erken_odeme_aciklama": "15 gün içinde ödenirse %25 indirim uygulanır",
+            "erken_odeme_aciklama": "İndirim hakkı bulunması halinde %25 indirimli tutar örneğidir; ödeme süresini tebligatınızdan kontrol edin.",
             "taksit_2": taksit_2,
             "taksit_3": taksit_3,
         }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { adminApi } from '../services/api';
 
 export default function AdminPage() {
-  const [token, setToken] = useState(localStorage.getItem('admin_token') || '');
+  const [token, setToken] = useState(() => { try { return localStorage.getItem('admin_token') || ''; } catch { return ''; } });
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [stats, setStats] = useState(null);
@@ -33,9 +33,9 @@ export default function AdminPage() {
     setLoginError('');
     try {
       const d = await adminApi.login(loginForm.email, loginForm.password);
-      localStorage.setItem('admin_token', d.token);
+      try { localStorage.setItem('admin_token', d.token); } catch {}
       setToken(d.token);
-    } catch { setLoginError('Hatalı e-posta veya şifre'); }
+    } catch (e) { setLoginError(e.message || 'Giriş yapılamadı'); }
   };
 
   const handle2026Yukle = async () => {
@@ -97,12 +97,12 @@ export default function AdminPage() {
         <form onSubmit={handleLogin}>
           <div style={{ marginBottom: 14 }}>
             <label style={{ fontSize: 13, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>E-posta</label>
-            <input type="email" value={loginForm.email} onChange={e => setLoginForm({ ...loginForm, email: e.target.value })}
+            <input aria-label="E-posta" autoComplete="username" type="email" value={loginForm.email} onChange={e => setLoginForm({ ...loginForm, email: e.target.value })}
               style={{ width: '100%', border: '1px solid #e2e8f0', borderRadius: 8, padding: '11px 14px', fontSize: 14, outline: 'none' }} required />
           </div>
           <div style={{ marginBottom: 20 }}>
             <label style={{ fontSize: 13, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Şifre</label>
-            <input type="password" value={loginForm.password} onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
+            <input aria-label="Şifre" autoComplete="current-password" type="password" value={loginForm.password} onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
               style={{ width: '100%', border: '1px solid #e2e8f0', borderRadius: 8, padding: '11px 14px', fontSize: 14, outline: 'none' }} required />
           </div>
           {loginError && <div style={{ background: '#fee2e2', color: '#b91c1c', borderRadius: 8, padding: '10px 14px', fontSize: 13, marginBottom: 14 }}>{loginError}</div>}
@@ -118,7 +118,7 @@ export default function AdminPage() {
       {/* Header */}
       <div style={{ background: '#1a3a6b', color: '#fff', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontWeight: 700, fontSize: 16 }}>🛡 TrafikRehber Admin</div>
-        <button onClick={() => { localStorage.removeItem('admin_token'); setToken(''); }}
+        <button onClick={() => { try { localStorage.removeItem('admin_token'); } catch {} setToken(''); }}
           style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', borderRadius: 7, padding: '7px 14px', cursor: 'pointer', fontSize: 13 }}>Çıkış</button>
       </div>
 

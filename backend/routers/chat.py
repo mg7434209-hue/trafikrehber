@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, UUID4
 from typing import Optional
 from database import get_db
 from models import ChatMessage
@@ -11,13 +11,13 @@ router = APIRouter()
 
 
 class ChatRequest(BaseModel):
-    message: str
-    conversation_id: Optional[str] = None
+    message: str = Field(min_length=1, max_length=2000)
+    conversation_id: Optional[UUID4] = None
 
 
 @router.post("/send")
 async def send_message(req: ChatRequest, db: Session = Depends(get_db)):
-    conv_id = req.conversation_id or str(uuid.uuid4())
+    conv_id = str(req.conversation_id or uuid.uuid4())
 
     # Konuşma geçmişini getir (son 10 mesaj)
     history = db.query(ChatMessage).filter(

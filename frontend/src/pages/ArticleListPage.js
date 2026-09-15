@@ -2,45 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi } from '../services/api';
-
+import { SITE_URL } from '../services/site';
+import SearchForm from '../components/SearchForm';
+import ArticleCard from '../components/ArticleCard';
 export default function ArticleListPage() {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-  const q = searchParams.get('q');
-
+  const [articles, setArticles] = useState([]), [total, setTotal] = useState(0), [loading, setLoading] = useState(true), [error, setError] = useState(''), [retry, setRetry] = useState(0);
+  const [params] = useSearchParams();
+  const q = (params.get('q') || '').trim();
+  const rawPage = Number(params.get('page'));
+  const page = Number.isSafeInteger(rawPage) && rawPage > 0 ? rawPage : 1;
   useEffect(() => {
-    setLoading(true);
-    const fetch = q ? articlesApi.search(q) : articlesApi.getAll();
-    fetch.then(d => { setArticles(d.articles || d.results || []); setLoading(false); }).catch(() => setLoading(false));
-  }, [q]);
-
-  return (
-    <>
-      <Helmet>
-        <title>{q ? `"${q}" için sonuçlar` : 'Blog & Makaleler'} — TrafikRehber</title>
-      </Helmet>
-      <div className="container" style={{ padding: '40px 20px' }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a3a6b', marginBottom: 8 }}>
-          {q ? `"${q}" için arama sonuçları` : 'Blog & Makaleler'}
-        </h1>
-        <p style={{ color: '#666', marginBottom: 32 }}>{articles.length} makale bulundu</p>
-
-        {loading ? <div className="loading"><div className="spinner" /></div> : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
-            {articles.map(a => (
-              <Link key={a.slug} to={`/blog/${a.slug}`} style={{ textDecoration: 'none' }}>
-                <div className="card" style={{ padding: 24 }}>
-                  <span className="badge badge-blue" style={{ marginBottom: 10, display: 'inline-block' }}>{a.category}</span>
-                  <h3 style={{ color: '#1a1a2e', fontWeight: 600, marginBottom: 8, lineHeight: 1.4, fontSize: 15 }}>{a.title}</h3>
-                  <p style={{ color: '#666', fontSize: 13, marginBottom: 12 }}>{a.meta_description}</p>
-                  <div style={{ fontSize: 12, color: '#999' }}>⏱ {a.reading_time_min} dk • 👁 {a.view_count}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </>
-  );
+    let active = true;
+    setLoading(true); setError(''); setArticles([]);
+    if (q && (q.length < 2 || q.length > 160)) { setError('Arama için 2–160 karakter girin.'); setLoading(false); return; }
+    (q ? articlesApi.search(q) : articlesApi.getAll(page)).then(d => { if (active) { setArticles(d.articles || d.results || []); setTotal(d.total ?? d.results?.length ?? 0); } }).catch(e => { if (active) setError(e.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [q, page, retry]);
+  const pages = Math.ceil(total / 12);
+  return <><Helmet><title>{q ? `“${q}” arama sonuçları` : 'Rehberler ve Makaleler'} — TrafikRehber</title><meta name="description" content="Trafik cezaları, sigorta, ehliyet ve araç işlemleri rehberlerinde arama yapın." /><link rel="canonical" href={`${SITE_URL}/blog${!q && page > 1 ? `?page=${page}` : ''}`} />{q && <meta name="robots" content="noindex, follow" />}</Helmet>
+    <div className="container page-content"><div className="page-intro"><div className="breadcrumb"><Link to="/">Ana Sayfa</Link><span>›</span><span>Rehberler</span></div><h1>{q ? `“${q}” için sonuçlar` : 'Rehberler ve makaleler'}</h1><p>Trafik ve araç işlemlerinde aradığınız bilgiyi bulun.</p><SearchForm key={q} initialValue={q} id="guide-search" /></div>
+      {loading ? <div className="loading" role="status"><span className="sr-only">Rehberler yükleniyor</span><div className="spinner" /></div> : error ? <div className="state-message error-state" role="alert"><p>{error}</p><button className="btn btn-secondary" onClick={() => setRetry(r => r + 1)}>Tekrar dene</button></div> : <><p style={{ marginBottom: 20, fontSize: 13 }} role="status">{total} rehber bulundu{q && total === 10 ? ' · İlk 10 sonuç gösteriliyor' : ''}</p>{articles.length ? <div className="guide-grid">{articles.map(a => <ArticleCard key={a.slug} article={a} />)}</div> : <div className="state-message"><p>Sonuç bulunamadı. Başka bir kelime deneyin veya tüm rehberlere göz atın.</p><Link to="/blog">Tüm rehberler →</Link></div>}{!q && pages > 1 && <nav className="pagination" aria-label="Makale sayfaları">{page > 1 && <Link to={`/blog?page=${page - 1}`}>← Önceki</Link>}<span>Sayfa {page} / {pages}</span>{page < pages && <Link to={`/blog?page=${page + 1}`}>Sonraki →</Link>}</nav>}</>}
+    </div></>;
 }

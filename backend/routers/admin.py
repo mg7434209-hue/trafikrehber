@@ -7,11 +7,12 @@ from models import Article, DilecceSablon, CezaTuru, PageStat
 from utils.auth import create_token, require_admin
 import os
 import re
+import secrets
 
 router = APIRouter()
 
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@trafikrehber.com")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "trafikrehber2026!")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
 # --- Auth ---
@@ -21,7 +22,9 @@ class LoginRequest(BaseModel):
 
 @router.post("/login")
 def admin_login(req: LoginRequest):
-    if req.email != ADMIN_EMAIL or req.password != ADMIN_PASSWORD:
+    if not ADMIN_PASSWORD or ADMIN_PASSWORD == "trafikrehber2026!":
+        raise HTTPException(status_code=503, detail="Yönetici erişimi yapılandırılmamış")
+    if req.email != ADMIN_EMAIL or not secrets.compare_digest(req.password.encode(), ADMIN_PASSWORD.encode()):
         raise HTTPException(status_code=401, detail="Hatalı giriş bilgileri")
     token = create_token({"email": req.email, "is_admin": True})
     return {"success": True, "token": token}

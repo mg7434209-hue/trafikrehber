@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, func, update
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db
@@ -45,13 +45,14 @@ def article_to_dict(a: Article, include_content=True):
         "featured_image_url": a.featured_image_url,
         "schema_type": a.schema_type,
         "created_at": a.created_at.isoformat() if a.created_at else None,
+        "updated_at": a.updated_at.isoformat() if a.updated_at else None,
     }
 
 
 @router.get("")
 def get_articles(
     page: int = Query(1, ge=1),
-    limit: int = Query(12, le=50),
+    limit: int = Query(12, ge=1, le=50),
     category: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
@@ -78,7 +79,10 @@ def get_featured(db: Session = Depends(get_db)):
 
 
 @router.get("/search")
-def search_articles(q: str = Query(..., min_length=2), db: Session = Depends(get_db)):
+def search_articles(q: str = Query(..., min_length=2, max_length=160), db: Session = Depends(get_db)):
+    q = q.strip()
+    if len(q) < 2:
+        raise HTTPException(status_code=422, detail="En az 2 karakter girin")
     results = db.query(Article).filter(
         Article.is_published == True,
         or_(
@@ -106,7 +110,7 @@ def get_article(slug: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Makale bulunamadı")
 
     # Görüntülenme sayısını artır
-    article.view_count = (article.view_count or 0) + 1
+    db.execute(update(Article).where(Article.id == article.id).values(view_count=func.coalesce(Article.view_count, 0) + 1, updated_at=Article.updated_at))
     stat = PageStat(page_slug=slug)
     db.add(stat)
     db.commit()
