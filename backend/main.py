@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from utils.auth import require_admin
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 import os
@@ -8,11 +10,12 @@ from routers import articles, dilekce, ceza, admin, chat, sitemap, stats
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="TrafikRehber API", version="1.0.0")
+app = FastAPI(title="TrafikRehber API", version="1.1.0")
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=list({"https://www.cezarehberi.com", "https://cezarehberi.com", "https://trafikrehber.com", "https://www.trafikrehber.com", *[origin.strip() for origin in os.getenv("CORS_ORIGINS", "").split(",") if origin.strip() and origin.strip() != "*"]}),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,7 +53,7 @@ async def google_verify_2():
     return "google-site-verification: google32637b0bab066255.html"
 # ─────────────────────────────────────────────────────────
 
-@app.post("/api/seed")
+@app.post("/api/seed", dependencies=[Depends(require_admin)])
 def run_seed():
     from database import SessionLocal
     from models import Article, DilecceSablon, CezaTuru
@@ -90,7 +93,7 @@ def run_seed():
     return {"success": True, "seeded": results}
 
 
-@app.post("/api/seed-rich")
+@app.post("/api/seed-rich", dependencies=[Depends(require_admin)])
 def run_rich_seed():
     from database import SessionLocal
     from models import Article, DilecceSablon
