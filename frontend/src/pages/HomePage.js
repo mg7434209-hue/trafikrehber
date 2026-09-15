@@ -2,14 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi, statsApi } from '../services/api';
-
-const SSS = [
-  { s: 'Trafik cezasına kaç günde itiraz edilebilir?', c: 'Trafik cezasına tebliğ tarihinden itibaren 15 gün içinde Sulh Ceza Hâkimliği\'ne itiraz edilebilir. Bu süre kaçırılırsa ceza kesinleşir.' },
-  { s: '2026 yılında trafik cezaları ne kadar arttı?', c: '1 Ocak 2026 itibarıyla %25,49 Yeniden Değerleme Oranı uygulandı. Ayrıca 27 Şubat 2026 tarihli 7574 sayılı Kanun ile kırmızı ışık ihlali 5.000 TL, cep telefonu kullanımı 5.000 TL, trafikte saldırgan davranış 180.000 TL oldu.' },
-  { s: 'Trafik cezasını erken ödesem indirim var mı?', c: 'Evet. Tebliğden itibaren 1 ay (30 gün) içinde ödenirse cezanın %25\'i indirimli uygulanır — örneğin 5.000 TL\'lik ceza 3.750 TL\'ye düşer. Bu süre 31.01.2024 yönetmelik değişikliğiyle 15 günden 1 aya çıkarıldı; itiraz süresi ise ayrıdır ve 15 gündür.' },
-  { s: 'E-devlet ile trafik cezası nasıl sorgulanır?', c: 'E-devlet.gov.tr\'ye giriş yapın, "Trafik İdari Para Cezası Sorgulama" hizmetini aratın. TC kimlik numaranızla tüm cezalarınızı görüntüleyebilirsiniz.' },
-  { s: '100 ceza puanı dolunca ne olur?', c: '1 yıl içinde 100 ceza puanına ulaşan sürücünün ehliyetine geçici olarak el konulur. Ehliyetin iadesi için psikoteknik değerlendirme zorunludur.' },
-];
+// SSS verisi paylaşılır: sunucu (server.js) bunu okuyup FAQPage JSON-LD basar
+import SSS from '../data/sss.json';
 
 const KATEGORILER = [
   { label: 'Trafik Cezaları', icon: '🚦', path: '/trafik-cezalari', desc: 'Ceza tutarları, itiraz yolları, güncel rehber', renk: '#1a3a6b' },
