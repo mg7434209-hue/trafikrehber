@@ -45,6 +45,7 @@ def article_to_dict(a: Article, include_content=True):
         "featured_image_url": a.featured_image_url,
         "schema_type": a.schema_type,
         "created_at": a.created_at.isoformat() if a.created_at else None,
+        "updated_at": a.updated_at.isoformat() if a.updated_at else None,
     }
 
 

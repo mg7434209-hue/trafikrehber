@@ -12,7 +12,7 @@ AdSense (`ca-pub-9741235138417122`; `ads.txt` hem backend hem `public/`ta).
 ```
 trafikrehber/
 ├── backend/   → FastAPI + SQLAlchemy + PostgreSQL   (API, sitemap, robots)
-└── frontend/  → React 18 SPA (CRA + react-router)   (npx serve ile yayında)
+└── frontend/  → React 18 SPA (CRA + react-router)   (server.js ile yayında)
 ```
 
 Frontend API'ye `REACT_APP_BACKEND_URL` ile bağlanır (`src/services/api.js`);
@@ -91,16 +91,45 @@ Site hukuki bilgi verdiği için tutarlar **tek kaynaktan** ve **tarihli** gider
   çalıştırdıktan sonra makale içindeki rakamları elle gözden geçir.
 
 ## SEO altyapısı
-- `frontend/src/seo.js` — `SITE_URL` (env `REACT_APP_SITE_URL`, varsayılan
-  `https://www.cezarehberi.com`) ve `<SeoDefaults>`: App.js'te bir kez render
-  edilir, her rotaya **canonical + og:url/og:type/og:site_name/twitter:card**
-  basar. KURAL: sayfalara elle alan adı yazma, `abs('/yol')` kullan.
-- `frontend/scripts/build-sitemap.js` — `npm run build` öncesi (prebuild)
-  çalışır: alan adının kökünü frontend servisi yayınladığı için
-  `/sitemap.xml` STATİK dosyadır; betik derleme anında backend'in dinamik
-  sitemap'ini çeker, ulaşamazsa statik rota listesine düşer (derlemeyi
-  düşürmez). Yeni sayfa eklerken `ROTALAR` listesine de ekle.
-- `frontend/public/robots.txt` `/admin` ve `/api/` engellidir.
+### 1) Bot görünürlüğü — `frontend/server.js` (üretimde açılış komutu)
+SPA olduğu için `serve -s build` HER URL'de AYNI head'i döndürüyordu; JS
+çalıştırmayan botlar (Facebook, WhatsApp, X, LinkedIn) ve paylaşım kazıyıcıları
+her sayfada aynı başlığı görüyordu. `server.js` index.html'in `<head>`'ini
+**istek anında** doldurur:
+- rotaya özel `<title>`, description, canonical, Open Graph/Twitter, `og:image`
+  (`public/og-default.png`, 1200×630)
+- `/blog/:slug` ve `/dilekce-ornekleri/:slug` için veriyi API'den çeker
+  (10 dk önbellek) → gerçek başlık/açıklama + `datePublished`/`dateModified`
+- JSON-LD `@graph`: WebSite + Organization + BreadcrumbList + FAQPage (ana
+  sayfa, `src/data/sss.json`'dan) + Article/HowTo
+- bilinmeyen rota → **404 + noindex**; `?q=` arama sonuçları → **noindex**
+- `/sitemap.xml` ve `/robots.txt` backend'in DİNAMİK çıktısından servis edilir
+  (15 dk / 1 sa önbellek) → yeni makale yayımlanınca yeniden derleme gerekmeden
+  sitemap tazelenir
+- `INDEXNOW_KEY` tanımlıysa `/<anahtar>.txt` doğrulama dosyasını yayımlar
+- hash'li varlıklar `immutable`, HTML `max-age=300`
+KURAL: yeni rota eklerken `server.js` → `ROTALAR` tablosuna başlık/açıklama ekle,
+yoksa sayfa 404+noindex alır.
+
+### 2) İstemci tarafı — `frontend/src/seo.js`
+`SITE_URL` (env `REACT_APP_SITE_URL`) + `abs('/yol')`. `<SeoDefaults>` App.js'te
+render edilir; head'i **Helmet ile çakışmadan** korur: SPA gezinmesinde
+canonical/og:url'i günceller, Helmet bir etiketi yazdıysa sunucunun aynı
+etiketten bastığı kopyayı siler (`data-rh` işaretine bakar), og:title/description'ı
+başlıkla eşitler. Veriyi geç çeken sayfalar için head'i 6 sn MutationObserver ile
+izler. KURAL: sayfalara elle alan adı yazma.
+
+### 3) Kendini güncel tutma
+- **Sitemap**: `routers/sitemap.py` her istekte veritabanından üretir; `lastmod`
+  değerleri gerçek `updated_at`/`created_at` tarihleridir.
+- **IndexNow** (`utils/indexnow.py`): makale yayımlandığında/güncellendiğinde
+  Bing-Yandex ailesine ANINDA bildirim gider (arka planda, hata uygulamayı
+  etkilemez). Toplu tazeleme: `POST /api/admin/indexnow-ping`.
+  `INDEXNOW_KEY` **iki servise de** aynı değerle verilmeli (frontend anahtar
+  dosyasını yayımlar, backend bildirimi gönderir). Anahtar yoksa sessizce pasif.
+  Google IndexNow'a katılmaz; onun için sitemap `lastmod` tazeliği çalışır.
+- `frontend/scripts/build-sitemap.js` prebuild'de yedek statik sitemap yazar
+  (server.js backend'e ulaşamazsa bu dosya servis edilir).
 
 ## Konvansiyonlar
 - Rotalar UZANTISIZ; `.html` yok. Tüm arayüz metinleri Türkçe.
@@ -121,12 +150,17 @@ Site hukuki bilgi verdiği için tutarlar **tek kaynaktan** ve **tarihli** gider
 Backend: `DATABASE_URL` · `JWT_SECRET` (+`JWT_ALGORITHM`, `JWT_EXPIRE_HOURS`) ·
 `GEMINI_API_KEY` · `SITE_URL` (varsayılan https://www.cezarehberi.com) · `ADMIN_EMAIL` / `ADMIN_PASSWORD` ·
 `VISITORS_BASE` (sayaç tabanı, varsayılan 1000) · `VISITOR_SALT` (karma tuzu;
-boşsa `JWT_SECRET` kullanılır — **değiştirilirse o günün tekilliği sıfırlanır**).
-Frontend: `REACT_APP_BACKEND_URL` · `REACT_APP_SITE_URL`.
+boşsa `JWT_SECRET` kullanılır — **değiştirilirse o günün tekilliği sıfırlanır**) ·
+`INDEXNOW_KEY` (isteğe bağlı).
+Frontend: `REACT_APP_BACKEND_URL` · `REACT_APP_SITE_URL` · `INDEXNOW_KEY`
+(backend'dekiyle AYNI değer).
 
 ## Test (commit öncesi)
 - Backend söz dizimi: `python3 -m py_compile backend/main.py backend/models.py backend/routers/*.py`
 - Frontend derleme: `cd frontend && CI=true npm run build` (uyarı = hata).
+- Bot görünümü: `node server.js` çalışırken
+  `curl -A facebookexternalhit http://localhost:3000/blog/<slug> | grep -E '<title>|canonical'`
+  → rotaya özel başlık gelmeli; tarayıcıda canonical/description **tek** olmalı.
 - Sayaç: API'yi Postgres'e bağlayıp `POST /api/stats/visit`'i farklı
   `X-Forwarded-For` + UA ile çağır; aynı IP+UA ikinci kez tekil ARTIRMAMALI,
   `Googlebot` UA'sı hiç saymamalı.

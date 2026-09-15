@@ -12,8 +12,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "serve": "npx serve -s build -l $PORT",
-    "prebuild": "node scripts/build-sitemap.js"
+    "serve": "node server.js",
+    "prebuild": "node scripts/build-sitemap.js",
+    "start:prod": "node server.js"
   },
   "browserslist": {
     "production": [
@@ -24,5 +25,8 @@
     "development": [
       "last 1 chrome version"
     ]
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

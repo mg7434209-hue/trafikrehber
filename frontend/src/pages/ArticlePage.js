@@ -36,11 +36,19 @@ export default function ArticlePage() {
         <meta property="og:type" content="article" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
-          "@type": article.schema_type || "Article",
+          "@type": article.schema_type === 'HowTo' ? 'HowTo' : 'Article',
           "headline": article.title,
-          "author": { "@type": "Organization", "name": article.author },
-          "publisher": { "@type": "Organization", "name": "TrafikRehber" },
-          "description": article.meta_description
+          "description": article.meta_description || '',
+          "mainEntityOfPage": { "@type": "WebPage", "@id": abs('/blog/' + article.slug) },
+          "image": abs('/og-default.png'),
+          "inLanguage": "tr-TR",
+          "datePublished": article.created_at || undefined,
+          "dateModified": article.updated_at || article.created_at || undefined,
+          "author": { "@type": "Organization", "name": article.author || 'TrafikRehber' },
+          "publisher": {
+            "@type": "Organization", "name": "TrafikRehber",
+            "logo": { "@type": "ImageObject", "url": abs('/og-default.png') }
+          }
         })}</script>
       </Helmet>
 
@@ -58,6 +66,11 @@ export default function ArticlePage() {
           <span>✍️ {article.author}</span>
           <span>⏱ {article.reading_time_min} dk okuma</span>
           <span>👁 {article.view_count} görüntülenme</span>
+          {(article.updated_at || article.created_at) && (
+            <span title="İçeriğin son gözden geçirilme tarihi">
+              🗓 Güncellenme: {new Date(article.updated_at || article.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
+          )}
         </div>
 
         <div className="warning-box" style={{ marginBottom: 32 }}>

@@ -36,8 +36,11 @@ trafikrehber/
 - Environment Variables:
   ```
   REACT_APP_BACKEND_URL=https://<backend>.up.railway.app
-  REACT_APP_SITE_URL=https://trafikrehber.com
+  REACT_APP_SITE_URL=https://www.cezarehberi.com
+  INDEXNOW_KEY=<backend ile AYNI anahtar>   # isteğe bağlı
   ```
+- Start Command: `node server.js` (railway.toml'da tanımlı).
+  `serve -s build` KULLANMA — bot görünürlüğü için head enjeksiyonu gerekir.
 
 ### 3. Seed Data Yükle
 Backend deploy olduktan sonra:
@@ -68,3 +71,30 @@ beslenir:
   **1000**'dir, yani sayaç 1.000 ziyaretçiden başlar. Veritabanı sıfırlanırsa
   `VISITORS_BASE`'i güncel toplama çekerek sayacı taşıyın.
 - Yönetim: `/admin` → toplam / bugün / şu an sitede kartları + son 7 gün grafiği.
+
+## SEO / Görünürlük
+
+Site bir SPA; JS çalıştırmayan botlar için `frontend/server.js` her istekte
+`<head>`'i rotaya göre doldurur:
+
+- rotaya özel başlık, açıklama, canonical, Open Graph/Twitter + `og-default.png`
+- makale ve dilekçe sayfalarında veriler API'den çekilir (yayın/güncelleme tarihi
+  dâhil), JSON-LD `@graph` basılır (WebSite, Organization, BreadcrumbList,
+  FAQPage, Article/HowTo)
+- bilinmeyen sayfa 404+noindex, `?q=` arama sonuçları noindex
+- `/sitemap.xml` ve `/robots.txt` backend'in dinamik çıktısından gelir
+
+### Kendini güncel tutma
+
+| Mekanizma | Ne yapar |
+|---|---|
+| Dinamik sitemap | Her istekte veritabanından üretilir; `lastmod` gerçek güncelleme tarihi |
+| IndexNow | Makale yayımlanınca Bing/Yandex'e anında bildirim (`utils/indexnow.py`) |
+| `POST /api/admin/indexnow-ping` | Tüm sayfalar için toplu bildirim |
+| Makalede "Güncellenme" tarihi | Okuyucuya ve `dateModified`'a tazelik sinyali |
+
+**IndexNow kurulumu:** rastgele bir anahtar üretin
+(`python3 -c "import uuid;print(uuid.uuid4().hex)"`) ve **hem backend hem
+frontend** servisine `INDEXNOW_KEY` olarak girin. Frontend anahtarı
+`https://www.cezarehberi.com/<anahtar>.txt` adresinde yayımlar, backend
+bildirimi gönderir. Anahtar tanımlı değilse özellik sessizce kapalıdır.

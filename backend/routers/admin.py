@@ -5,6 +5,7 @@ from typing import Optional, List
 from database import get_db
 from models import Article, DilecceSablon, CezaTuru, PageStat, SiteVisit
 from utils.auth import create_token, require_admin
+from utils import indexnow
 import os
 import re
 
@@ -50,7 +51,10 @@ def create_article(data: ArticleCreate, db: Session = Depends(get_db), _=Depends
     article = Article(**data.dict())
     db.add(article)
     db.commit()
-    return {"success": True, "id": str(article.id)}
+    # Yeni yayımlanan içeriği arama motorlarına bildir (anahtar yoksa sessizce atlanır)
+    if article.is_published:
+        indexnow.bildir([f"/blog/{article.slug}", "/blog", "/"])
+    return {"success": True, "id": str(article.id), "indexnow": indexnow.etkin()}
 
 @router.put("/articles/{article_id}")
 def update_article(article_id: str, data: ArticleCreate, db: Session = Depends(get_db), _=Depends(require_admin)):
@@ -60,7 +64,9 @@ def update_article(article_id: str, data: ArticleCreate, db: Session = Depends(g
     for key, value in data.dict(exclude_unset=True).items():
         setattr(article, key, value)
     db.commit()
-    return {"success": True}
+    if article.is_published:
+        indexnow.bildir([f"/blog/{article.slug}"])
+    return {"success": True, "indexnow": indexnow.etkin()}
 
 @router.delete("/articles/{article_id}")
 def delete_article(article_id: str, db: Session = Depends(get_db), _=Depends(require_admin)):
@@ -308,6 +314,23 @@ def ceza_2026_yukle(db: Session = Depends(get_db), _=Depends(require_admin)):
     db.commit()
     return {"success": True, "eklenen": eklenen, "guncellenen": guncellenen,
             "silinen_eski_kayit": silinen, "son_dogrulama": CEZA_SON_DOGRULAMA}
+
+
+# --- IndexNow: içeriği arama motorlarına elle bildir ---
+@router.post("/indexnow-ping")
+def indexnow_ping(db: Session = Depends(get_db), _=Depends(require_admin)):
+    """Yayındaki tüm sayfaları IndexNow ile bildirir.
+
+    Normalde makale yayımlandığında otomatik bildirim gider; bu uç toplu
+    tazeleme (ör. çok sayıda içerik güncellendikten sonra) içindir.
+    """
+    if not indexnow.etkin():
+        return {"success": False, "hata": "INDEXNOW_KEY tanımlı değil"}
+    yollar = ["/", "/trafik-cezalari-2026", "/dilekce-ornekleri", "/araclar/ceza-hesapla", "/blog"]
+    yollar += [f"/blog/{a.slug}" for a in db.query(Article).filter(Article.is_published == True).all()]
+    yollar += [f"/dilekce-ornekleri/{s.slug}" for s in db.query(DilecceSablon).all()]
+    adet = indexnow.bildir(yollar)
+    return {"success": True, "bildirilen_url": adet}
 
 
 # --- İstatistikler ---
