@@ -147,10 +147,12 @@ izler. KURAL: sayfalara elle alan adı yazma.
   yazılır (ALTER ... IF NOT EXISTS); tip değişimi gibi dönüşümleri elle SQL ile yap.
 
 ## Ortam değişkenleri (Railway)
-Backend: `DATABASE_URL` · `JWT_SECRET` (+`JWT_ALGORITHM`, `JWT_EXPIRE_HOURS`) ·
-`GEMINI_API_KEY` · `SITE_URL` (varsayılan https://www.cezarehberi.com) · `ADMIN_EMAIL` / `ADMIN_PASSWORD` ·
+Backend: `DATABASE_URL` · `JWT_SECRET` (ZORUNLU, ≥32 karakter; +`JWT_ALGORITHM`, `JWT_EXPIRE_HOURS`) ·
+`GEMINI_API_KEY` · `SITE_URL` (varsayılan https://www.cezarehberi.com) · `ADMIN_EMAIL` / `ADMIN_PASSWORD`
+(ZORUNLU; koddaki yedek değerler herkese açık repoda olduğu için KALDIRILDI —
+`JWT_SECRET` ya da `ADMIN_PASSWORD` yoksa admin girişi 503 döner, site yayında kalır) ·
 `VISITORS_BASE` (sayaç tabanı, varsayılan 1000) · `VISITOR_SALT` (karma tuzu;
-boşsa `JWT_SECRET` kullanılır — **değiştirilirse o günün tekilliği sıfırlanır**) ·
+boşsa `JWT_SECRET`, o da yoksa süreç başına rastgele tuz — **değiştirilirse o günün tekilliği sıfırlanır**) ·
 `INDEXNOW_KEY` (isteğe bağlı).
 Frontend: `REACT_APP_BACKEND_URL` · `REACT_APP_SITE_URL` · `INDEXNOW_KEY`
 (backend'dekiyle AYNI değer).

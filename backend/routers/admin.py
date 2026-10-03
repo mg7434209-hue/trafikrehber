@@ -6,13 +6,16 @@ from database import get_db
 from models import Article, DilecceSablon, CezaTuru, PageStat, SiteVisit
 from utils.auth import create_token, require_admin
 from utils import indexnow
+import hmac
 import os
 import re
 
 router = APIRouter()
 
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@trafikrehber.com")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "trafikrehber2026!")
+# Şifre YALNIZ ortam değişkeninden; koddaki eski yedek değer herkese açıktı.
+# Tanımlı değilse giriş 503 döner.
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
 
 
 # --- Auth ---
@@ -22,7 +25,10 @@ class LoginRequest(BaseModel):
 
 @router.post("/login")
 def admin_login(req: LoginRequest):
-    if req.email != ADMIN_EMAIL or req.password != ADMIN_PASSWORD:
+    if not ADMIN_PASSWORD:
+        raise HTTPException(status_code=503, detail="Yönetim kapalı: sunucuda ADMIN_PASSWORD tanımlı değil")
+    if not (hmac.compare_digest(req.email.encode(), ADMIN_EMAIL.encode())
+            and hmac.compare_digest(req.password.encode(), ADMIN_PASSWORD.encode())):
         raise HTTPException(status_code=401, detail="Hatalı giriş bilgileri")
     token = create_token({"email": req.email, "is_admin": True})
     return {"success": True, "token": token}

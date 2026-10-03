@@ -23,6 +23,7 @@ Uçlar:
 import hashlib
 import os
 import re
+import secrets
 import time
 import uuid
 from datetime import date, timedelta
@@ -55,7 +56,10 @@ PRUNE_EVERY_SEC = 3600              # temizlik en fazla saatte bir çalışır
 # Railway → Variables → VISITORS_BASE ile ezilebilir (veritabanı
 # sıfırlanırsa güncel toplam buraya yazılarak sayaç taşınır).
 VISITORS_BASE = int(os.getenv("VISITORS_BASE", "1000") or 1000)
-VISITOR_SALT = os.getenv("VISITOR_SALT") or os.getenv("JWT_SECRET", "trafikrehber-salt")
+# Tuz bilinirse IP+UA karması kaba kuvvetle geri çözülebilir (KVKK); koddaki
+# sabit yedek yerine, ikisi de yoksa süreç başına rastgele tuz kullanılır
+# (o zaman tekillik yeniden başlatmada sıfırlanır).
+VISITOR_SALT = os.getenv("VISITOR_SALT") or os.getenv("JWT_SECRET") or secrets.token_hex(32)
 
 _online: dict = {}                  # anahtar → son istek zamanı (bellek)
 _cache = {"t": 0.0, "toplam": 0, "bugun": 0, "goruntulenme": 0}
