@@ -19,7 +19,7 @@
 
 ## SEO ve AI görünürlüğü
 
-- Tek kanonik üretim alan adını belirleyin. `REACT_APP_SITE_URL`, backend `SITE_URL`, robots.txt, sitemap.xml, IndexNow ve Search Console aynı alan adını kullanmalı. Depoda `cezarehberi.com` ve `trafikrehber.com` referansları bulunuyor; canlı alan adı doğrulanmadan otomatik değiştirilmemelidir.
+- Doğrulanmış kanonik üretim alan adı: **https://www.cezarehberi.com**. `REACT_APP_SITE_URL`, backend `SITE_URL`, robots.txt, sitemap.xml, IndexNow ve Search Console aynı alan adını kullanmalı. Kök alan adından `www` sürümüne 301/308 yönlendirme yapın; Railway `REACT_APP_SITE_URL` ve backend `SITE_URL` değerlerini `https://www.cezarehberi.com` olarak ayarlayın.
 - Search Console'da sitemap gönderimi, sayfa indeksleme, canonical ve Core Web Vitals raporlarını kontrol edin.
 - Hukuki/para cezası içeriklerinde resmi mevzuat bağlantıları, doğrulama tarihi, yazar/editör bilgisi, kaynak ve değişiklik geçmişi sağlayın. Yanlış veya eski ceza tutarlarını otomatik yayına almayın.
 - AI arama görünürlüğü için botlara erişilebilir gerçek HTML, net başlıklar, özgün soru-cevaplar, güvenilir kaynaklar ve tutarlı Organization/Article yapılandırılmış verileri önceliklendirin. Yapılandırılmış veri tek başına sıralama garantisi değildir.
