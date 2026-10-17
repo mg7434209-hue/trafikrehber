@@ -21,9 +21,9 @@ trafikrehber/
   JWT_ALGORITHM=HS256
   JWT_EXPIRE_HOURS=24
   GEMINI_API_KEY=<Google AI Studio key>
-  CORS_ORIGINS=https://trafikrehber.com,https://www.trafikrehber.com,https://<frontend>.up.railway.app
-  SITE_URL=https://trafikrehber.com
-  ADMIN_EMAIL=admin@trafikrehber.com
+  CORS_ORIGINS=https://www.cezarehberi.com,https://cezarehberi.com,https://<frontend>.up.railway.app
+  SITE_URL=https://www.cezarehberi.com
+  ADMIN_EMAIL=<yönetici e-posta adresi>
   ADMIN_PASSWORD=<güçlü şifre>
 
   # Ziyaretçi sayacı
@@ -50,7 +50,9 @@ python seed.py
 ```
 
 ## Domain
-trafikrehber.com → Frontend Railway servisine CNAME
+www.cezarehberi.com → Frontend Railway servisine DNS kaydı (Railway'in verdiği hedefe göre)
+
+Ana yayın adresi: **https://www.cezarehberi.com/**. Kök alan adı `https://cezarehberi.com` bu adrese kalıcı **301/308 yönlendirme** yapmalıdır. DNS ve yönlendirme ayarları hosting tarafında ayrıca doğrulanmalıdır.
 
 ## Ziyaretçi Sayacı
 
