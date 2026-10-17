@@ -35,11 +35,14 @@ trafikrehber/
 - Root Directory: `/frontend`
 - Environment Variables:
   ```
-  REACT_APP_BACKEND_URL=https://<backend>.up.railway.app
+  REACT_APP_BACKEND_URL=    # önerilen: boş bırakın, /api istekleri frontend sunucusundan backend'e proxy edilir
+  BACKEND_URL=https://<backend>.up.railway.app  # frontend Node sunucusunun erişeceği backend URL
   REACT_APP_SITE_URL=https://www.cezarehberi.com
   INDEXNOW_KEY=<backend ile AYNI anahtar>   # isteğe bağlı
   ```
 - Start Command: `node server.js` (railway.toml'da tanımlı).
+- **Önemli:** `BACKEND_URL` backend'in Railway servis URL'si olmalı, frontend'in kendi URL'si olmamalı (proxy döngüsü). React tarafında `REACT_APP_BACKEND_URL` boşsa API aynı-origin `/api` üzerinden gider. Bu değer daha önce dolu bir URL ile build edildiyse boşaltıp yeniden build edin.
+- Sayaç kontrolü: tarayıcı Network panelinde `POST /api/stats/visit` yanıtı JSON ve HTTP 200 olmalı. 503: veritabanı kayıt hatası / backend ayarı; 502: frontend backend'e ulaşamıyor. Aynı kişinin aynı gün tekrar ziyareti toplam tekili artırmaz.
   `serve -s build` KULLANMA — bot görünürlüğü için head enjeksiyonu gerekir.
 
 ### 3. Seed Data Yükle
