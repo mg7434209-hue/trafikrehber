@@ -313,6 +313,54 @@ const sunucu = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     let yol = decodeURIComponent(url.pathname);
 
+    // Aynı-origin API geçidi: React build sırasında backend URL tanımlı olmasa
+    // bile /api çağrıları backend'e ulaşır. CORS bağımlılığını azaltır.
+    if (yol === '/api' || yol.startsWith('/api/')) {
+      if (!API) {
+        res.writeHead(503, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+        return res.end(JSON.stringify({ detail: 'Backend API adresi tanımlı değil.' }));
+      }
+      try {
+        const ac = new AbortController();
+        const timeout = setTimeout(() => ac.abort(), 15000);
+        const chunks = [];
+        let size = 0;
+        for await (const chunk of req) {
+          size += chunk.length;
+          if (size > 2 * 1024 * 1024) {
+            clearTimeout(timeout);
+            res.writeHead(413);
+            return res.end('Request too large');
+          }
+          chunks.push(chunk);
+        }
+        const upstream = await fetch(API + url.pathname + url.search, {
+          method: req.method,
+          headers: {
+            'content-type': req.headers['content-type'] || 'application/json',
+            'authorization': req.headers.authorization || '',
+            'user-agent': req.headers['user-agent'] || '',
+            'x-forwarded-for': req.headers['x-forwarded-for'] || req.socket.remoteAddress || '',
+          },
+          body: ['GET', 'HEAD'].includes(req.method) ? undefined : Buffer.concat(chunks),
+          signal: ac.signal,
+          redirect: 'manual',
+        });
+        clearTimeout(timeout);
+        const contentType = upstream.headers.get('content-type') || 'application/json; charset=utf-8';
+        res.writeHead(upstream.status, {
+          'Content-Type': contentType,
+          'Cache-Control': 'no-store',
+          'X-Content-Type-Options': 'nosniff',
+        });
+        return res.end(Buffer.from(await upstream.arrayBuffer()));
+      } catch (err) {
+        console.error('[api-proxy]', err && err.message);
+        res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+        return res.end(JSON.stringify({ detail: 'Backend servisine erişilemiyor.' }));
+      }
+    }
+
     // IndexNow doğrulama dosyası (arama motorları anahtarı bu adresten okur)
     if (INDEXNOW_KEY && yol === '/' + INDEXNOW_KEY + '.txt') {
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' });
