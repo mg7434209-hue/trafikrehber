@@ -3,6 +3,7 @@ from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from database import get_db
 from models import Article, DilecceSablon, CezaTuru
+from ceza_icerik import ICERIK
 import os
 
 router = APIRouter()
@@ -15,17 +16,9 @@ STATIC_URLS = [
     "/trafik-cezalari-2026",
     "/blog",
     "/trafik-cezalari",
-    "/trafik-cezalari/sorgulama",
-    "/trafik-cezalari/itiraz",
-    "/trafik-cezalari/tutarlar",
     "/sigorta",
-    "/sigorta/trafik-sigortasi",
-    "/sigorta/kasko",
     "/ehliyet",
-    "/ehliyet/sinav",
-    "/ehliyet/puan-sistemi",
     "/arac-islemleri",
-    "/arac-islemleri/muayene",
     "/dilekce-ornekleri",
     "/araclar/ceza-hesapla",
     "/hakkimizda",
@@ -82,6 +75,13 @@ def sitemap(db: Session = Depends(get_db)):
             continue
         oncelik = "0.4" if path in ("/hakkimizda", "/iletisim", "/gizlilik-politikasi") else "0.7"
         urls.append(_url(f"{SITE_URL}{path}", None, "monthly", oncelik))
+
+    # Ceza sayfaları — her ceza ayrı arama sorgusu, ayrı URL
+    for c in db.query(CezaTuru).order_by(CezaTuru.taban_ceza_tl.desc()).all():
+        if c.kod not in ICERIK:
+            continue
+        urls.append(_url(f"{SITE_URL}/ceza/{ICERIK[c.kod]['slug']}",
+                         _tarih(c.updated_at), "monthly", "0.8"))
 
     # Makaleler
     for a in db.query(Article).filter(Article.is_published == True).all():

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import AdSlot from '../components/AdSlot';
+import { AD_SLOTS } from '../adsense';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -139,6 +141,8 @@ export default function CezaListesiPage() {
           />
         </div>
 
+        <AdSlot slot={AD_SLOTS.listeUstu} style={{ margin: '0 0 18px' }} />
+
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 70px 80px 140px', padding: '10px 16px', background: '#f8faff', borderBottom: '2px solid #e2e8f0', fontSize: 11, fontWeight: 700, color: '#64748b', letterSpacing: 0.5 }}>
             <div>İHLAL</div>
@@ -165,7 +169,9 @@ export default function CezaListesiPage() {
                 >
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>
-                      {c.aciklama}{' '}
+                      {c.slug
+                        ? <Link to={`/ceza/${c.slug}`} style={{ color: '#1a3a6b', textDecoration: 'none' }}>{c.aciklama}</Link>
+                        : c.aciklama}{' '}
                       {c.kademe_notu && (
                         <span title={c.kademe_notu} style={{ marginLeft: 6, background: '#fff8e6', color: '#92400e', border: '1px solid #fde68a', fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 10, whiteSpace: 'nowrap' }}>
                           kademeli
@@ -199,6 +205,12 @@ export default function CezaListesiPage() {
                     >
                       Hesapla
                     </button>
+                    {c.slug && (
+                      <Link to={`/ceza/${c.slug}`}
+                        style={{ background: '#eef2ff', color: '#3730a3', borderRadius: 6, padding: '5px 10px', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
+                        Detay
+                      </Link>
+                    )}
                     <Link
                       to="/dilekce-ornekleri"
                       style={{ background: '#f0fdf4', color: '#16a34a', borderRadius: 6, padding: '5px 10px', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}

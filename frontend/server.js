@@ -107,6 +107,11 @@ const ROTALAR = {
     aciklama: 'Trafik cezaları, sigorta, ehliyet ve araç işlemleri üzerine güncel rehber yazıları.',
     ad: 'Blog',
   },
+  '/ceza': {
+    baslik: '2026 Trafik Cezaları — Tutar, Puan ve İtiraz | TrafikRehber',
+    aciklama: 'Her trafik cezasının güncel tutarı, erken ödeme indirimi, ceza puanı ve itiraz yolu.',
+    ad: 'Cezalar',
+  },
   '/trafik-cezalari': {
     baslik: 'Trafik Cezaları — Tutarlar, İtiraz ve Sorgulama | TrafikRehber',
     aciklama: 'Trafik cezası tutarları, e-Devlet sorgulama, itiraz yolları ve erken ödeme indirimi hakkında güncel rehberler.',
@@ -187,6 +192,34 @@ async function metaCoz(yol) {
       tip: 'article',
       ld: [ld, breadcrumbLd([{ ad: 'Ana Sayfa', yol: '/' }, { ad: 'Blog', yol: '/blog' }, { ad: a.title, yol }])],
     };
+  }
+
+  // Ceza sayfası — her ceza ayrı arama sorgusu
+  m = yol.match(/^\/ceza\/([^/]+)$/);
+  if (m) {
+    const veri = await apiGet('/api/ceza-turleri/sayfa/' + encodeURIComponent(m[1]), 600000);
+    const c = veri && veri.ceza, sf = veri && veri.sayfa;
+    if (!c || !sf) return { baslik: 'Ceza bulunamadı — ' + MARKA, aciklama: '', noindex: true, bulunamadi: true, ld: [] };
+    const tl = (v) => Number(v).toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺';
+    const aciklama = `${c.aciklama} cezası ${tl(c.taban_ceza_tl)}. ${veri.odeme_suresi_gun} gün içinde ödemede ` +
+      `${tl(c.indirimli_tl)}. Ceza puanı, itiraz süresi ve hazır dilekçe örneği.`;
+    const ld = [
+      breadcrumbLd([
+        { ad: 'Ana Sayfa', yol: '/' },
+        { ad: '2026 Ceza Listesi', yol: '/trafik-cezalari-2026' },
+        { ad: c.aciklama, yol },
+      ]),
+    ];
+    if (sf.sss && sf.sss.length) {
+      ld.push({
+        '@type': 'FAQPage',
+        mainEntity: sf.sss.map((q) => ({
+          '@type': 'Question', name: q.soru,
+          acceptedAnswer: { '@type': 'Answer', text: q.cevap },
+        })),
+      });
+    }
+    return { baslik: sf.baslik + ' | ' + MARKA, aciklama, ld };
   }
 
   // Dilekçe detayı
@@ -317,6 +350,14 @@ const sunucu = http.createServer(async (req, res) => {
     if (INDEXNOW_KEY && yol === '/' + INDEXNOW_KEY + '.txt') {
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' });
       return res.end(INDEXNOW_KEY);
+    }
+
+    // Kopya içerik üreten alt kategoriler → üst kategoriye kalıcı yönlendirme.
+    // Bu URL'ler üst sayfayla birebir aynı içeriği basıyordu ve sitemap'teydi.
+    const altKategori = yol.match(/^(\/(?:trafik-cezalari|sigorta|ehliyet|arac-islemleri))\/[^/]+$/);
+    if (altKategori) {
+      res.writeHead(301, { Location: altKategori[1], 'Cache-Control': 'public, max-age=86400' });
+      return res.end();
     }
 
     if (yol === '/sitemap.xml' || yol === '/robots.txt') {

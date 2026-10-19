@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi } from '../services/api';
 import { abs } from '../seo';
+import AdSlot from '../components/AdSlot';
+import { AD_SLOTS } from '../adsense';
 
 export default function ArticlePage() {
   const { slug } = useParams();
