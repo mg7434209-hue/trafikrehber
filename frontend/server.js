@@ -303,7 +303,7 @@ async function metinVarlik(yol, ttlMs) {
 
 function guvenliYol(kok, istenen) {
   const tam = path.normalize(path.join(kok, istenen));
-  return tam.startsWith(kok) ? tam : null;
+  return (tam === kok || tam.startsWith(kok + path.sep)) ? tam : null;
 }
 
 const indexHtml = () => fs.readFileSync(path.join(BUILD, 'index.html'), 'utf8');
@@ -346,16 +346,18 @@ const sunucu = http.createServer(async (req, res) => {
           signal: ac.signal,
           redirect: 'manual',
         });
-        clearTimeout(timeout);
         const contentType = upstream.headers.get('content-type') || 'application/json; charset=utf-8';
         res.writeHead(upstream.status, {
           'Content-Type': contentType,
           'Cache-Control': 'no-store',
           'X-Content-Type-Options': 'nosniff',
         });
-        return res.end(Buffer.from(await upstream.arrayBuffer()));
+        const responseBody = Buffer.from(await upstream.arrayBuffer());
+        clearTimeout(timeout);
+        return res.end(responseBody);
       } catch (err) {
         console.error('[api-proxy]', err && err.message);
+        if (res.headersSent) return res.destroy();
         res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
         return res.end(JSON.stringify({ detail: 'Backend servisine erişilemiyor.' }));
       }
@@ -420,5 +422,5 @@ const sunucu = http.createServer(async (req, res) => {
 });
 
 sunucu.listen(PORT, () => {
-  console.log(`TrafikRehber ${PORT} portunda · API: ${API || '(tanımsız)'} · site: ${SITE}`);
+  console.log(`CezaRehberi ${PORT} portunda · API: ${API || '(tanımsız)'} · site: ${SITE}`);
 });
