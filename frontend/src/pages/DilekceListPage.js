@@ -58,15 +58,40 @@ export default function DilekceListPage() {
           </h1>
           <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
             Trafik cezasına itiraz etmek için hazır dilekçe şablonları. Bilgileri doldurun, indirin.
-            İtiraz süresi ceza tebliğinden itibaren <strong>15 gündür</strong>.
+            Başvuru süresi, yetkili merci ve usul işlem türüne göre değişebilir; güncel resmî kaynaklardan doğrulayın.
           </p>
         </div>
 
         {/* Bilgi bandı */}
         <div style={{ background: '#fff8e6', border: '1px solid #fbbf24', borderRadius: 8, padding: '11px 16px', marginBottom: 16, fontSize: 13, color: '#92400e' }}>
-          ⚖️ İtiraz dilekçenizi <strong>Trafik Para Cezası Karar Tutanağı</strong>'nı düzenleyen birime (trafik müdürlüğü veya emniyet) teslim edin.
+          ⚖️ Başvurunun yapılacağı merci ve yöntem, tutanak türüne ve güncel mevzuata göre belirlenir. Yanlış makama başvurmamak için resmî başvuru bilgilerini kontrol edin.
         </div>
 
+        <section aria-label="Dilekçe hizmet seçenekleri" style={{ marginBottom: 28 }}>
+          <h2 style={{ color:'#1a3a6b',fontSize:22,margin:'0 0 12px' }}>Size uygun dilekçe seçeneğini belirleyin</h2>
+          <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(215px,1fr))',gap:12 }}>
+            <div style={{ border:'1px solid #cbd5e1',borderRadius:12,padding:18,background:'#fff' }}>
+              <strong>Ücretsiz tam şablon</strong><h3 style={{fontSize:26,margin:'8px 0'}}>0 TL</h3>
+              <p style={{fontSize:13,lineHeight:1.6}}>Genel örnek dilekçeyi doldurun, görüntüleyin ve yazdırın. Kişiye özel hukuki görüş içermez.</p>
+              <a href="#dilekce-listesi" style={{color:'#1a3a6b',fontWeight:700}}>Ücretsiz şablonları incele →</a>
+            </div>
+            <div style={{ border:'1px solid #f59e0b',borderRadius:12,padding:18,background:'#fffbeb' }}>
+              <strong>Gelişmiş dijital şablon</strong><h3 style={{fontSize:26,margin:'8px 0'}}>200 TL</h3>
+              <p style={{fontSize:13,lineHeight:1.6}}>Belge kontrol listesi, düzenli ekler ve gelişmiş şablon paketi. Henüz satışa açık değil; avukat onayı içermez.</p>
+              <span style={{fontSize:12,fontWeight:700,color:'#92400e'}}>Hazırlanıyor · ödeme alınmıyor</span>
+            </div>
+            <div style={{ border:'1px solid #cbd5e1',borderRadius:12,padding:18,background:'#f8fafc' }}>
+              <strong>Avukat incelemesi ve danışmanlık</strong><h3 style={{fontSize:22,margin:'8px 0'}}>Yakında</h3>
+              <p style={{fontSize:13,lineHeight:1.6}}>Bağımsız avukatla hizmet kapsamı, sözleşme ve yürürlükteki asgari ücretler netleştirildikten sonra sunulabilir.</p>
+              <span style={{fontSize:12,fontWeight:700,color:'#475569'}}>Avukat anlaşması yapılmadı · başvuru/ödeme kapalı</span>
+            </div>
+          </div>
+        </section>
+        <section style={{background:'#eef5ff',borderRadius:12,padding:18,marginBottom:24}}>
+          <h2 style={{fontSize:18,color:'#1a3a6b',margin:'0 0 8px'}}>Başvuru yol haritası</h2>
+          <p style={{fontSize:13,lineHeight:1.7,margin:0}}>1. Tutanak türünü ve tebliğ tarihini kontrol edin. 2. Güncel mevzuattan başvuru süresi ve yetkili mercii doğrulayın. 3. Belgelerinizi ve delillerinizi hazırlayın. 4. Şablonu doldurup kontrol edin. 5. Gerekirse avukata danışın. Yapay zekâ desteği hukuki danışmanlık yerine geçmez.</p>
+          <p style={{fontSize:12,margin:'10px 0 0'}}>Resmî kaynaklar: <a href="https://www.mevzuat.gov.tr/" target="_blank" rel="noopener noreferrer">Mevzuat</a> · <a href="https://www.turkiye.gov.tr/" target="_blank" rel="noopener noreferrer">e-Devlet</a></p>
+        </section>
         <div style={{ position: 'relative', marginBottom: 16 }}>
           <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>🔍</span>
           <input
@@ -78,7 +103,7 @@ export default function DilekceListPage() {
           />
         </div>
 
-        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
+        <div id="dilekce-listesi" style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
           {/* Başlık satırı */}
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 100px 1fr 120px', padding: '10px 16px', background: '#f8faff', borderBottom: '2px solid #e2e8f0', fontSize: 11, fontWeight: 700, color: '#64748b', letterSpacing: 0.5 }}>
             <div>DİLEKÇE ADI</div>
