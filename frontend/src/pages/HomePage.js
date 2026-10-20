@@ -101,6 +101,33 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── BELGE HAZIRLAMA YOLCULUĞU ─── */}
+      <section aria-labelledby="belge-baslik" style={{ padding: '54px 20px', background: '#fff' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ display: 'inline-block', background: '#e8f1ff', color: '#1a3a6b', fontWeight: 700, fontSize: 12, borderRadius: 30, padding: '5px 13px', marginBottom: 14 }}>ADIM ADIM BAŞVURU REHBERİ</div>
+          <h2 id="belge-baslik" style={{ color: '#142c4f', fontSize: 'clamp(22px, 3vw, 30px)', lineHeight: 1.3, marginBottom: 12 }}>Trafik cezanıza ilişkin belgeleri bilinçli hazırlayın</h2>
+          <p style={{ color: '#64748b', maxWidth: 720, lineHeight: 1.7, marginBottom: 24 }}>İşlemin türünü belirleyin, resmî bilgileri doğrulayın ve uygun dilekçe örneğine ulaşın. Hukuki temsil veya avukat incelemesi gerektiren durumlarda bağımsız bir avukattan destek alın.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 16 }}>
+            {[
+              { n: '01', title: 'Ceza türünü belirleyin', detail: 'Tebliğ tarihi, tutanak ve işlem türünü inceleyin.' },
+              { n: '02', title: 'Başvuru yolunu öğrenin', detail: 'Süreleri ve yetkili mercileri güncel mevzuattan doğrulayın.' },
+              { n: '03', title: 'Dilekçe örneğini inceleyin', detail: 'Genel şablonlardan yararlanın; kişisel olayınıza göre değerlendirin.' },
+              { n: '04', title: 'Gerekirse avukata danışın', detail: 'Hukuki görüş ve temsil için yetkili bir avukatla çalışın.' },
+            ].map(step => (
+              <div key={step.n} style={{ padding: 20, border: '1px solid #dfe7f1', borderRadius: 14, background: '#fbfdff' }}>
+                <span style={{ color: '#e65c00', fontSize: 22, fontWeight: 900 }}>{step.n}</span>
+                <h3 style={{ color: '#142c4f', fontSize: 16, margin: '12px 0 8px' }}>{step.title}</h3>
+                <p style={{ color: '#64748b', fontSize: 13, lineHeight: 1.6 }}>{step.detail}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 22, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16 }}>
+            <Link to="/dilekce-ornekleri" style={{ display: 'inline-block', background: '#e65c00', color: '#fff', padding: '13px 22px', borderRadius: 9, textDecoration: 'none', fontWeight: 700 }}>Dilekçe örneklerini incele →</Link>
+            <span style={{ fontSize: 12, color: '#64748b' }}>Avukat incelemeli ücretli hizmet henüz sunulmamaktadır.</span>
+          </div>
+        </div>
+      </section>
+
       {/* ─── HIZLI ARAÇLAR ─── */}
       <section style={{ padding: '52px 20px', background: '#f4f7fc' }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
