@@ -32,8 +32,8 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title>TrafikRehber — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi</title>
-        <meta name="description" content="2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. 7574 sayılı Kanun ile güncellendi." />
+        <title>CezaRehberi — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi</title>
+        <meta name="description" content="2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. Bilgileri resmî kaynaklardan doğrulayın." />
         <meta name="keywords" content="trafik cezası 2026, trafik cezası itiraz, trafik cezası sorgulama, kırmızı ışık cezası, hız cezası, trafik sigortası" />
       </Helmet>
 
