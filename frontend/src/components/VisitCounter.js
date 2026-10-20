@@ -52,8 +52,11 @@ export default function VisitCounter() {
   ) : null;
 
   return (
-    <p className="visit-counter" title={`Bugün ${nf.format(veri.bugun || 0)} tekil ziyaretçi`}>
+    <p className="visit-counter" title="Son 24 saat, günlük tekil ziyaret kayıtlarını gösterir; gece yarısını geçen tekrar ziyaretler yeniden sayılabilir.">
       <span aria-hidden="true">👥</span> <b>{nf.format(veri.toplam)}</b> ziyaretçi
+      {typeof veri.son_24_saat === "number" && (
+        <span className="visit-24h"> · Son 24 saat: <b>{nf.format(veri.son_24_saat)}</b> giriş</span>
+      )}
       {veri.online > 0 && (
         <span className="visit-online">
           {' · '}<span className="visit-dot" aria-hidden="true" />
