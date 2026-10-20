@@ -47,11 +47,11 @@ export default function HomePage() {
           </div>
 
           <h1 style={{ fontSize: 'clamp(26px, 5vw, 46px)', fontWeight: 900, margin: '0 0 16px', lineHeight: 1.2 }}>
-            Trafik Cezası mı Aldınız?<br />
+            Trafik Cezası Aldınız mı?<br />
             <span style={{ color: '#fbbf24' }}>Doğru Adımı Öğrenin.</span>
           </h1>
           <p style={{ fontSize: 17, opacity: 0.85, margin: '0 auto 36px', maxWidth: 580, lineHeight: 1.6 }}>
-            2026 güncel ceza tutarları, erken ödeme indirimi hesaplayıcı, itiraz dilekçeleri ve hukuki rehber — hepsi ücretsiz.
+            Ceza tutarlarını inceleyin, hesaplama araçlarını kullanın ve başvuru sürecinizi adım adım öğrenin. Ücretsiz dilekçe şablonları sizi bekliyor.
           </p>
 
           {/* Arama */}
@@ -68,6 +68,8 @@ export default function HomePage() {
               Ara →
             </button>
           </form>
+
+          <p style={{fontSize:12,opacity:.8,margin:'-12px auto 24px',maxWidth:590}}>Bağımsız bilgilendirme platformudur; resmî kurum veya hukuk bürosu değildir. Süreleri ve tutarları resmî kaynaklardan doğrulayın.</p>
 
           {/* Hızlı linkler */}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -125,6 +127,41 @@ export default function HomePage() {
             <Link to="/dilekce-ornekleri" style={{ display: 'inline-block', background: '#e65c00', color: '#fff', padding: '13px 22px', borderRadius: 9, textDecoration: 'none', fontWeight: 700 }}>Dilekçe örneklerini incele →</Link>
             <span style={{ fontSize: 12, color: '#64748b' }}>Avukat incelemeli ücretli hizmet henüz sunulmamaktadır.</span>
           </div>
+        </div>
+      </section>
+
+      {/* ─── HİZMET SEÇENEKLERİ ─── */}
+      <section aria-labelledby="hizmetler-baslik" style={{padding:'64px 20px',background:'#f8fafc'}}>
+        <div style={{maxWidth:1060,margin:'0 auto'}}>
+          <div style={{textAlign:'center',marginBottom:30}}>
+            <span style={{fontSize:12,color:'#b45309',fontWeight:800,letterSpacing:1.2}}>BELGE VE BAŞVURU MERKEZİ</span>
+            <h2 id="hizmetler-baslik" style={{fontSize:'clamp(24px,3vw,34px)',color:'#142c4f',margin:'10px 0'}}>Dilekçenizi hazırlamak için doğru seçeneği bulun</h2>
+            <p style={{fontSize:15,color:'#64748b',maxWidth:680,margin:'0 auto',lineHeight:1.7}}>Ücretsiz örneklerden başlayın. Gelişmiş dijital belgeler ve avukat incelemesi seçeneklerinin hizmet durumunu açıkça görün.</p>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:18}}>
+            <article style={{background:'#fff',border:'1px solid #dbe4ef',borderRadius:18,padding:26,boxShadow:'0 8px 26px rgba(20,44,79,.04)'}}>
+              <span style={{fontSize:12,fontWeight:800,color:'#047857'}}>HEMEN KULLANIN</span>
+              <h3 style={{fontSize:21,color:'#142c4f',margin:'12px 0 4px'}}>Ücretsiz tam şablon</h3>
+              <div style={{fontSize:32,fontWeight:900,color:'#142c4f'}}>0 TL</div>
+              <p style={{color:'#64748b',fontSize:14,lineHeight:1.7,minHeight:72}}>Dilekçe örneğini seçin, bilgileri doldurun, kopyalayın veya yazdırın.</p>
+              <Link to="/dilekce-ornekleri" style={{display:'block',textAlign:'center',background:'#1a3a6b',color:'#fff',padding:13,borderRadius:10,textDecoration:'none',fontWeight:800}}>Ücretsiz dilekçe hazırla →</Link>
+            </article>
+            <article style={{background:'#fff',border:'2px solid #f0b65e',borderRadius:18,padding:25,boxShadow:'0 8px 26px rgba(20,44,79,.04)'}}>
+              <span style={{fontSize:12,fontWeight:800,color:'#b45309'}}>YAKINDA</span>
+              <h3 style={{fontSize:21,color:'#142c4f',margin:'12px 0 4px'}}>Gelişmiş şablon paketi</h3>
+              <div style={{fontSize:32,fontWeight:900,color:'#142c4f'}}>200 TL</div>
+              <p style={{color:'#64748b',fontSize:14,lineHeight:1.7,minHeight:72}}>Belge kontrol listesi ve düzenli eklerle hazırlanacak dijital paket. Avukat incelemesi içermez.</p>
+              <div style={{textAlign:'center',background:'#fff7ed',color:'#92400e',padding:13,borderRadius:10,fontWeight:800}}>Hazırlanıyor · ödeme kapalı</div>
+            </article>
+            <article style={{background:'#fff',border:'1px solid #dbe4ef',borderRadius:18,padding:26,boxShadow:'0 8px 26px rgba(20,44,79,.04)'}}>
+              <span style={{fontSize:12,fontWeight:800,color:'#64748b'}}>PLANLANIYOR</span>
+              <h3 style={{fontSize:21,color:'#142c4f',margin:'12px 0 4px'}}>Avukat incelemesi</h3>
+              <div style={{fontSize:23,fontWeight:900,color:'#142c4f',margin:'8px 0'}}>Anlaşma sonrası</div>
+              <p style={{color:'#64748b',fontSize:14,lineHeight:1.7,minHeight:72}}>Gerçek avukatın incelemesi ve ek danışmanlık; sözleşme, yetki ve ücret koşulları tamamlanınca sunulabilir.</p>
+              <div style={{textAlign:'center',background:'#f1f5f9',color:'#475569',padding:13,borderRadius:10,fontWeight:800}}>Şu anda hizmet verilmemektedir</div>
+            </article>
+          </div>
+          <p style={{textAlign:'center',fontSize:12,color:'#64748b',lineHeight:1.7,marginTop:20}}>Genel şablonlar kişiye özel hukuki danışmanlık değildir. Avukat incelemeli hizmet için henüz avukat anlaşması yapılmamıştır.</p>
         </div>
       </section>
 
