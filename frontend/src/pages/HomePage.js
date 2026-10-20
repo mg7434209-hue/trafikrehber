@@ -32,17 +32,9 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title>TrafikRehber — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi</title>
-        <meta name="description" content="2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. 7574 sayılı Kanun ile güncellendi." />
+        <title>CezaRehberi — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi</title>
+        <meta name="description" content="2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. Bilgileri resmî kaynaklardan doğrulayın." />
         <meta name="keywords" content="trafik cezası 2026, trafik cezası itiraz, trafik cezası sorgulama, kırmızı ışık cezası, hız cezası, trafik sigortası" />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": "TrafikRehber",
-          "url": "https://www.cezarehberi.com",
-          "description": "Trafik cezaları, itiraz rehberi ve sigorta bilgileri",
-          "potentialAction": { "@type": "SearchAction", "target": "https://www.cezarehberi.com/blog?q={search_term_string}", "query-input": "required name=search_term_string" }
-        })}</script>
       </Helmet>
 
       {/* ─── HERO ─── */}
@@ -50,8 +42,8 @@ export default function HomePage() {
         <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
 
           {/* Güncellik bandı */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(230,92,0,0.9)', borderRadius: 20, padding: '5px 16px', fontSize: 13, fontWeight: 700, marginBottom: 20 }}>
-            <span>🔴</span> 7574 sayılı Kanun — 27 Şubat 2026 güncel
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.24)', borderRadius: 20, padding: '6px 16px', fontSize: 13, fontWeight: 700, marginBottom: 20 }}>
+            <span aria-hidden="true">✓</span> Trafik cezaları ve araç işlemleri bilgi merkezi
           </div>
 
           <h1 style={{ fontSize: 'clamp(26px, 5vw, 46px)', fontWeight: 900, margin: '0 0 16px', lineHeight: 1.2 }}>
@@ -65,6 +57,8 @@ export default function HomePage() {
           {/* Arama */}
           <form onSubmit={handleSearch} style={{ display: 'flex', gap: 0, maxWidth: 540, margin: '0 auto 32px', background: '#fff', borderRadius: 10, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
             <input
+              type="search"
+              aria-label="Trafik ve araç işlemleri rehberlerinde ara"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Trafik cezası itiraz, sigorta, ehliyet puan..."
@@ -94,16 +88,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── 2026 ACİL BİLGİ KUTUSU ─── */}
+      {/* ─── RESMÎ KAYNAKLAR / GÜNCELLİK ─── */}
       <section style={{ background: '#fff8e6', borderBottom: '2px solid #fbbf24', padding: '20px' }}>
         <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontSize: 22 }}>⚡</span>
           <div style={{ fontSize: 14, color: '#92400e', lineHeight: 1.5 }}>
-            <strong>2026 yeni ceza tutarları yürürlükte:</strong> Kırmızı ışık <strong>5.000 ₺</strong> · Cep telefonu <strong>5.000 ₺</strong> · Trafikte saldırgan davranış <strong>180.000 ₺</strong> · 1 ay içinde ödeyin <strong>%25 indirim</strong> alın.
+            <strong>Ceza tutarını ve ödeme süresini kontrol edin.</strong> Tutarlar, mevzuat ve uygulama koşulları değişebilir. İşlem yapmadan önce güncel resmî kayıtları doğrulayın.
           </div>
           <Link to="/trafik-cezalari-2026" style={{ background: '#e65c00', color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', flexShrink: 0 }}>
             Tüm Liste →
           </Link>
+        </div>
+      </section>
+
+      {/* ─── BELGE HAZIRLAMA YOLCULUĞU ─── */}
+      <section aria-labelledby="belge-baslik" style={{ padding: '54px 20px', background: '#fff' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ display: 'inline-block', background: '#e8f1ff', color: '#1a3a6b', fontWeight: 700, fontSize: 12, borderRadius: 30, padding: '5px 13px', marginBottom: 14 }}>ADIM ADIM BAŞVURU REHBERİ</div>
+          <h2 id="belge-baslik" style={{ color: '#142c4f', fontSize: 'clamp(22px, 3vw, 30px)', lineHeight: 1.3, marginBottom: 12 }}>Trafik cezanıza ilişkin belgeleri bilinçli hazırlayın</h2>
+          <p style={{ color: '#64748b', maxWidth: 720, lineHeight: 1.7, marginBottom: 24 }}>İşlemin türünü belirleyin, resmî bilgileri doğrulayın ve uygun dilekçe örneğine ulaşın. Hukuki temsil veya avukat incelemesi gerektiren durumlarda bağımsız bir avukattan destek alın.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 16 }}>
+            {[
+              { n: '01', title: 'Ceza türünü belirleyin', detail: 'Tebliğ tarihi, tutanak ve işlem türünü inceleyin.' },
+              { n: '02', title: 'Başvuru yolunu öğrenin', detail: 'Süreleri ve yetkili mercileri güncel mevzuattan doğrulayın.' },
+              { n: '03', title: 'Dilekçe örneğini inceleyin', detail: 'Genel şablonlardan yararlanın; kişisel olayınıza göre değerlendirin.' },
+              { n: '04', title: 'Gerekirse avukata danışın', detail: 'Hukuki görüş ve temsil için yetkili bir avukatla çalışın.' },
+            ].map(step => (
+              <div key={step.n} style={{ padding: 20, border: '1px solid #dfe7f1', borderRadius: 14, background: '#fbfdff' }}>
+                <span style={{ color: '#e65c00', fontSize: 22, fontWeight: 900 }}>{step.n}</span>
+                <h3 style={{ color: '#142c4f', fontSize: 16, margin: '12px 0 8px' }}>{step.title}</h3>
+                <p style={{ color: '#64748b', fontSize: 13, lineHeight: 1.6 }}>{step.detail}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 22, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16 }}>
+            <Link to="/dilekce-ornekleri" style={{ display: 'inline-block', background: '#e65c00', color: '#fff', padding: '13px 22px', borderRadius: 9, textDecoration: 'none', fontWeight: 700 }}>Dilekçe örneklerini incele →</Link>
+            <span style={{ fontSize: 12, color: '#64748b' }}>Avukat incelemeli ücretli hizmet henüz sunulmamaktadır.</span>
+          </div>
         </div>
       </section>
 
@@ -147,8 +168,7 @@ export default function HomePage() {
             {[
               { val: stats.total_articles + '+', label: 'Güncel Makale', icon: '📰' },
               { val: stats.total_dilekce + '+', label: 'Dilekçe Şablonu', icon: '📄' },
-              { val: '17', label: 'Ceza Türü', icon: '⚖️' },
-              { val: '%100', label: 'Ücretsiz', icon: '✅' },
+              { val: 'Ücretsiz', label: 'Bilgi ve Rehberler', icon: '✅' },
               // Ziyaretçi sayacı (backend /api/stats/public) — veri yoksa gizlenir
               ...(stats.ziyaretci_toplam
                 ? [{ val: stats.ziyaretci_toplam.toLocaleString('tr-TR'), label: 'Ziyaretçi', icon: '👥' }]
@@ -218,6 +238,28 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* ─── RESMÎ İŞLEM KANALLARI ─── */}
+      <section style={{ padding: '46px 20px', background: '#fff' }} aria-labelledby="resmi-kaynaklar-baslik">
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <h2 id="resmi-kaynaklar-baslik" style={{ fontSize: 22, fontWeight: 800, color: '#1a3a6b', marginBottom: 8 }}>Resmî kaynaklardan doğrulayın</h2>
+          <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7, marginBottom: 20 }}>
+            Rehberlerimiz bilgilendirme amaçlıdır. Borç, tebligat, başvuru ve ödeme durumunuzu ilgili kurumun resmî sisteminden kontrol edin.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 14 }}>
+            {[
+              { ad: 'e-Devlet Kapısı', aciklama: 'Kişisel sorgulama ve kamu hizmetleri', url: 'https://www.turkiye.gov.tr/' },
+              { ad: 'Gelir İdaresi Başkanlığı', aciklama: 'Vergi ve ödeme işlemleri', url: 'https://www.gib.gov.tr/' },
+              { ad: 'Mevzuat Bilgi Sistemi', aciklama: 'Yürürlükteki düzenlemeleri inceleyin', url: 'https://www.mevzuat.gov.tr/' },
+            ].map(k => (
+              <a key={k.url} href={k.url} target="_blank" rel="noopener noreferrer" style={{ display: 'block', border: '1px solid #e2e8f0', borderRadius: 12, padding: 18, color: '#1a3a6b', textDecoration: 'none' }}>
+                <strong style={{ display: 'block', fontSize: 15, marginBottom: 6 }}>{k.ad} ↗</strong>
+                <span style={{ color: '#64748b', fontSize: 13 }}>{k.aciklama}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── SSS ─── */}
       <section style={{ padding: '52px 20px' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
@@ -226,6 +268,9 @@ export default function HomePage() {
           {SSS.map((item, i) => (
             <div key={i} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, marginBottom: 8, overflow: 'hidden' }}>
               <button
+                type="button"
+                aria-expanded={openSss === i}
+                aria-controls={`sss-yanit-${i}`}
                 onClick={() => setOpenSss(openSss === i ? null : i)}
                 style={{ width: '100%', background: 'none', border: 'none', padding: '16px 20px', textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 700, fontSize: 14, color: '#1a3a6b' }}
               >
@@ -233,7 +278,7 @@ export default function HomePage() {
                 <span style={{ fontSize: 18, marginLeft: 12, flexShrink: 0, color: '#94a3b8' }}>{openSss === i ? '−' : '+'}</span>
               </button>
               {openSss === i && (
-                <div style={{ padding: '0 20px 16px', color: '#475569', fontSize: 14, lineHeight: 1.7, borderTop: '1px solid #f1f5f9' }}>
+                <div id={`sss-yanit-${i}`} style={{ padding: '0 20px 16px', color: '#475569', fontSize: 14, lineHeight: 1.7, borderTop: '1px solid #f1f5f9' }}>
                   {item.c}
                 </div>
               )}
@@ -247,7 +292,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 10 }}>Cezanıza Haksız mı Kaldınız?</h2>
           <p style={{ opacity: 0.8, fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
-            15 gün içinde itiraz hakkınız var. Hazır dilekçe şablonlarımızla hemen başlayın.
+            İtiraz süresi ve başvuru yolu işlemin türüne göre değişebilir. Güncel mevzuatı kontrol edin, dilekçe örneklerimizden yararlanın.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/dilekce-ornekleri" style={{ background: '#e65c00', color: '#fff', textDecoration: 'none', padding: '13px 28px', borderRadius: 9, fontWeight: 700, fontSize: 15 }}>
