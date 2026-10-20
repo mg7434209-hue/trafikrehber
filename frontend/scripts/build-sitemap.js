@@ -13,7 +13,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SITE = (process.env.REACT_APP_SITE_URL || 'https://www.cezarehberi.com').replace(/\/$/, '');
-const API = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/$/, '');
+const API = (process.env.BACKEND_URL || process.env.REACT_APP_BACKEND_URL || '').replace(/\/$/, '');
 const OUT = path.join(__dirname, '..', 'public', 'sitemap.xml');
 
 // App.js'teki statik rotalar (yeni sayfa eklerken buraya da ekle)
@@ -50,7 +50,7 @@ function yaz(xml, kaynak) {
 
 async function main() {
   if (!API) {
-    yaz(statikXml(), 'statik rota listesi — REACT_APP_BACKEND_URL tanımsız');
+    yaz(statikXml(), 'statik rota listesi — BACKEND_URL tanımsız');
     return;
   }
   try {
