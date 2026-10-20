@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * TrafikRehber — yayın sunucusu (bağımlılıksız Node).
+ * CezaRehberi — yayın sunucusu (bağımlılıksız Node).
  *
  * NEDEN VAR: Site bir React SPA. `serve -s build` HER URL için AYNI index.html'i
  * döndürür; yani Google dışındaki botlar (Facebook, WhatsApp, X, LinkedIn, Bing'in
@@ -31,11 +31,11 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 const BUILD = path.join(__dirname, 'build');
-const API = (process.env.REACT_APP_BACKEND_URL || process.env.BACKEND_URL || '').replace(/\/$/, '');
+const API = (process.env.BACKEND_URL || process.env.REACT_APP_BACKEND_URL || '').replace(/\/$/, '');
 const SITE = (process.env.REACT_APP_SITE_URL || 'https://www.cezarehberi.com').replace(/\/$/, '');
 const INDEXNOW_KEY = (process.env.INDEXNOW_KEY || '').trim();
 const OG_IMAGE = SITE + '/og-default.png';
-const MARKA = 'TrafikRehber';
+const MARKA = 'CezaRehberi';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8',
@@ -83,53 +83,53 @@ async function apiGet(yol, ttlMs = 600000) {
 // ---- Statik rota meta tablosu (App.js ile aynı rotalar) ----
 const ROTALAR = {
   '/': {
-    baslik: 'TrafikRehber — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi',
-    aciklama: '2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. 7574 sayılı Kanun ile güncellendi.',
+    baslik: 'CezaRehberi — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi',
+    aciklama: '2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. Bilgileri işlem öncesinde resmî kaynaklardan doğrulayın.',
     ad: 'Ana Sayfa',
   },
   '/trafik-cezalari-2026': {
-    baslik: '2026 Trafik Cezaları Güncel Liste | Tüm Tutarlar — TrafikRehber',
+    baslik: '2026 Trafik Cezaları Güncel Liste | Tüm Tutarlar — CezaRehberi',
     aciklama: '2026 trafik cezası tutarlarının tam listesi: kırmızı ışık, hız, alkol, cep telefonu. Kademeli cezalar ve %25 erken ödeme indirimi.',
     ad: '2026 Ceza Listesi',
   },
   '/araclar/ceza-hesapla': {
-    baslik: 'Trafik Cezası Hesaplama Aracı 2026 — TrafikRehber',
+    baslik: 'Trafik Cezası Hesaplama Aracı 2026 — CezaRehberi',
     aciklama: 'Ceza türünü seçin; 1 ay içinde ödemede %25 indirimli tutarı ve taksit seçeneklerini anında görün.',
     ad: 'Ceza Hesapla',
   },
   '/dilekce-ornekleri': {
-    baslik: 'Trafik Cezası İtiraz Dilekçe Örnekleri (2026) — TrafikRehber',
-    aciklama: 'Trafik cezasına itiraz, sigorta hasar ihbarı ve ehliyet iptali için hazır dilekçe şablonları. Doldurun, indirin. İtiraz süresi 15 gündür.',
+    baslik: 'Trafik Cezası İtiraz Dilekçe Örnekleri (2026) — CezaRehberi',
+    aciklama: 'Trafik cezasına itiraz, sigorta hasar ihbarı ve ehliyet iptali için hazır dilekçe şablonları. Doldurun, indirin. Başvuru süresini ve usulünü güncel mevzuattan doğrulayın.',
     ad: 'Dilekçe Örnekleri',
   },
   '/blog': {
-    baslik: 'Trafik, Sigorta ve Ehliyet Rehberleri — TrafikRehber Blog',
+    baslik: 'Trafik, Sigorta ve Ehliyet Rehberleri — CezaRehberi Blog',
     aciklama: 'Trafik cezaları, sigorta, ehliyet ve araç işlemleri üzerine güncel rehber yazıları.',
     ad: 'Blog',
   },
   '/trafik-cezalari': {
-    baslik: 'Trafik Cezaları — Tutarlar, İtiraz ve Sorgulama | TrafikRehber',
+    baslik: 'Trafik Cezaları — Tutarlar, İtiraz ve Sorgulama | CezaRehberi',
     aciklama: 'Trafik cezası tutarları, e-Devlet sorgulama, itiraz yolları ve erken ödeme indirimi hakkında güncel rehberler.',
     ad: 'Trafik Cezaları',
   },
   '/sigorta': {
-    baslik: 'Trafik Sigortası ve Kasko Rehberi 2026 — TrafikRehber',
+    baslik: 'Trafik Sigortası ve Kasko Rehberi 2026 — CezaRehberi',
     aciklama: 'Zorunlu trafik sigortası (ZMSS), kasko, hasar ihbarı ve tazminat süreçleri hakkında güncel bilgiler.',
     ad: 'Sigorta',
   },
   '/ehliyet': {
-    baslik: 'Ehliyet İşlemleri: Puan Sorgulama, Sınav ve Yenileme — TrafikRehber',
+    baslik: 'Ehliyet İşlemleri: Puan Sorgulama, Sınav ve Yenileme — CezaRehberi',
     aciklama: 'Ehliyet puan sistemi, sınav başvurusu, yenileme ve iptal kararına itiraz hakkında rehberler.',
     ad: 'Ehliyet',
   },
   '/arac-islemleri': {
-    baslik: 'Araç İşlemleri: Muayene, Tescil ve Devir — TrafikRehber',
+    baslik: 'Araç İşlemleri: Muayene, Tescil ve Devir — CezaRehberi',
     aciklama: 'TÜVTÜRK muayene randevusu, araç tescili, noter devri ve plaka işlemleri hakkında güncel rehberler.',
     ad: 'Araç İşlemleri',
   },
-  '/hakkimizda': { baslik: 'Hakkımızda — TrafikRehber', aciklama: 'TrafikRehber; trafik cezaları, sigorta, ehliyet ve araç işlemleri üzerine güncel ve güvenilir Türkçe rehber sunar.', ad: 'Hakkımızda' },
-  '/iletisim': { baslik: 'İletişim — TrafikRehber', aciklama: 'Görüş, öneri ve sorularınız için TrafikRehber iletişim sayfası.', ad: 'İletişim' },
-  '/gizlilik-politikasi': { baslik: 'Gizlilik Politikası — TrafikRehber', aciklama: 'KVKK kapsamında kişisel verilerin işlenmesi, çerezler ve ziyaretçi sayacı hakkında bilgilendirme.', ad: 'Gizlilik Politikası' },
+  '/hakkimizda': { baslik: 'Hakkımızda — CezaRehberi', aciklama: 'CezaRehberi; trafik cezaları, sigorta, ehliyet ve araç işlemleri üzerine güncel ve güvenilir Türkçe rehber sunar.', ad: 'Hakkımızda' },
+  '/iletisim': { baslik: 'İletişim — CezaRehberi', aciklama: 'Görüş, öneri ve sorularınız için CezaRehberi iletişim sayfası.', ad: 'İletişim' },
+  '/gizlilik-politikasi': { baslik: 'Gizlilik Politikası — CezaRehberi', aciklama: 'KVKK kapsamında kişisel verilerin işlenmesi, çerezler ve ziyaretçi sayacı hakkında bilgilendirme.', ad: 'Gizlilik Politikası' },
 };
 
 const KATEGORI_KOKU = ['/trafik-cezalari', '/sigorta', '/ehliyet', '/arac-islemleri'];
