@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { YIL } from '../yil';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -46,8 +47,8 @@ export default function DilekceListPage() {
   return (
     <>
       <Helmet>
-        <title>Trafik Cezası İtiraz Dilekçe Örnekleri 2026 | Ücretsiz Şablonlar</title>
-        <meta name="description" content="2026 trafik cezası itiraz dilekçesi örnekleri. Hız ihlali, kırmızı ışık, park cezası ve daha fazlası için hazır dilekçe şablonları." />
+        <title>{`Trafik Cezası İtiraz Dilekçe Örnekleri ${YIL} | Ücretsiz Şablonlar`}</title>
+        <meta name="description" content={`${YIL} trafik cezası itiraz dilekçesi örnekleri. Hız ihlali, kırmızı ışık, park cezası ve daha fazlası için hazır dilekçe şablonları.`} />
       </Helmet>
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
@@ -160,7 +161,7 @@ export default function DilekceListPage() {
 
         <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 16, lineHeight: 1.6 }}>
           📌 Dilekçeler bilgilendirme amaçlıdır. Hukuki destek için bir avukata danışmanızı öneririz. ·{' '}
-          <Link to="/trafik-cezalari-2026" style={{ color: '#1a3a6b' }}>2026 ceza tutarlarına bakın</Link>
+          <Link to="/trafik-cezalari-2026" style={{ color: '#1a3a6b' }}>{YIL} ceza tutarlarına bakın</Link>
         </p>
       </div>
     </>

@@ -15,6 +15,7 @@ def _eksik_kolonlari_ekle():
     from sqlalchemy import text
     kolonlar = [
         ("ceza_turleri", "kademe_notu", "TEXT"),
+        ("articles", "icerik_surumu", "TEXT"),
     ]
     with engine.begin() as conn:
         for tablo, kolon, tip in kolonlar:
@@ -24,6 +25,13 @@ def _eksik_kolonlari_ekle():
                 print(f"[migrate] {tablo}.{kolon} atlandı: {e}")
 
 _eksik_kolonlari_ekle()
+
+# Rehber yazılarını koddaki güncel metinle eşitle (makale_icerik.py).
+# Sürümü değişmeyen yazıya dokunulmaz; admin düzeltmeleri korunur.
+from makale_icerik import esitle as _makaleleri_esitle, MAKALELER as _MAKALELER
+_makaleleri_esitle()
+# Tohum uçları bu slug'ları ezmesin / eski kopyaları geri getirmesin
+_KODDAKI_SLUGLAR = {m["slug"] for m in _MAKALELER} | {e for m in _MAKALELER for e in m.get("eski", [])}
 
 app = FastAPI(title="TrafikRehber API", version="1.0.0")
 
@@ -94,6 +102,8 @@ def run_seed():
         {"slug":"ehliyet-puan-sistemi-sorgulama","title":"Ehliyet Puan Sistemi Sorgulama Rehberi","meta_description":"Ehliyet puan sistemi ve sorgulama rehberi.","content":"<h2>Ehliyet Puan Sistemi</h2><p>100 puan üzerinden işler.</p>","category":"ehliyet","tags":["ehliyet puan"],"is_published":True,"is_featured":True,"reading_time_min":4,"schema_type":"Article"},
         {"slug":"arac-muayene-randevu-nasil-alinir","title":"Araç Muayene Randevusu Nasıl Alınır?","meta_description":"TÜVTÜRK üzerinden araç muayene randevusu alma rehberi.","content":"<h2>Muayene Zorunluluğu</h2><p>Tüm araçlar için yasal zorunluluktur.</p>","category":"arac-islemleri","tags":["muayene"],"is_published":True,"is_featured":True,"reading_time_min":4,"schema_type":"HowTo"},
     ]:
+        if a["slug"] in _KODDAKI_SLUGLAR:
+            continue  # metni makale_icerik.py'de; açılışta eşitlenir
         if not db.query(Article).filter(Article.slug == a["slug"]).first():
             db.add(Article(**a)); results["articles"] += 1
     for s in [
@@ -135,6 +145,8 @@ def run_rich_seed():
         {"slug":"kaza-tazminat-talep-dilekce","baslik":"Trafik Kazası Tazminat Talep Dilekçesi","aciklama":"Sigorta şirketinden tazminat talep etmek için resmi dilekçe.","kategori":"sigorta","ilgili_kanun":"KTK Madde 97 / BK Madde 49","sablon_icerik":"[SİGORTA ŞİRKETİ] GENEL MÜDÜRLÜĞÜ'NE\n\nTALEP EDEN: [AD SOYAD]\nIBAN: [IBAN]\n\n30 gün içinde ödeme yapılmasını talep ederim.\n[TARİH] - [AD SOYAD]\n\n⚖️ Yüksek tutarlarda avukat desteği önerilir."},
     ]
     for a in articles_data:
+        if a["slug"] in _KODDAKI_SLUGLAR:
+            continue  # bu yazıların güncel metni makale_icerik.py'de
         clean = {k: v for k, v in a.items() if k in AF}
         existing = db.query(Article).filter(Article.slug == clean["slug"]).first()
         if existing:

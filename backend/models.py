@@ -45,6 +45,8 @@ class Article(Base):
     schema_type = Column(String, default="Article")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    # makale_icerik.py SURUM'u: koddaki metin hangi sürümle yazıldı (eşitleme)
+    icerik_surumu = Column(String)
 
 
 class DilecceSablon(Base):

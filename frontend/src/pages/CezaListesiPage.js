@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import AdSlot from '../components/AdSlot';
+import { AD_SLOTS } from '../adsense';
+import { YIL } from '../yil';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -73,7 +76,7 @@ export default function CezaListesiPage() {
   const [loading, setLoading] = useState(true);
   const [arama, setArama] = useState('');
   const [hesaplaModal, setHesaplaModal] = useState(null);
-  const [meta, setMeta] = useState({ odeme_suresi_gun: 30, son_dogrulama: null });
+  const [meta, setMeta] = useState({ odeme_suresi_gun: 30, son_dogrulama: null, dayanak: null });
 
   useEffect(() => {
     fetch(`${API}/api/ceza-turleri`)
@@ -89,6 +92,7 @@ export default function CezaListesiPage() {
           setMeta({
             odeme_suresi_gun: data.odeme_suresi_gun || 30,
             son_dogrulama: data.son_dogrulama || null,
+            dayanak: data.dayanak || null,
           });
         }
         setLoading(false);
@@ -112,17 +116,17 @@ export default function CezaListesiPage() {
   return (
     <>
       <Helmet>
-        <title>2026 Trafik Cezaları Güncel Liste | Tüm Tutarlar</title>
-        <meta name="description" content="2026 yılı güncel trafik cezaları tam listesi. Kırmızı ışık, hız, alkol ve tüm ihlaller için ceza tutarları ve erken ödeme indirimi." />
+        <title>{`${YIL} Trafik Cezaları Güncel Liste | Tüm Tutarlar`}</title>
+        <meta name="description" content={`${YIL} yılı güncel trafik cezaları tam listesi. Kırmızı ışık, hız, alkol ve tüm ihlaller için ceza tutarları ve erken ödeme indirimi.`} />
       </Helmet>
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
         <div style={{ marginBottom: 24 }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1a3a6b', margin: '0 0 8px' }}>
-            2026 Trafik Cezaları Güncel Liste
+            {YIL} Trafik Cezaları Güncel Liste
           </h1>
           <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-            27 Şubat 2026 tarihli 7574 sayılı Kanun ve %25,49 Yeniden Değerleme Oranı kapsamında güncellenmiştir.
+            {meta.dayanak && <>Tutarlar {meta.dayanak} esas alınarak güncellenmiştir. </>}
             Tebliğden itibaren <strong>1 ay (30 gün) içinde ödeme</strong> yapıldığında <strong>%25 indirim</strong> uygulanır;{' '}
             <strong>itiraz süresi</strong> ise tebliğden itibaren <strong>15 gündür</strong>.
           </p>
@@ -138,6 +142,8 @@ export default function CezaListesiPage() {
             style={{ width: '100%', padding: '10px 14px 10px 36px', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 14, outline: 'none', boxSizing: 'border-box', background: '#fff' }}
           />
         </div>
+
+        <AdSlot slot={AD_SLOTS.listeUstu} style={{ margin: '0 0 18px' }} />
 
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 70px 80px 140px', padding: '10px 16px', background: '#f8faff', borderBottom: '2px solid #e2e8f0', fontSize: 11, fontWeight: 700, color: '#64748b', letterSpacing: 0.5 }}>
@@ -165,7 +171,9 @@ export default function CezaListesiPage() {
                 >
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>
-                      {c.aciklama}{' '}
+                      {c.slug
+                        ? <Link to={`/ceza/${c.slug}`} style={{ color: '#1a3a6b', textDecoration: 'none' }}>{c.aciklama}</Link>
+                        : c.aciklama}{' '}
                       {c.kademe_notu && (
                         <span title={c.kademe_notu} style={{ marginLeft: 6, background: '#fff8e6', color: '#92400e', border: '1px solid #fde68a', fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 10, whiteSpace: 'nowrap' }}>
                           kademeli
@@ -199,6 +207,12 @@ export default function CezaListesiPage() {
                     >
                       Hesapla
                     </button>
+                    {c.slug && (
+                      <Link to={`/ceza/${c.slug}`}
+                        style={{ background: '#eef2ff', color: '#3730a3', borderRadius: 6, padding: '5px 10px', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
+                        Detay
+                      </Link>
+                    )}
                     <Link
                       to="/dilekce-ornekleri"
                       style={{ background: '#f0fdf4', color: '#16a34a', borderRadius: 6, padding: '5px 10px', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}

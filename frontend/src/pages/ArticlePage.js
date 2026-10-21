@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi } from '../services/api';
 import { abs } from '../seo';
+import AdSlot from '../components/AdSlot';
+import { AD_SLOTS } from '../adsense';
 
 export default function ArticlePage() {
   const { slug } = useParams();
@@ -29,7 +31,7 @@ export default function ArticlePage() {
   return (
     <>
       <Helmet>
-        <title>{article.title} — TrafikRehber</title>
+        <title>{article.title} — CezaRehberi</title>
         <meta name="description" content={article.meta_description} />
         <meta property="og:title" content={article.title} />
         <meta property="og:description" content={article.meta_description || ''} />

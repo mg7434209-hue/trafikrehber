@@ -25,7 +25,7 @@ import os
 import re
 import time
 import uuid
-from datetime import date, timedelta, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Request, HTTPException
@@ -38,6 +38,17 @@ from database import get_db
 from models import Article, DilecceSablon, SiteVisit, VisitorKey
 
 router = APIRouter()
+
+# Türkiye takvim günü. Railway konteyneri UTC çalışır; date.today() gün sınırını
+# Türkiye saatiyle 03:00'e kaydırıyordu (00:00-03:00 arası "bugün" dünü gösterip
+# 03:00'te sıfıra düşüyordu). Türkiye 2016'dan beri kalıcı UTC+3 — yaz saati yok,
+# sabit ofset doğrudur ve tzdata paketi gerektirmez.
+TR_SAAT = timezone(timedelta(hours=3))
+
+
+def tr_bugun() -> date:
+    return datetime.now(TR_SAAT).date()
+
 
 # Bot süzgeci — gespaenerji server.js'teki BOT_RE ile aynı liste
 BOT_RE = re.compile(
@@ -92,7 +103,7 @@ def _totals(db: Session, force: bool = False) -> dict:
         return _cache
     toplam = db.query(func.coalesce(func.sum(SiteVisit.tekil), 0)).scalar() or 0
     goruntulenme = db.query(func.coalesce(func.sum(SiteVisit.goruntulenme), 0)).scalar() or 0
-    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == date.today()).first()
+    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == tr_bugun()).first()
     _cache.update({
         "t": simdi,
         "toplam": int(toplam),
@@ -111,7 +122,7 @@ def _prune(db: Session) -> None:
     _last_prune = simdi
     try:
         db.query(VisitorKey).filter(
-            VisitorKey.gun < date.today() - timedelta(days=KEY_RETENTION_DAYS)
+            VisitorKey.gun < tr_bugun() - timedelta(days=KEY_RETENTION_DAYS)
         ).delete(synchronize_session=False)
         db.commit()
     except Exception:
@@ -146,7 +157,7 @@ def kaydet_ziyaret(req: VisitRequest, request: Request, db: Session = Depends(ge
         # Bot: sayma, yalnız güncel değerleri dön
         return _cevap(db)
 
-    gun = date.today()
+    gun = tr_bugun()
     anahtar = _visitor_key(request, gun)
     _online[anahtar] = time.time()
 

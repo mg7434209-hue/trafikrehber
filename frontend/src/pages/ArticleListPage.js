@@ -18,7 +18,7 @@ export default function ArticleListPage() {
   return (
     <>
       <Helmet>
-        <title>{q ? `"${q}" için sonuçlar` : 'Blog & Makaleler'} — TrafikRehber</title>
+        <title>{q ? `"${q}" için sonuçlar` : 'Blog & Makaleler'} — CezaRehberi</title>
       </Helmet>
       <div className="container" style={{ padding: '40px 20px' }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a3a6b', marginBottom: 8 }}>

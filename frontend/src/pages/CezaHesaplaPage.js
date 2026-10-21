@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { cezaApi } from '../services/api';
+import { YIL } from '../yil';
 
 export default function CezaHesaplaPage() {
   const [cezalar, setCezalar] = useState([]);
   const [selected, setSelected] = useState('');
   const [sonuc, setSonuc] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [dayanak, setDayanak] = useState(null);
 
   useEffect(() => {
-    cezaApi.getAll().then(d => setCezalar(d.cezalar || [])).catch(() => {});
+    cezaApi.getAll().then(d => { setCezalar(d.cezalar || []); setDayanak(d.dayanak || null); }).catch(() => {});
   }, []);
 
   const hesapla = async () => {
@@ -26,8 +28,8 @@ export default function CezaHesaplaPage() {
   return (
     <>
       <Helmet>
-        <title>Trafik Cezası Hesaplama Aracı 2026 — TrafikRehber</title>
-        <meta name="description" content="2026 yılı güncel trafik cezası tutarlarını hesaplayın. 1 ay içinde ödemede %25 erken ödeme indirimi ve taksitlendirme seçenekleri." />
+        <title>{`Trafik Cezası Hesaplama Aracı ${YIL} — CezaRehberi`}</title>
+        <meta name="description" content={`${YIL} yılı güncel trafik cezası tutarlarını hesaplayın. 1 ay içinde ödemede %25 erken ödeme indirimi ve taksitlendirme seçenekleri.`} />
       </Helmet>
       <div className="container-sm" style={{ padding: '40px 20px' }}>
         <div className="breadcrumb">
@@ -106,7 +108,7 @@ export default function CezaHesaplaPage() {
         )}
 
         <div className="warning-box" style={{ marginTop: 32 }}>
-          ⚖️ Tutarlar 27.02.2026 tarihli 7574 sayılı Kanun ve 2026 yeniden değerleme oranına göredir; bilgilendirme amaçlıdır.
+          ⚖️ {dayanak ? `Tutarlar ${dayanak} esas alınarak hesaplanır; ` : ''}bilgilendirme amaçlıdır.
           <strong> Ödeme indirimi süresi 1 ay, itiraz süresi 15 gündür.</strong> Kesin tutar için e-Devlet'teki ceza kaydınızı esas alın.
         </div>
       </div>

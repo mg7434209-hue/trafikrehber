@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import VisitCounter from './VisitCounter';
+import { YIL } from '../yil';
 
 export default function Footer() {
   return (
@@ -18,7 +19,7 @@ export default function Footer() {
               Trafik cezaları, sigorta, ehliyet ve araç işlemleri hakkında güncel ve güvenilir Türkçe rehber.
             </p>
             <div style={{ marginTop: 14, background: '#e65c0020', border: '1px solid #e65c0040', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#fbbf24' }}>
-              🔴 2026 güncel ceza tutarları yayında
+              🔴 {YIL} güncel ceza tutarları yayında
             </div>
           </div>
 
@@ -26,7 +27,7 @@ export default function Footer() {
           <div>
             <div style={{ fontWeight: 700, color: '#e2e8f0', marginBottom: 14, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trafik Cezaları</div>
             {[
-              ['2026 Ceza Listesi', '/trafik-cezalari-2026'],
+              [`${YIL} Ceza Listesi`, '/trafik-cezalari-2026'],
               ['Trafik Cezaları', '/trafik-cezalari'],
               ['Ceza Hesapla', '/araclar/ceza-hesapla'],
               ['İtiraz Dilekçeleri', '/dilekce-ornekleri'],
@@ -80,7 +81,7 @@ export default function Footer() {
       {/* Alt bar */}
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '16px 20px' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-          <p style={{ fontSize: 12, color: '#64748b' }}>© 2026 CezaRehberi. Tüm hakları saklıdır.</p>
+          <p style={{ fontSize: 12, color: '#64748b' }}>© {new Date().getFullYear()} CezaRehberi. Tüm hakları saklıdır.</p>
           <VisitCounter />
           <p style={{ fontSize: 12, color: '#64748b', textAlign: 'right' }}>
             ⚖️ Bu site genel bilgilendirme amaçlıdır. Hukuki danışmanlık yerine geçmez.

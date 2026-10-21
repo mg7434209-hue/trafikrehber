@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 export function HakkimizdaPage() {
   return (
     <>
-      <Helmet><title>Hakkımızda — TrafikRehber</title></Helmet>
+      <Helmet><title>Hakkımızda — CezaRehberi</title></Helmet>
       <div className="container-sm" style={{ padding: '60px 20px' }}>
         <h1 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 }}>Hakkımızda</h1>
         <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
@@ -25,7 +25,7 @@ export function HakkimizdaPage() {
 export function IletisimPage() {
   return (
     <>
-      <Helmet><title>İletişim — TrafikRehber</title></Helmet>
+      <Helmet><title>İletişim — CezaRehberi</title></Helmet>
       <div className="container-sm" style={{ padding: '60px 20px' }}>
         <h1 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 }}>İletişim</h1>
         <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 24 }}>
@@ -46,7 +46,7 @@ export function IletisimPage() {
 export function GizlilikPage() {
   return (
     <>
-      <Helmet><title>Gizlilik Politikası — TrafikRehber</title></Helmet>
+      <Helmet><title>Gizlilik Politikası — CezaRehberi</title></Helmet>
       <div className="container-sm" style={{ padding: '60px 20px' }}>
         <h1 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 }}>Gizlilik Politikası</h1>
         <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Kişisel Verilerin Korunması (KVKK)</h2>
@@ -80,7 +80,7 @@ export function GizlilikPage() {
 export function NotFoundPage() {
   return (
     <>
-      <Helmet><title>Sayfa Bulunamadı — TrafikRehber</title></Helmet>
+      <Helmet><title>Sayfa Bulunamadı — CezaRehberi</title></Helmet>
       <div className="container" style={{ padding: '80px 20px', textAlign: 'center' }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>🚦</div>
         <h1 style={{ color: '#1a3a6b', fontSize: 32, marginBottom: 8 }}>404 — Sayfa Bulunamadı</h1>

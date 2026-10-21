@@ -66,7 +66,42 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   stilleri `App.css`'te), rota değişiminde ping atar, 60 sn'de bir (sekme
   görünürken) online sayısını tazeler. **API yanıt vermezse rozet gizlenir —
   tahmini/uydurma sayı basılmaz.** Admin panelinde toplam/bugün/online kartları
-  ve son 7 gün grafiği vardır.
+  ve son 7 gün grafiği vardır. "Bugün" TÜRKİYE günüdür (`tr_bugun()`).
+
+## Ana sayfa
+Arama + niyet kartları + ziyaretçi şeridi; kurallar: @docs/ana-sayfa.md
+
+## Güncel kalma (yıl · tutar · rehber metni)
+Yıl/tutar ELLE YAZILMAZ — `{{yil}}`, `{{ceza:H1}}`, `YIL`: @docs/guncellik.md
+
+## Ceza Sayfaları (`/ceza/:slug`) — trafiğin ana kaynağı
+Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız cezası
+2026"); hepsi tek listede dururken bu sorguların hiçbirinde sıralanmıyordu.
+- Sayfa metni `backend/ceza_icerik.py` → `ICERIK[kod]` = `slug` + `baslik`
+  (SEO H1/title) + `ozet` (özgün giriş) + `sss` (soru-cevap).
+- TUTAR/PUAN BURAYA YAZILMAZ — veritabanından (CEZALAR_2026) gelir. İki yere
+  yazılırsa biri mutlaka güncellenmeden kalır.
+- Uçlar: `GET /api/ceza-turleri/sayfa/<slug>` (tek sayfa + ilgili cezalar),
+  `GET /api/ceza-turleri/sayfalar` (liste). Liste ucu da `slug` döndürür.
+- `server.js` bu rotaya başlık/açıklama + BreadcrumbList + FAQPage şeması basar
+  (zengin sonuç). Sitemap'e ceza başına bir URL girer.
+- YENİ CEZA: CEZALAR_2026'ya satır + `ceza_icerik.py`'ye aynı `kod` ile kayıt.
+  Kodu `ICERIK`'te olmayan ceza listede kalır, sayfası üretilmez (zararsız).
+- KOPYA İÇERİK: `/trafik-cezalari/:sub`, `/sigorta/:sub` … üst kategoriyle
+  BİREBİR aynı sayfayı basıyordu (kod `:sub`'ı hiç okumuyordu) ve sitemap'teydi.
+  Artık server.js 301 ile üst kategoriye yollar; sitemap'ten çıkarıldı. Bu
+  rotalara yeniden içerik verilecekse önce `CategoryPage` `:sub`'ı okumalı.
+
+## AdSense (gelir)
+`frontend/src/adsense.js` → `AD_SLOTS` TEK DOĞRU KAYNAKTIR; birim kimlikleri
+oraya yazılır, sayfalara gömülmez. `<AdSlot slot={AD_SLOTS.x} />` bileşeni
+kimlik BOŞKEN hiçbir şey basmaz (boş kutu, yer kayması ve politika riski yok).
+- Yerleşim: `icerikIci` (ceza sayfası yazı ortası), `icerikAlti` (makale ve
+  ceza sayfası yazı sonu), `listeUstu` (2026 ceza listesi üstü).
+- Sayfa başına üçten fazla birim koyma; reklamı tıklanacak kadar içeriğe yakın
+  yerleştirme ("Reklam" etiketi bileşende zaten var).
+- index.html'deki yükleyici betik TEK BAŞINA gelir üretmez — birim şarttır.
+  Site aylarca yükleyiciyle ama birimsiz yayındaydı.
 
 ## Ceza Verisi — DOĞRULUK KURALLARI (`routers/admin.py` · `routers/ceza.py`)
 Site hukuki bilgi verdiği için tutarlar **tek kaynaktan** ve **tarihli** gider:
@@ -87,8 +122,7 @@ Site hukuki bilgi verdiği için tutarlar **tek kaynaktan** ve **tarihli** gider
   `TAKSIT_ADEDI = 4` → Kabahatler Kanunu m.17/3: ilk taksit ödeme süresinde,
   kalan 3 taksit 1 yıl içinde; taksitte indirim uygulanmaz.
 - Nihai kaynak: Resmî Gazete / mevzuat.gov.tr (7574 s.K.) ve EGM listesi.
-  `articles-2026-guncelle` yalnız YIL ETİKETİNİ değiştirir, TUTARLARI değil —
-  çalıştırdıktan sonra makale içindeki rakamları elle gözden geçir.
+  Rehber tutarları `{{ceza:KOD}}` ile listeden gelir (docs/guncellik.md).
 
 ## SEO altyapısı
 ### 1) Bot görünürlüğü — `frontend/server.js` (üretimde açılış komutu)

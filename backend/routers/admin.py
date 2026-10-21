@@ -233,6 +233,12 @@ def ceza_ydo_guncelle(req: YdoRequest, db: Session = Depends(get_db), _=Depends(
 #   sayılı Kanun metni ve EGM listesidir. Değişiklikte bu listeyi güncelle,
 #   CEZA_SON_DOGRULAMA tarihini de birlikte değiştir.
 CEZA_SON_DOGRULAMA = "2026-09-14"
+# Sayfalarda "tutarlar şuna göredir" cümlesi. Yeni yılın listesi işlenince
+# bununla birlikte güncellenir (tek yer; sayfalara gömülmez).
+CEZA_DAYANAK = "27 Şubat 2026 tarihli 7574 sayılı Kanun ve 2026 yeniden değerleme oranı (%25,49)"
+# NOT: sitedeki YIL etiketleri ("… Cezası 2026") bu tarihin YILINDAN türetilir
+# (utils/icerik.py veri_yili) — takvimden değil. Listeyi güncelleyip bu tarihi
+# ilerletmek, başlıkları da yeni yıla taşır.
 
 CEZALAR_2026 = [
     {"kod": "H1", "aciklama": "Kırmızı ışık ihlali", "taban_ceza_tl": 5000.0, "puan": 20,
@@ -347,12 +353,12 @@ def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
 
     # --- Ziyaretçi sayacı (routers/stats.py ile aynı kaynak) ---
     from datetime import date, timedelta
-    from routers.stats import VISITORS_BASE, _online_count
+    from routers.stats import VISITORS_BASE, _online_count, tr_bugun
 
     ziyaret_toplam = db.query(func.coalesce(func.sum(SiteVisit.tekil), 0)).scalar() or 0
-    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == date.today()).first()
+    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == tr_bugun()).first()
     son7 = db.query(SiteVisit).filter(
-        SiteVisit.gun >= date.today() - timedelta(days=6)
+        SiteVisit.gun >= tr_bugun() - timedelta(days=6)
     ).order_by(SiteVisit.gun).all()
 
     return {

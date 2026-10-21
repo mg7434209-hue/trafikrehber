@@ -18,7 +18,7 @@ export function DilekceListPage() {
   return (
     <>
       <Helmet>
-        <title>Ücretsiz Dilekçe Örnekleri — TrafikRehber</title>
+        <title>Ücretsiz Dilekçe Örnekleri — CezaRehberi</title>
         <meta name="description" content="Trafik cezası itiraz, sigorta hasar, ehliyet gibi konularda ücretsiz dilekçe şablonları." />
       </Helmet>
       <div className="container" style={{ padding: '40px 20px' }}>
@@ -84,7 +84,7 @@ export function DilekceDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{sablon.baslik} — TrafikRehber Dilekçe Örnekleri</title>
+        <title>{sablon.baslik} — CezaRehberi Dilekçe Örnekleri</title>
         <meta name="description" content={sablon.aciklama} />
       </Helmet>
       <div className="container-sm" style={{ padding: '40px 20px' }}>
