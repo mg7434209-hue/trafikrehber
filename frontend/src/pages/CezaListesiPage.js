@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import AdSlot from '../components/AdSlot';
 import { AD_SLOTS } from '../adsense';
+import { YIL } from '../yil';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -75,7 +76,7 @@ export default function CezaListesiPage() {
   const [loading, setLoading] = useState(true);
   const [arama, setArama] = useState('');
   const [hesaplaModal, setHesaplaModal] = useState(null);
-  const [meta, setMeta] = useState({ odeme_suresi_gun: 30, son_dogrulama: null });
+  const [meta, setMeta] = useState({ odeme_suresi_gun: 30, son_dogrulama: null, dayanak: null });
 
   useEffect(() => {
     fetch(`${API}/api/ceza-turleri`)
@@ -91,6 +92,7 @@ export default function CezaListesiPage() {
           setMeta({
             odeme_suresi_gun: data.odeme_suresi_gun || 30,
             son_dogrulama: data.son_dogrulama || null,
+            dayanak: data.dayanak || null,
           });
         }
         setLoading(false);
@@ -114,17 +116,17 @@ export default function CezaListesiPage() {
   return (
     <>
       <Helmet>
-        <title>2026 Trafik Cezaları Güncel Liste | Tüm Tutarlar</title>
-        <meta name="description" content="2026 yılı güncel trafik cezaları tam listesi. Kırmızı ışık, hız, alkol ve tüm ihlaller için ceza tutarları ve erken ödeme indirimi." />
+        <title>{`${YIL} Trafik Cezaları Güncel Liste | Tüm Tutarlar`}</title>
+        <meta name="description" content={`${YIL} yılı güncel trafik cezaları tam listesi. Kırmızı ışık, hız, alkol ve tüm ihlaller için ceza tutarları ve erken ödeme indirimi.`} />
       </Helmet>
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
         <div style={{ marginBottom: 24 }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1a3a6b', margin: '0 0 8px' }}>
-            2026 Trafik Cezaları Güncel Liste
+            {YIL} Trafik Cezaları Güncel Liste
           </h1>
           <p style={{ fontSize: 14, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-            27 Şubat 2026 tarihli 7574 sayılı Kanun ve %25,49 Yeniden Değerleme Oranı kapsamında güncellenmiştir.
+            {meta.dayanak && <>Tutarlar {meta.dayanak} esas alınarak güncellenmiştir. </>}
             Tebliğden itibaren <strong>1 ay (30 gün) içinde ödeme</strong> yapıldığında <strong>%25 indirim</strong> uygulanır;{' '}
             <strong>itiraz süresi</strong> ise tebliğden itibaren <strong>15 gündür</strong>.
           </p>

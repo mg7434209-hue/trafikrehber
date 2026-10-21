@@ -23,7 +23,7 @@ export default function ArticlePage() {
   return (
     <>
       <Helmet>
-        <title>{article.title} — TrafikRehber</title>
+        <title>{article.title} — CezaRehberi</title>
         <meta name="description" content={article.meta_description} />
         <script type="application/ld+json">{JSON.stringify({
           "@context":"https://schema.org","@type":article.schema_type||"Article",

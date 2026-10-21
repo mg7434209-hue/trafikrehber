@@ -17,7 +17,7 @@ Kodu burada olmayan ceza sayfası üretilmez (listede kalır, zarar vermez).
 ICERIK = {
     "H1": {
         "slug": "kirmizi-isik-cezasi",
-        "baslik": "Kırmızı Işık Cezası 2026: Tutar, Ceza Puanı ve İtiraz",
+        "baslik": "Kırmızı Işık Cezası {{yil}}: Tutar, Ceza Puanı ve İtiraz",
         "ozet": (
             "Kırmızı ışıkta geçmek, 7574 sayılı Kanun'la birlikte tek tutarlı olmaktan çıkıp "
             "<strong>kademeli cezaya</strong> dönüştü: aynı yıl içinde tekrarlayan her ihlalde tutar katlanıyor, "
@@ -35,7 +35,7 @@ ICERIK = {
     },
     "H2": {
         "slug": "hiz-cezasi-sehir-ici",
-        "baslik": "Şehir İçi Hız Cezası 2026: Yeni Kademeler ve Tolerans",
+        "baslik": "Şehir İçi Hız Cezası {{yil}}: Yeni Kademeler ve Tolerans",
         "ozet": (
             "7574 sayılı Kanun, yıllardır alışılan <strong>yüzde bazlı hız kademelerini (%10-30 / %30-50 / %50+) "
             "tamamen kaldırdı</strong>. Yerine aşılan kilometreye göre işleyen dokuz kademeli bir yapı geldi; "
@@ -53,7 +53,7 @@ ICERIK = {
     },
     "H3": {
         "slug": "hiz-cezasi-sehir-disi",
-        "baslik": "Şehirlerarası ve Otoyol Hız Cezası 2026 (Kademeli Tablo)",
+        "baslik": "Şehirlerarası ve Otoyol Hız Cezası {{yil}} (Kademeli Tablo)",
         "ozet": (
             "Yerleşim yeri dışında ve otoyollarda hız cezası, aşılan kilometreye göre kademelenir; "
             "tolerans 10 km/saattir. Aşım büyüdükçe tutar hızla yükselir ve üst kademelerde para cezasına "
@@ -71,7 +71,7 @@ ICERIK = {
     },
     "H5": {
         "slug": "cep-telefonu-cezasi",
-        "baslik": "Araç Kullanırken Telefon Cezası 2026: Tutar ve Ehliyete El Koyma",
+        "baslik": "Araç Kullanırken Telefon Cezası {{yil}}: Tutar ve Ehliyete El Koyma",
         "ozet": (
             "Seyir hâlinde elde telefon kullanmak 7574 sayılı Kanun'la birlikte <strong>kademeli cezaya</strong> "
             "bağlandı ve her ihlalde sürücü belgesine 30 gün el konulması yaptırımı eklendi. Tekrarlayan "
@@ -89,7 +89,7 @@ ICERIK = {
     },
     "H7": {
         "slug": "alkollu-arac-kullanma-cezasi",
-        "baslik": "Alkollü Araç Kullanma Cezası 2026: Promil Sınırı ve Ehliyet",
+        "baslik": "Alkollü Araç Kullanma Cezası {{yil}}: Promil Sınırı ve Ehliyet",
         "ozet": (
             "Alkollü araç kullanma, 7574 sayılı Kanun'la en sert artırılan ihlallerden biri oldu. Ceza "
             "<strong>tekrara göre katlanır</strong> ve para cezasının yanında sürücü belgesine el koyma süresi de "
@@ -107,7 +107,7 @@ ICERIK = {
     },
     "H12": {
         "slug": "trafikte-saldirgan-davranis-cezasi",
-        "baslik": "Trafikte Saldırgan Davranış Cezası 2026 (Yol Kesme, Araçtan İnme)",
+        "baslik": "Trafikte Saldırgan Davranış Cezası {{yil}} (Yol Kesme, Araçtan İnme)",
         "ozet": (
             "7574 sayılı Kanun'un en yüksek tutarlı maddelerinden biridir. Aracı kasten yavaşlatıp yol kesmek, "
             "taciz amacıyla ısrarla takip etmek, araçtan inerek diğer sürücünün üzerine yürümek gibi davranışlar "
@@ -125,7 +125,7 @@ ICERIK = {
     },
     "H13": {
         "slug": "drift-makas-cezasi",
-        "baslik": "Drift ve Makas Cezası 2026: Tutar, Ehliyet ve Araç Men",
+        "baslik": "Drift ve Makas Cezası {{yil}}: Tutar, Ehliyet ve Araç Men",
         "ozet": (
             "Trafikte yarış, drift ve makas atmak doğrudan can güvenliğini tehdit eden eylemler sayılır. "
             "Para cezasının yanında <strong>sürücü belgesi geri alınır</strong> ve araç trafikten men edilebilir. "
@@ -142,7 +142,7 @@ ICERIK = {
     },
     "H11": {
         "slug": "ehliyetsiz-arac-kullanma-cezasi",
-        "baslik": "Ehliyetsiz Araç Kullanma Cezası 2026: Tutar ve Araç Men",
+        "baslik": "Ehliyetsiz Araç Kullanma Cezası {{yil}}: Tutar ve Araç Men",
         "ozet": (
             "Sürücü belgesi olmadan araç kullanmak yüksek tutarlı cezalardandır ve <strong>araç trafikten men "
             "edilir</strong>. Ceza yalnız sürücüye değil, aracı ehliyetsiz kişiye verdiği tespit edilen araç "
@@ -159,7 +159,7 @@ ICERIK = {
     },
     "H8": {
         "slug": "hatali-sollama-cezasi",
-        "baslik": "Hatalı Sollama Cezası 2026: Nerelerde Sollama Yasak?",
+        "baslik": "Hatalı Sollama Cezası {{yil}}: Nerelerde Sollama Yasak?",
         "ozet": (
             "Sollama; kesik çizgi bulunmayan yerlerde, dönemeç ve tepe üstlerinde, yaya geçitlerinde ve "
             "görüşün yetersiz olduğu her noktada yasaktır. Karşı şeride geçerek yapılan hatalı sollama, "
@@ -176,7 +176,7 @@ ICERIK = {
     },
     "H10": {
         "slug": "muayenesiz-arac-cezasi",
-        "baslik": "Muayenesiz Araç Cezası 2026: Tutar, Gecikme Zammı ve Men",
+        "baslik": "Muayenesiz Araç Cezası {{yil}}: Tutar, Gecikme Zammı ve Men",
         "ozet": (
             "Muayene süresi geçmiş araçla trafiğe çıkmak hem para cezası hem de aracın <strong>trafikten men "
             "edilmesi</strong> sonucunu doğurur. Ayrıca muayenenin geciktiği her ay için TÜVTÜRK tarafından "
@@ -193,7 +193,7 @@ ICERIK = {
     },
     "H4": {
         "slug": "emniyet-kemeri-cezasi",
-        "baslik": "Emniyet Kemeri Cezası 2026: Sürücü, Yolcu ve Arka Koltuk",
+        "baslik": "Emniyet Kemeri Cezası {{yil}}: Sürücü, Yolcu ve Arka Koltuk",
         "ozet": (
             "Emniyet kemeri yükümlülüğü yalnız ön koltukları değil, <strong>arka koltuktaki yolcuları da</strong> "
             "kapsar. Kemer takmamak ceza puanı uygulanan ihlallerdendir. Kemersiz yolcu için ceza kural olarak "
@@ -210,7 +210,7 @@ ICERIK = {
     },
     "H14": {
         "slug": "kask-takmama-cezasi",
-        "baslik": "Motosiklette Kask Cezası 2026: Sürücü ve Yolcu",
+        "baslik": "Motosiklette Kask Cezası {{yil}}: Sürücü ve Yolcu",
         "ozet": (
             "Motosiklet ve motorlu bisiklet kullanırken koruma başlığı (kask) takmak sürücü için de "
             "<strong>arkadaki yolcu için de</strong> zorunludur. Kask, motosiklet kazalarında ölüm riskini "
@@ -227,7 +227,7 @@ ICERIK = {
     },
     "H6": {
         "slug": "hatali-park-cezasi",
-        "baslik": "Hatalı Park Cezası 2026: Tutar, Araç Çekme ve İtiraz",
+        "baslik": "Hatalı Park Cezası {{yil}}: Tutar, Araç Çekme ve İtiraz",
         "ozet": (
             "Yasak yere park, en sık yazılan trafik cezalarından biridir. Para cezasının yanında araç "
             "<strong>çekilebilir</strong>; bu durumda çekme ve otopark ücretleri ayrıca araç sahibinden tahsil "
@@ -245,7 +245,7 @@ ICERIK = {
     },
     "H9": {
         "slug": "zorunlu-trafik-sigortasi-cezasi",
-        "baslik": "Sigortasız Araç Cezası 2026: Zorunlu Trafik Sigortası",
+        "baslik": "Sigortasız Araç Cezası {{yil}}: Zorunlu Trafik Sigortası",
         "ozet": (
             "Zorunlu trafik sigortası (ZMSS) olmadan trafiğe çıkmak hem para cezası hem de aracın "
             "<strong>trafikten men edilmesi</strong> sonucunu doğurur. Araç, poliçe yapılana kadar trafiğe "

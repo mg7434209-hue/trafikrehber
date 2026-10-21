@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db
 from models import Article, PageStat
+from utils.icerik import isle, veri_yili
 import uuid
 
 router = APIRouter()
@@ -29,13 +30,25 @@ class ArticleOut(BaseModel):
         from_attributes = True
 
 
-def article_to_dict(a: Article, include_content=True):
+# Kaldırılan / birleştirilen eski adresler → güncel yazı. server.js aynı
+# tabloyla 301 verir; burada SPA içi gezinmede (eski bağlantı) 404 olmasın diye
+# çözülür. Yayınlanmış slug SİLİNMEZ, buraya taşınır.
+ESKI_SLUG = {
+    "trafik-cezasi-tutarlari-2025": "trafik-cezasi-tutarlari",
+    "trafik-cezasi-sorgulama-e-devlet": "trafik-cezasi-e-devlet-sorgulama",
+}
+
+
+def article_to_dict(a: Article, include_content=True, db: Session = None):
+    # db verilirse {{yil}} / {{ceza:H1}} … yer tutucuları güncel değerle
+    # doldurulur (utils/icerik.py). Admin uçları HAM metni kullanır.
+    f = (lambda m: isle(m, db)) if db is not None else (lambda m: m)
     return {
         "id": str(a.id),
         "slug": a.slug,
-        "title": a.title,
-        "meta_description": a.meta_description,
-        "content": a.content if include_content else None,
+        "title": f(a.title),
+        "meta_description": f(a.meta_description),
+        "content": f(a.content) if include_content else None,
         "category": a.category,
         "tags": a.tags or [],
         "is_featured": a.is_featured,
@@ -65,7 +78,7 @@ def get_articles(
         "success": True,
         "total": total,
         "page": page,
-        "articles": [article_to_dict(a, include_content=False) for a in articles]
+        "articles": [article_to_dict(a, include_content=False, db=db) for a in articles]
     }
 
 
@@ -75,11 +88,16 @@ def get_featured(db: Session = Depends(get_db)):
         Article.is_published == True,
         Article.is_featured == True
     ).order_by(Article.created_at.desc()).limit(6).all()
-    return {"success": True, "articles": [article_to_dict(a, include_content=False) for a in articles]}
+    return {"success": True, "articles": [article_to_dict(a, include_content=False, db=db) for a in articles]}
 
 
 @router.get("/search")
 def search_articles(q: str = Query(..., min_length=2), db: Session = Depends(get_db)):
+    # Başlıklarda yıl "{{yil}}" olarak saklanır; "hız cezası 2026" araması
+    # yıl yüzünden boş dönmesin diye veri yılı sorgudan çıkarılır.
+    yalin = " ".join(q.replace(str(veri_yili()), " ").split())
+    if len(yalin) >= 2:
+        q = yalin
     results = db.query(Article).filter(
         Article.is_published == True,
         or_(
@@ -88,7 +106,7 @@ def search_articles(q: str = Query(..., min_length=2), db: Session = Depends(get
             Article.content.ilike(f"%{q}%")
         )
     ).limit(10).all()
-    return {"success": True, "results": [article_to_dict(a, include_content=False) for a in results]}
+    return {"success": True, "results": [article_to_dict(a, include_content=False, db=db) for a in results]}
 
 
 @router.get("/category/{category}")
@@ -97,20 +115,26 @@ def get_by_category(category: str, db: Session = Depends(get_db)):
         Article.is_published == True,
         Article.category == category
     ).order_by(Article.created_at.desc()).all()
-    return {"success": True, "articles": [article_to_dict(a, include_content=False) for a in articles]}
+    return {"success": True, "articles": [article_to_dict(a, include_content=False, db=db) for a in articles]}
 
 
 @router.get("/{slug}")
 def get_article(slug: str, db: Session = Depends(get_db)):
+    slug = ESKI_SLUG.get(slug, slug)
     article = db.query(Article).filter(Article.slug == slug, Article.is_published == True).first()
     if not article:
         raise HTTPException(status_code=404, detail="Makale bulunamadı")
 
-    # Görüntülenme sayısını artır
-    article.view_count = (article.view_count or 0) + 1
-    stat = PageStat(page_slug=slug)
-    db.add(stat)
+    # Görüntülenme sayısını artır. updated_at AÇIKÇA korunur: kolonun
+    # onupdate=now() kuralı her okumada "güncellendi" damgası basıyor, sitemap
+    # lastmod'u anlamsızlaştırıyordu (Google güvenilmez lastmod'u yok sayar).
+    db.query(Article).filter(Article.id == article.id).update(
+        {Article.view_count: Article.view_count + 1, Article.updated_at: Article.updated_at},
+        synchronize_session=False,
+    )
+    db.add(PageStat(page_slug=slug))
     db.commit()
+    db.refresh(article)
 
     # İlgili makaleler
     related = db.query(Article).filter(
@@ -121,6 +145,6 @@ def get_article(slug: str, db: Session = Depends(get_db)):
 
     return {
         "success": True,
-        "article": article_to_dict(article),
-        "related": [article_to_dict(a, include_content=False) for a in related]
+        "article": article_to_dict(article, db=db),
+        "related": [article_to_dict(a, include_content=False, db=db) for a in related]
     }

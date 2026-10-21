@@ -71,6 +71,9 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
 ## Ana sayfa
 Arama + niyet kartları + ziyaretçi şeridi; kurallar: @docs/ana-sayfa.md
 
+## Güncel kalma (yıl · tutar · rehber metni)
+Yıl/tutar ELLE YAZILMAZ — `{{yil}}`, `{{ceza:H1}}`, `YIL`: @docs/guncellik.md
+
 ## Ceza Sayfaları (`/ceza/:slug`) — trafiğin ana kaynağı
 Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız cezası
 2026"); hepsi tek listede dururken bu sorguların hiçbirinde sıralanmıyordu.
@@ -119,8 +122,7 @@ Site hukuki bilgi verdiği için tutarlar **tek kaynaktan** ve **tarihli** gider
   `TAKSIT_ADEDI = 4` → Kabahatler Kanunu m.17/3: ilk taksit ödeme süresinde,
   kalan 3 taksit 1 yıl içinde; taksitte indirim uygulanmaz.
 - Nihai kaynak: Resmî Gazete / mevzuat.gov.tr (7574 s.K.) ve EGM listesi.
-  `articles-2026-guncelle` yalnız YIL ETİKETİNİ değiştirir, TUTARLARI değil —
-  çalıştırdıktan sonra makale içindeki rakamları elle gözden geçir.
+  Rehber tutarları `{{ceza:KOD}}` ile listeden gelir (docs/guncellik.md).
 
 ## SEO altyapısı
 ### 1) Bot görünürlüğü — `frontend/server.js` (üretimde açılış komutu)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { adminApi } from '../services/api';
+import { adminApi, cezaApi } from '../services/api';
 
 export default function AdminPage() {
   const [token, setToken] = useState(localStorage.getItem('admin_token') || '');
@@ -12,8 +12,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [ydoOran, setYdoOran] = useState('');
   const [editCeza, setEditCeza] = useState(null);
+  const [guncellik, setGuncellik] = useState(null);
 
-  useEffect(() => { if (token) { loadStats(); loadCezalar(); } }, [token]);
+  useEffect(() => { if (token) { loadStats(); loadCezalar(); cezaApi.guncellik().then(setGuncellik).catch(() => {}); } }, [token]);
 
   const loadStats = async () => {
     try { const d = await adminApi.getStats(token); setStats(d.stats); } catch {}
@@ -197,6 +198,22 @@ export default function AdminPage() {
         </div>
 
         {/* ── GENEL SEKMESİ ── */}
+        {/* Veri güncelliği: yıl etiketleri ve rehber tutarları ceza listesinden türer */}
+        {tab === 'genel' && guncellik && (
+          <div style={{ background: guncellik.uyari ? '#fef2f2' : '#f0fdf4', border: `1px solid ${guncellik.uyari ? '#fecaca' : '#bbf7d0'}`, borderRadius: 12, padding: 16, marginBottom: 16, fontSize: 13, lineHeight: 1.6 }}>
+            <strong style={{ color: guncellik.uyari ? '#b91c1c' : '#047857' }}>
+              {guncellik.uyari ? '⚠️ Ceza verisi güncelleme bekliyor' : '✅ Ceza verisi güncel'}
+            </strong>
+            <div style={{ color: '#475569' }}>
+              Veri yılı <b>{guncellik.veri_yili}</b> · son doğrulama <b>{new Date(guncellik.son_dogrulama).toLocaleDateString('tr-TR')}</b> ({guncellik.gun_once} gün önce) · dayanak: {guncellik.dayanak}
+            </div>
+            {guncellik.uyari && <div style={{ color: '#b91c1c', marginTop: 4 }}>{guncellik.uyari}</div>}
+            <div style={{ color: '#64748b', marginTop: 4 }}>
+              Sitedeki yıl etiketleri ve rehberlerdeki tutarlar bu listeden otomatik gelir; liste güncellenip doğrulama tarihi ilerletilince hepsi kendiliğinden değişir.
+            </div>
+          </div>
+        )}
+
         {tab === 'genel' && stats && (
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 20 }}>
             <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1a3a6b', marginBottom: 16 }}>🔥 En Çok Okunan Sayfalar</h3>
@@ -231,7 +248,7 @@ export default function AdminPage() {
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 20 }}>
             <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1a3a6b', marginBottom: 6 }}>📝 Toplu Makale Güncelleme</h3>
             <p style={{ fontSize: 13, color: '#64748b', marginBottom: 20 }}>
-              Tüm makale başlıklarında, meta açıklamalarında ve içeriklerinde geçen <strong>"2025"</strong> ifadesini <strong>"2026"</strong> olarak günceller. Slug'lara dokunmaz.
+              Tüm makale başlıklarında, meta açıklamalarında ve içeriklerinde geçen <strong>"2025"</strong> ifadesini <strong>"2026"</strong> olarak günceller. Slug'lara dokunmaz. <em>Yalnız eski yazılar için: yeni yazılarda yıl yerine <code>{'{{yil}}'}</code>, tutar yerine <code>{'{{ceza:H1}}'}</code> yazın — otomatik güncellenir.</em>
             </p>
             <button onClick={handle2026MakaleGuncelle} disabled={loading} style={{
               background: '#059669', color: '#fff', border: 'none', borderRadius: 8,

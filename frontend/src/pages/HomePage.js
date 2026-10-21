@@ -6,6 +6,7 @@ import AkilliArama from '../components/AkilliArama';
 import ZiyaretciSeridi from '../components/ZiyaretciSeridi';
 // SSS verisi paylaşılır: sunucu (server.js) bunu okuyup FAQPage JSON-LD basar
 import SSS from '../data/sss.json';
+import { YIL } from '../yil';
 
 /*
  * ANA SAYFA — "giren kişi ne aradığını ilk ekranda bulsun".
@@ -39,7 +40,7 @@ const CIPLER = [
 // `yazi` adayları varsa ve öne çıkan rehberlerde bulunursa o yazıya gider,
 // yoksa `ara` ile rehberlerde arama açılır (kırık bağlantı oluşmaz).
 const NIYETLER = [
-  { ikon: '💸', baslik: 'Cezam ne kadar?', alt: '2026 güncel tutarlar ve ceza puanları', href: '/trafik-cezalari-2026' },
+  { ikon: '💸', baslik: 'Cezam ne kadar?', alt: `${YIL} güncel tutarlar ve ceza puanları`, href: '/trafik-cezalari-2026' },
   { ikon: '🧮', baslik: 'İndirimli ne kadar öderim?', alt: 'Erken ödeme indirimi ve taksit hesabı', href: '/araclar/ceza-hesapla' },
   { ikon: '📄', baslik: 'Cezaya itiraz etmek istiyorum', alt: 'Hazır itiraz dilekçesi örnekleri', href: '/dilekce-ornekleri' },
   { ikon: '🔎', baslik: 'Cezamı nasıl sorgularım?', alt: 'e-Devlet ile adım adım sorgulama', yazi: ['trafik-cezasi-sorgulama-e-devlet', 'trafik-cezasi-e-devlet-sorgulama'], ara: 'sorgulama' },
@@ -96,9 +97,9 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title>Trafik Cezası Ne Kadar? 2026 Güncel Tutarlar ve İtiraz | CezaRehberi</title>
-        <meta name="description" content="2026 güncel trafik cezası tutarları: kırmızı ışık, hız, cep telefonu, alkol, park. %25 erken ödeme indirimi hesaplama, ücretsiz itiraz dilekçesi örnekleri ve e-Devlet sorgulama rehberi." />
-        <meta name="keywords" content="trafik cezası 2026, trafik cezası ne kadar, trafik cezası itiraz, trafik cezası sorgulama, kırmızı ışık cezası, hız cezası, ceza hesaplama" />
+        <title>{`Trafik Cezası Ne Kadar? ${YIL} Güncel Tutarlar ve İtiraz | CezaRehberi`}</title>
+        <meta name="description" content={`${YIL} güncel trafik cezası tutarları: kırmızı ışık, hız, cep telefonu, alkol, park. %25 erken ödeme indirimi hesaplama, ücretsiz itiraz dilekçesi örnekleri ve e-Devlet sorgulama rehberi.`} />
+        <meta name="keywords" content={`trafik cezası ${YIL}, trafik cezası ne kadar, trafik cezası itiraz, trafik cezası sorgulama, kırmızı ışık cezası, hız cezası, ceza hesaplama`} />
       </Helmet>
 
       {/* ─── HERO: arama ilk ekranın merkezinde ─── */}
@@ -106,7 +107,7 @@ export default function HomePage() {
         <div className="hm-hero-in">
           <div className="hm-rozet">
             <span aria-hidden="true">✓</span>
-            <span>2026 güncel<span className="hm-rozet-uzun"> · 7574 sayılı Kanun değişiklikleri işlendi</span></span>
+            <span>{YIL} güncel<span className="hm-rozet-uzun"> · 7574 sayılı Kanun değişiklikleri işlendi</span></span>
           </div>
           <h1 className="hm-h1">
             Trafik cezanız ne kadar?<br />
@@ -188,7 +189,7 @@ export default function HomePage() {
           <div className="hm-wrap">
             <div className="hm-head hm-head-satir">
               <div>
-                <span className="hm-etiket">2026 TUTARLARI</span>
+                <span className="hm-etiket">{YIL} TUTARLARI</span>
                 <h2 id="populer-baslik">En çok aranan trafik cezaları</h2>
               </div>
               <Link to="/trafik-cezalari-2026" className="hm-tumu">Tüm cezalar ({cezalar.length}) →</Link>
@@ -363,10 +364,10 @@ export default function HomePage() {
       <section className="hm-cta">
         <div className="hm-wrap hm-dar hm-orta">
           <h2>Aradığınızı bulamadınız mı?</h2>
-          <p>Tüm rehberlerde arayın ya da 2026 ceza listesinin tamamına göz atın.</p>
+          <p>Tüm rehberlerde arayın ya da {YIL} ceza listesinin tamamına göz atın.</p>
           <div className="hm-cta-btn">
             <Link to="/blog" className="hm-btn hm-btn-tur">📰 Tüm rehberler</Link>
-            <Link to="/trafik-cezalari-2026" className="hm-btn hm-btn-cam">📋 2026 ceza listesi</Link>
+            <Link to="/trafik-cezalari-2026" className="hm-btn hm-btn-cam">📋 {YIL} ceza listesi</Link>
           </div>
         </div>
       </section>

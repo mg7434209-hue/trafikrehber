@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { articlesApi, cezaApi, dilekceApi } from '../services/api';
+import { YIL } from '../yil';
 
 /**
  * Ana sayfa akıllı araması — yazarken sonuç gösterir.
@@ -23,7 +24,7 @@ const norm = (s) => (s || '')
 
 // Sabit sayfalar: halkın kullandığı kelimelerle (anahtar) eşleşir
 const SAYFALAR = [
-  { baslik: '2026 trafik cezaları listesi', alt: 'Tüm tutarlar tek tabloda', href: '/trafik-cezalari-2026', anahtar: 'liste tum cezalar tutar 2026 ne kadar' },
+  { baslik: `${YIL} trafik cezaları listesi`, alt: 'Tüm tutarlar tek tabloda', href: '/trafik-cezalari-2026', anahtar: `liste tum cezalar tutar ${YIL} ne kadar` },
   { baslik: 'Ceza hesaplama aracı', alt: 'Erken ödeme indirimi ve taksit', href: '/araclar/ceza-hesapla', anahtar: 'hesapla hesaplama indirim erken odeme taksit ne kadar oderim yuzde 25' },
   { baslik: 'İtiraz dilekçesi örnekleri', alt: 'Hazır şablonlar', href: '/dilekce-ornekleri', anahtar: 'itiraz dilekce sablon ornek mahkeme sulh ceza' },
   { baslik: 'Sigorta rehberi', alt: 'Trafik sigortası, kasko, hasar', href: '/sigorta', anahtar: 'sigorta kasko hasar kaza tazminat zmss' },

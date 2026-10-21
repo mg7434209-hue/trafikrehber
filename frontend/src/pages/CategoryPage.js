@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi } from '../services/api';
+import { YIL } from '../yil';
 
 const CATEGORY_META = {
   ceza: {
@@ -64,7 +65,7 @@ export default function CategoryPage() {
   return (
     <>
       <Helmet>
-        <title>{meta.label} — TrafikRehber 2026</title>
+        <title>{`${meta.label} — CezaRehberi ${YIL}`}</title>
         <meta name="description" content={meta.desc} />
       </Helmet>
 

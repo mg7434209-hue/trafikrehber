@@ -233,6 +233,12 @@ def ceza_ydo_guncelle(req: YdoRequest, db: Session = Depends(get_db), _=Depends(
 #   sayılı Kanun metni ve EGM listesidir. Değişiklikte bu listeyi güncelle,
 #   CEZA_SON_DOGRULAMA tarihini de birlikte değiştir.
 CEZA_SON_DOGRULAMA = "2026-09-14"
+# Sayfalarda "tutarlar şuna göredir" cümlesi. Yeni yılın listesi işlenince
+# bununla birlikte güncellenir (tek yer; sayfalara gömülmez).
+CEZA_DAYANAK = "27 Şubat 2026 tarihli 7574 sayılı Kanun ve 2026 yeniden değerleme oranı (%25,49)"
+# NOT: sitedeki YIL etiketleri ("… Cezası 2026") bu tarihin YILINDAN türetilir
+# (utils/icerik.py veri_yili) — takvimden değil. Listeyi güncelleyip bu tarihi
+# ilerletmek, başlıkları da yeni yıla taşır.
 
 CEZALAR_2026 = [
     {"kod": "H1", "aciklama": "Kırmızı ışık ihlali", "taban_ceza_tl": 5000.0, "puan": 20,

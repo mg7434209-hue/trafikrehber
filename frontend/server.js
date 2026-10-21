@@ -80,25 +80,45 @@ async function apiGet(yol, ttlMs = 600000) {
   }
 }
 
+// ---- Veri yılı: başlıklardaki "2026" TEK KAYNAKTAN gelir ----
+// Backend /api/ceza-turleri/guncellik → veri_yili (ceza listesinin DOĞRULANDIĞI
+// yıl; takvim yılı değil). Ceza listesi yeni yıl için güncellenince bütün
+// başlıklar kendiliğinden yeni yıla geçer. Metinlerde yıl {YIL} diye yazılır.
+// API'ye ulaşılamazsa son bilinen değer (ilk açılışta VARSAYILAN_YIL) kullanılır.
+const VARSAYILAN_YIL = 2026;
+let veriYili = VARSAYILAN_YIL;
+async function yilYenile() {
+  const v = await apiGet('/api/ceza-turleri/guncellik', 3600000);
+  if (v && Number(v.veri_yili) > 2000) veriYili = Number(v.veri_yili);
+  return veriYili;
+}
+const Y = (s) => String(s == null ? '' : s).replace(/\{YIL\}/g, veriYili);
+
+// Taşınan yazılar → yeni adres (backend routers/articles.py ESKI_SLUG ile aynı)
+const ESKI_BLOG = {
+  'trafik-cezasi-tutarlari-2025': 'trafik-cezasi-tutarlari',
+  'trafik-cezasi-sorgulama-e-devlet': 'trafik-cezasi-e-devlet-sorgulama',
+};
+
 // ---- Statik rota meta tablosu (App.js ile aynı rotalar) ----
 const ROTALAR = {
   '/': {
-    baslik: 'Trafik Cezası Ne Kadar? 2026 Güncel Tutarlar ve İtiraz | CezaRehberi',
-    aciklama: '2026 güncel trafik cezası tutarları: kırmızı ışık, hız, cep telefonu, alkol, park. %25 erken ödeme indirimi hesaplama, ücretsiz itiraz dilekçesi örnekleri ve e-Devlet sorgulama rehberi.',
+    baslik: 'Trafik Cezası Ne Kadar? {YIL} Güncel Tutarlar ve İtiraz | CezaRehberi',
+    aciklama: '{YIL} güncel trafik cezası tutarları: kırmızı ışık, hız, cep telefonu, alkol, park. %25 erken ödeme indirimi hesaplama, ücretsiz itiraz dilekçesi örnekleri ve e-Devlet sorgulama rehberi.',
     ad: 'Ana Sayfa',
   },
   '/trafik-cezalari-2026': {
-    baslik: '2026 Trafik Cezaları Güncel Liste | Tüm Tutarlar — CezaRehberi',
-    aciklama: '2026 trafik cezası tutarlarının tam listesi: kırmızı ışık, hız, alkol, cep telefonu. Kademeli cezalar ve %25 erken ödeme indirimi.',
-    ad: '2026 Ceza Listesi',
+    baslik: '{YIL} Trafik Cezaları Güncel Liste | Tüm Tutarlar — CezaRehberi',
+    aciklama: '{YIL} trafik cezası tutarlarının tam listesi: kırmızı ışık, hız, alkol, cep telefonu. Kademeli cezalar ve %25 erken ödeme indirimi.',
+    ad: '{YIL} Ceza Listesi',
   },
   '/araclar/ceza-hesapla': {
-    baslik: 'Trafik Cezası Hesaplama Aracı 2026 — CezaRehberi',
+    baslik: 'Trafik Cezası Hesaplama Aracı {YIL} — CezaRehberi',
     aciklama: 'Ceza türünü seçin; 1 ay içinde ödemede %25 indirimli tutarı ve taksit seçeneklerini anında görün.',
     ad: 'Ceza Hesapla',
   },
   '/dilekce-ornekleri': {
-    baslik: 'Trafik Cezası İtiraz Dilekçe Örnekleri (2026) — CezaRehberi',
+    baslik: 'Trafik Cezası İtiraz Dilekçe Örnekleri ({YIL}) — CezaRehberi',
     aciklama: 'Trafik cezasına itiraz, sigorta hasar ihbarı ve ehliyet iptali için hazır dilekçe şablonları. Doldurun, indirin. Başvuru süresini ve usulünü güncel mevzuattan doğrulayın.',
     ad: 'Dilekçe Örnekleri',
   },
@@ -108,7 +128,7 @@ const ROTALAR = {
     ad: 'Blog',
   },
   '/ceza': {
-    baslik: '2026 Trafik Cezaları — Tutar, Puan ve İtiraz | TrafikRehber',
+    baslik: '{YIL} Trafik Cezaları — Tutar, Puan ve İtiraz | CezaRehberi',
     aciklama: 'Her trafik cezasının güncel tutarı, erken ödeme indirimi, ceza puanı ve itiraz yolu.',
     ad: 'Cezalar',
   },
@@ -118,7 +138,7 @@ const ROTALAR = {
     ad: 'Trafik Cezaları',
   },
   '/sigorta': {
-    baslik: 'Trafik Sigortası ve Kasko Rehberi 2026 — CezaRehberi',
+    baslik: 'Trafik Sigortası ve Kasko Rehberi {YIL} — CezaRehberi',
     aciklama: 'Zorunlu trafik sigortası (ZMSS), kasko, hasar ihbarı ve tazminat süreçleri hakkında güncel bilgiler.',
     ad: 'Sigorta',
   },
@@ -168,6 +188,7 @@ function breadcrumbLd(parcalar) {
 
 /** Rota → { baslik, aciklama, tip, ld[], noindex } */
 async function metaCoz(yol) {
+  await yilYenile();
   // Makale detayı
   let m = yol.match(/^\/blog\/([^/]+)$/);
   if (m) {
@@ -206,7 +227,7 @@ async function metaCoz(yol) {
     const ld = [
       breadcrumbLd([
         { ad: 'Ana Sayfa', yol: '/' },
-        { ad: '2026 Ceza Listesi', yol: '/trafik-cezalari-2026' },
+        { ad: Y('{YIL} Ceza Listesi'), yol: '/trafik-cezalari-2026' },
         { ad: c.aciklama, yol },
       ]),
     ];
@@ -228,7 +249,7 @@ async function metaCoz(yol) {
     const veri = await apiGet('/api/dilekce/' + encodeURIComponent(m[1]), 600000);
     const s = veri && veri.sablon;
     if (!s) return { baslik: 'Dilekçe bulunamadı — ' + MARKA, aciklama: '', noindex: true, bulunamadi: true, ld: [] };
-    const baslik = s.baslik + ' (2026 Örneği) — ' + MARKA;
+    const baslik = s.baslik + Y(/örne/i.test(s.baslik) ? ' ({YIL}) — ' : ' ({YIL} Örneği) — ') + MARKA;
     const aciklama = (s.aciklama || '') + (s.ilgili_kanun ? ' İlgili mevzuat: ' + s.ilgili_kanun + '.' : '') +
       ' Ücretsiz şablonu doldurup indirin.';
     return {
@@ -265,9 +286,9 @@ async function metaCoz(yol) {
         });
       }
     } else {
-      ld.push(breadcrumbLd([{ ad: 'Ana Sayfa', yol: '/' }, { ad: r.ad, yol }]));
+      ld.push(breadcrumbLd([{ ad: 'Ana Sayfa', yol: '/' }, { ad: Y(r.ad), yol }]));
     }
-    return { baslik: r.baslik, aciklama: r.aciklama, ld };
+    return { baslik: Y(r.baslik), aciklama: Y(r.aciklama), ld };
   }
 
   // Kategori alt sayfası (/sigorta/kasko gibi)
@@ -277,9 +298,9 @@ async function metaCoz(yol) {
     const altAd = decodeURIComponent(yol.slice(kok.length + 1)).replace(/-/g, ' ');
     const baslik = altAd.charAt(0).toLocaleUpperCase('tr') + altAd.slice(1);
     return {
-      baslik: baslik + ' — ' + ust.ad + ' | ' + MARKA,
-      aciklama: ust.aciklama,
-      ld: [breadcrumbLd([{ ad: 'Ana Sayfa', yol: '/' }, { ad: ust.ad, yol: kok }, { ad: baslik, yol }])],
+      baslik: baslik + ' — ' + Y(ust.ad) + ' | ' + MARKA,
+      aciklama: Y(ust.aciklama),
+      ld: [breadcrumbLd([{ ad: 'Ana Sayfa', yol: '/' }, { ad: Y(ust.ad), yol: kok }, { ad: baslik, yol }])],
     };
   }
 
@@ -321,7 +342,9 @@ function headEnjekte(html, yol, meta) {
   return html
     .replace(/<title>[\s\S]*?<\/title>/i, '<title>' + esc(meta.baslik) + '</title>')
     .replace(/<meta\s+name="description"[^>]*>/i, '<meta name="description" content="' + esc(meta.aciklama) + '" />')
-    .replace('</head>', etiketler.join('\n    ') + '\n  </head>');
+    .replace('</head>', etiketler.join('\n    ') +
+      // İstemci (src/yil.js) aynı yılı kullansın: Helmet başlıkları sunucununkiyle eşleşir
+      `\n    <script>window.__VERI_YILI__=${Number(veriYili)}</script>` + '\n  </head>');
 }
 
 // ---- sitemap / robots: backend'in dinamik çıktısı (yoksa derleme kopyası) ----
@@ -398,6 +421,13 @@ const sunucu = http.createServer(async (req, res) => {
     if (INDEXNOW_KEY && yol === '/' + INDEXNOW_KEY + '.txt') {
       res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' });
       return res.end(INDEXNOW_KEY);
+    }
+
+    // Taşınan yazılar (ör. slug'ında yıl olan) → yeni kalıcı adres
+    const eskiBlog = yol.match(/^\/blog\/([^/]+)$/);
+    if (eskiBlog && ESKI_BLOG[eskiBlog[1]]) {
+      res.writeHead(301, { Location: '/blog/' + ESKI_BLOG[eskiBlog[1]], 'Cache-Control': 'public, max-age=86400' });
+      return res.end();
     }
 
     // Kopya içerik üreten alt kategoriler → üst kategoriye kalıcı yönlendirme.

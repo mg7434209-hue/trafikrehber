@@ -31,7 +31,7 @@ export default function ArticlePage() {
   return (
     <>
       <Helmet>
-        <title>{article.title} — TrafikRehber</title>
+        <title>{article.title} — CezaRehberi</title>
         <meta name="description" content={article.meta_description} />
         <meta property="og:title" content={article.title} />
         <meta property="og:description" content={article.meta_description || ''} />

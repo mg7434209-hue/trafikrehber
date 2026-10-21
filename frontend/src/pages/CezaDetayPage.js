@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import AdSlot from '../components/AdSlot';
 import { AD_SLOTS } from '../adsense';
+import { YIL } from '../yil';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
 const tl = v => Number(v).toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺';
@@ -25,7 +26,7 @@ export default function CezaDetayPage() {
   if (!d) return (
     <div className="container" style={{ padding: '70px 20px', textAlign: 'center' }}>
       <h1 style={{ color: '#1a3a6b', marginBottom: 12 }}>Ceza bulunamadı</h1>
-      <Link to="/trafik-cezalari-2026" className="btn btn-secondary">2026 ceza listesine dön</Link>
+      <Link to="/trafik-cezalari-2026" className="btn btn-secondary">{YIL} ceza listesine dön</Link>
     </div>
   );
 
@@ -35,7 +36,7 @@ export default function CezaDetayPage() {
   return (
     <>
       <Helmet>
-        <title>{sayfa.baslik} | TrafikRehber</title>
+        <title>{sayfa.baslik} | CezaRehberi</title>
         <meta name="description" content={`${ceza.aciklama} cezası ${tl(ceza.taban_ceza_tl)}. ${odeme_suresi_gun} gün içinde ödemede ${tl(ceza.indirimli_tl)}. Ceza puanı, itiraz yolu ve dilekçe örneği.`} />
       </Helmet>
 
@@ -44,7 +45,7 @@ export default function CezaDetayPage() {
         <div style={{ maxWidth: 820, margin: '0 auto' }}>
           <nav className="breadcrumb" style={{ color: 'rgba(255,255,255,.65)', marginBottom: 14 }}>
             <Link to="/" style={{ color: 'rgba(255,255,255,.8)' }}>Ana Sayfa</Link><span>/</span>
-            <Link to="/trafik-cezalari-2026" style={{ color: 'rgba(255,255,255,.8)' }}>2026 Ceza Listesi</Link><span>/</span>
+            <Link to="/trafik-cezalari-2026" style={{ color: 'rgba(255,255,255,.8)' }}>{YIL} Ceza Listesi</Link><span>/</span>
             <span>{ceza.aciklama}</span>
           </nav>
 
@@ -156,7 +157,7 @@ export default function CezaDetayPage() {
             </div>
             <div style={{ marginTop: 16 }}>
               <Link to="/trafik-cezalari-2026" style={{ fontWeight: 700, color: '#1a3a6b', fontSize: 14.5, textDecoration: 'none' }}>
-                📋 2026 trafik cezalarının tam listesi →
+                📋 {YIL} trafik cezalarının tam listesi →
               </Link>
             </div>
           </>
