@@ -347,12 +347,12 @@ def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
 
     # --- Ziyaretçi sayacı (routers/stats.py ile aynı kaynak) ---
     from datetime import date, timedelta
-    from routers.stats import VISITORS_BASE, _online_count
+    from routers.stats import VISITORS_BASE, _online_count, tr_bugun
 
     ziyaret_toplam = db.query(func.coalesce(func.sum(SiteVisit.tekil), 0)).scalar() or 0
-    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == date.today()).first()
+    bugun_row = db.query(SiteVisit).filter(SiteVisit.gun == tr_bugun()).first()
     son7 = db.query(SiteVisit).filter(
-        SiteVisit.gun >= date.today() - timedelta(days=6)
+        SiteVisit.gun >= tr_bugun() - timedelta(days=6)
     ).order_by(SiteVisit.gun).all()
 
     return {

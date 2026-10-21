@@ -57,6 +57,8 @@ export const dilekceApi = {
 
 export const cezaApi = {
   getAll: () => api.get('/api/ceza-turleri'),
+  // Ceza başına sayfa listesi (slug + başlık + tutar) — ana sayfa ve akıllı arama
+  sayfalar: () => api.get('/api/ceza-turleri/sayfalar'),
   hesapla: (id) => api.get(`/api/ceza-turleri/${id}/hesapla`),
 };
 

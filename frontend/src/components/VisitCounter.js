@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { statsApi } from '../services/api';
+import { ziyaretciYayinla } from '../ziyaretci';
 
 /**
  * Footer ziyaretçi sayacı.
@@ -27,7 +28,7 @@ export default function VisitCounter() {
   useEffect(() => {
     let iptal = false;
     statsApi.visit(location.pathname)
-      .then(d => { if (!iptal) { setVeri(d); setHata(false); sonPing.current = Date.now(); } })
+      .then(d => { if (!iptal) { setVeri(d); setHata(false); ziyaretciYayinla(d); sonPing.current = Date.now(); } })
       .catch(() => { if (!iptal) setHata(true); });
     return () => { iptal = true; };
   }, [location.pathname]);
@@ -38,7 +39,7 @@ export default function VisitCounter() {
       if (document.hidden) return;
       if (Date.now() - sonPing.current < HEARTBEAT_MS - 1000) return;
       sonPing.current = Date.now();
-      statsApi.visit(null).then(d => { setVeri(d); setHata(false); }).catch(() => setHata(true));
+      statsApi.visit(null).then(d => { setVeri(d); setHata(false); ziyaretciYayinla(d); }).catch(() => setHata(true));
     };
     const id = setInterval(tik, HEARTBEAT_MS);
     document.addEventListener('visibilitychange', tik);
@@ -52,11 +53,14 @@ export default function VisitCounter() {
   ) : null;
 
   return (
-    <p className="visit-counter" title="Son 24 saat, günlük tekil ziyaret kayıtlarını gösterir; gece yarısını geçen tekrar ziyaretler yeniden sayılabilir.">
-      <span aria-hidden="true">👥</span> <b>{nf.format(veri.toplam)}</b> ziyaretçi
-      {typeof veri.son_24_saat === "number" && (
-        <span className="visit-24h"> · Son 24 saat: <b>{nf.format(veri.son_24_saat)}</b> giriş</span>
-      )}
+    <p className="visit-counter"
+       title={typeof veri.son_24_saat === 'number'
+         ? `Son 24 saat: ${nf.format(veri.son_24_saat)} giriş. "Bugün" Türkiye saatiyle gece yarısından bu yana tekil ziyaretçidir.`
+         : '"Bugün" Türkiye saatiyle gece yarısından bu yana tekil ziyaretçidir.'}>
+      <span aria-hidden="true">👥</span>{' '}
+      Bugün <b>{nf.format(veri.bugun || 0)}</b> kişi
+      <span className="visit-sep"> · </span>
+      Toplam <b>{nf.format(veri.toplam)}</b> ziyaretçi
       {veri.online > 0 && (
         <span className="visit-online">
           {' · '}<span className="visit-dot" aria-hidden="true" />

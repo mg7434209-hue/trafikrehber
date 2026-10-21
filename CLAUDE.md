@@ -66,7 +66,10 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   stilleri `App.css`'te), rota değişiminde ping atar, 60 sn'de bir (sekme
   görünürken) online sayısını tazeler. **API yanıt vermezse rozet gizlenir —
   tahmini/uydurma sayı basılmaz.** Admin panelinde toplam/bugün/online kartları
-  ve son 7 gün grafiği vardır.
+  ve son 7 gün grafiği vardır. "Bugün" TÜRKİYE günüdür (`tr_bugun()`).
+
+## Ana sayfa
+Arama + niyet kartları + ziyaretçi şeridi; kurallar: @docs/ana-sayfa.md
 
 ## Ceza Sayfaları (`/ceza/:slug`) — trafiğin ana kaynağı
 Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız cezası

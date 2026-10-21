@@ -83,8 +83,8 @@ async function apiGet(yol, ttlMs = 600000) {
 // ---- Statik rota meta tablosu (App.js ile aynı rotalar) ----
 const ROTALAR = {
   '/': {
-    baslik: 'CezaRehberi — 2026 Güncel Trafik Cezaları, İtiraz ve Sigorta Rehberi',
-    aciklama: '2026 güncel trafik cezaları listesi, erken ödeme indirimi hesaplayıcı, itiraz dilekçesi ve sigorta rehberi. Bilgileri işlem öncesinde resmî kaynaklardan doğrulayın.',
+    baslik: 'Trafik Cezası Ne Kadar? 2026 Güncel Tutarlar ve İtiraz | CezaRehberi',
+    aciklama: '2026 güncel trafik cezası tutarları: kırmızı ışık, hız, cep telefonu, alkol, park. %25 erken ödeme indirimi hesaplama, ücretsiz itiraz dilekçesi örnekleri ve e-Devlet sorgulama rehberi.',
     ad: 'Ana Sayfa',
   },
   '/trafik-cezalari-2026': {
