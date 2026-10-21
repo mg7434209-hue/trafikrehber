@@ -11,8 +11,8 @@ export default function Footer() {
           {/* Marka */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 7, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: '#1a3a6b', flexShrink: 0 }}>T</div>
-              <span style={{ fontSize: 17, fontWeight: 700, color: '#fff' }}>TrafikRehber</span>
+              <div style={{ width: 32, height: 32, borderRadius: 7, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: '#1a3a6b', flexShrink: 0 }}>C</div>
+              <span style={{ fontSize: 17, fontWeight: 700, color: '#fff' }}>CezaRehberi</span>
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.7 }}>
               Trafik cezaları, sigorta, ehliyet ve araç işlemleri hakkında güncel ve güvenilir Türkçe rehber.
@@ -80,7 +80,7 @@ export default function Footer() {
       {/* Alt bar */}
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '16px 20px' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-          <p style={{ fontSize: 12, color: '#64748b' }}>© 2026 TrafikRehber. Tüm hakları saklıdır.</p>
+          <p style={{ fontSize: 12, color: '#64748b' }}>© 2026 CezaRehberi. Tüm hakları saklıdır.</p>
           <VisitCounter />
           <p style={{ fontSize: 12, color: '#64748b', textAlign: 'right' }}>
             ⚖️ Bu site genel bilgilendirme amaçlıdır. Hukuki danışmanlık yerine geçmez.

@@ -19,7 +19,7 @@ export default function Navbar() {
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
-    <nav style={{
+    <nav aria-label="Ana gezinme" style={{
       position: 'sticky', top: 0, zIndex: 100,
       background: '#1a3a6b',
       boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
@@ -27,15 +27,15 @@ export default function Navbar() {
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
 
         {/* Logo */}
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Link to="/" aria-label="CezaRehberi ana sayfa" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
             width: 36, height: 36, borderRadius: 8,
             background: '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 18, fontWeight: 800, color: '#1a3a6b',
             flexShrink: 0,
-          }}>T</div>
-          <span style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>TrafikRehber</span>
+          }}>C</div>
+          <span style={{ fontSize: 18, fontWeight: 700, color: '#fff' }}>CezaRehberi</span>
         </Link>
 
         {/* Desktop nav */}
@@ -56,6 +56,10 @@ export default function Navbar() {
 
         {/* Mobile hamburger */}
         <button
+          type="button"
+          aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+          aria-expanded={menuOpen}
+          aria-controls="mobil-ana-menu"
           onClick={() => setMenuOpen(!menuOpen)}
           style={{ display: 'none', background: 'none', border: 'none', color: '#fff', fontSize: 24, cursor: 'pointer', padding: 4 }}
           className="hamburger"
@@ -66,7 +70,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div style={{ background: '#0f2347', padding: '8px 20px 16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div id="mobil-ana-menu" style={{ background: '#0f2347', padding: '8px 20px 16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
           {NAV_ITEMS.map(item => (
             <Link key={item.path} to={item.path} style={{
               display: 'block', padding: '12px 4px',

@@ -19,6 +19,7 @@ const HEARTBEAT_MS = 60000;
 
 export default function VisitCounter() {
   const [veri, setVeri] = useState(null);
+  const [hata, setHata] = useState(false);
   const location = useLocation();
   const sonPing = useRef(0);
 
@@ -26,8 +27,8 @@ export default function VisitCounter() {
   useEffect(() => {
     let iptal = false;
     statsApi.visit(location.pathname)
-      .then(d => { if (!iptal) { setVeri(d); sonPing.current = Date.now(); } })
-      .catch(() => {});
+      .then(d => { if (!iptal) { setVeri(d); setHata(false); sonPing.current = Date.now(); } })
+      .catch(() => { if (!iptal) setHata(true); });
     return () => { iptal = true; };
   }, [location.pathname]);
 
@@ -37,18 +38,25 @@ export default function VisitCounter() {
       if (document.hidden) return;
       if (Date.now() - sonPing.current < HEARTBEAT_MS - 1000) return;
       sonPing.current = Date.now();
-      statsApi.visit(null).then(setVeri).catch(() => {});
+      statsApi.visit(null).then(d => { setVeri(d); setHata(false); }).catch(() => setHata(true));
     };
     const id = setInterval(tik, HEARTBEAT_MS);
     document.addEventListener('visibilitychange', tik);
     return () => { clearInterval(id); document.removeEventListener('visibilitychange', tik); };
   }, []);
 
-  if (!veri || !veri.toplam) return null;
+  if (!veri || !veri.toplam) return hata ? (
+    <p className="visit-counter" role="status" title="Ziyaret istatistikleri API bağlantısı kontrol edilmeli">
+      Ziyaretçi sayacı geçici olarak kullanılamıyor
+    </p>
+  ) : null;
 
   return (
-    <p className="visit-counter" title={`Bugün ${nf.format(veri.bugun || 0)} tekil ziyaretçi`}>
+    <p className="visit-counter" title="Son 24 saat, günlük tekil ziyaret kayıtlarını gösterir; gece yarısını geçen tekrar ziyaretler yeniden sayılabilir.">
       <span aria-hidden="true">👥</span> <b>{nf.format(veri.toplam)}</b> ziyaretçi
+      {typeof veri.son_24_saat === "number" && (
+        <span className="visit-24h"> · Son 24 saat: <b>{nf.format(veri.son_24_saat)}</b> giriş</span>
+      )}
       {veri.online > 0 && (
         <span className="visit-online">
           {' · '}<span className="visit-dot" aria-hidden="true" />

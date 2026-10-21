@@ -100,7 +100,7 @@ function openPdfPrint(content, baslik) {
 <div class="wm">ÖRNEK DİLEKÇEDİR</div>
 <div class="page">
   <div class="hdr">
-    <span class="sn">TrafikRehber — cezarehberi.com</span>
+    <span class="sn">CezaRehberi — cezarehberi.com</span>
     <span class="dl">Örnek Dilekçe Şablonu</span>
   </div>
   <div class="content">${escaped}</div>
@@ -167,7 +167,7 @@ export default function DilekceDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{sablon.baslik} — Kişiselleştir ve İndir | TrafikRehber</title>
+        <title>{sablon.baslik} — Kişiselleştir ve İndir | CezaRehberi</title>
         <meta name="description" content={sablon.aciklama} />
       </Helmet>
 
@@ -192,6 +192,20 @@ export default function DilekceDetailPage() {
           </div>
         )}
 
+        <section aria-label="Dilekçe hizmet seviyeleri" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:12,marginBottom:24}}>
+          <div style={{padding:16,border:'1px solid #cbd5e1',borderRadius:12,background:'#fff'}}>
+            <strong>Ücretsiz şablon</strong><p style={{fontSize:13}}>Bu sayfada doldurabilir, kopyalayabilir ve çıktı alabilirsiniz.</p><strong>0 TL</strong>
+          </div>
+          <div style={{padding:16,border:'1px solid #f59e0b',borderRadius:12,background:'#fffbeb'}}>
+            <strong>Gelişmiş dijital paket</strong><p style={{fontSize:13}}>Ekler ve kontrol listesi içeren paket hazırlanıyor. Ödeme alınmıyor.</p><strong>200 TL · Yakında</strong>
+          </div>
+          <div style={{padding:16,border:'1px solid #cbd5e1',borderRadius:12,background:'#f8fafc'}}>
+            <strong>Avukat incelemesi</strong><p style={{fontSize:13}}>Avukat anlaşması ve hukuki şartlar tamamlanınca sunulacak.</p><strong>Şu an kapalı</strong>
+          </div>
+        </section>
+        <section style={{padding:16,background:'#eef5ff',borderRadius:10,marginBottom:20,fontSize:13,lineHeight:1.7}}>
+          <strong>Başvuru yol haritası:</strong> Tutanak ve tebliğ bilgilerini inceleyin; işlem türüne göre güncel başvuru süresi, mercii ve usulünü <a href="https://www.mevzuat.gov.tr/" target="_blank" rel="noopener noreferrer">resmî mevzuattan</a> doğrulayın; delilleri hazırlayıp dilekçeyi kontrol edin. Bu rehber kişiye özel hukuki görüş değildir.
+        </section>
         <div className="warning-box" style={{ marginBottom:28 }}>
           ⚖️ Bu şablon örnek amaçlıdır. Hukuki danışmanlık yerine geçmez. Önemli davalarda avukata danışmanız önerilir.
         </div>

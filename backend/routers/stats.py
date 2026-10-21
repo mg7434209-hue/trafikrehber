@@ -25,10 +25,10 @@ import os
 import re
 import time
 import uuid
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -120,8 +120,12 @@ def _prune(db: Session) -> None:
 
 def _cevap(db: Session, force: bool = False) -> dict:
     t = _totals(db, force=force)
+    son_24_saat = db.query(func.count(VisitorKey.id)).filter(
+        VisitorKey.created_at >= datetime.now(timezone.utc) - timedelta(hours=24)
+    ).scalar() or 0
     return {
         "success": True,
+        "son_24_saat": int(son_24_saat),
         "toplam": VISITORS_BASE + t["toplam"],
         "bugun": t["bugun"],
         "online": _online_count(),
@@ -170,9 +174,12 @@ def kaydet_ziyaret(req: VisitRequest, request: Request, db: Session = Depends(ge
                 )
             )
         db.commit()
-    except Exception:
+    except Exception as exc:
         db.rollback()
-        return _cevap(db)
+        # Do not return a fake successful visit when persistence failed.
+        # The frontend must be able to surface a configuration/database issue.
+        print(f"[visitor-counter] visit write failed: {type(exc).__name__}: {exc}")
+        raise HTTPException(status_code=503, detail="Ziyaret kaydı şu anda yapılamıyor.") from exc
 
     _prune(db)
     # Yeni ziyaretçi sayıldıysa önbelleği tazele (rozet anında artsın)
