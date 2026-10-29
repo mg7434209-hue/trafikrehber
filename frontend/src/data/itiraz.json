@@ -1,0 +1,104 @@
+{
+  "_aciklama": "İtiraz yol haritası (/itiraz) verisi. server.js 'sss' alanından FAQPage şeması basar. Gerekçe metinleri dilekçe oluşturucuya girer; hukuki iddia yazarken kesin dil kullanma, kanıt öner.",
+  "gerekceler": [
+    {
+      "id": "tutanak_hata",
+      "baslik": "Tutanakta yanlış bilgi var",
+      "aciklama": "Plaka, araç markası/rengi, ihlal yeri, tarih ya da saat gerçeği yansıtmıyor.",
+      "guc": "guclu",
+      "kanit": "Ruhsat fotokopisi, aracın gerçek bilgilerini gösteren fotoğraf",
+      "metin": "İdari para cezası karar tutanağında yer alan bilgiler gerçeği yansıtmamaktadır. Tutanakta yazılı araç/yer/zaman bilgisi ile gerçek durum arasında açık bir çelişki bulunmaktadır. Maddi hata içeren tutanağa dayanılarak verilen idari yaptırım kararı hukuka aykırıdır."
+    },
+    {
+      "id": "arac_baska_yerde",
+      "baslik": "O saatte araç başka yerdeydi",
+      "aciklama": "Aracınızın o tarih ve saatte tutanaktaki yerde olmadığını gösterebiliyorsunuz (plaka kopyalanmış olabilir).",
+      "guc": "guclu",
+      "kanit": "HGS/OGS geçiş kaydı, otopark fişi, telefon konum geçmişi, araç takip kaydı, tanık",
+      "metin": "Tutanakta belirtilen tarih ve saatte aracım belirtilen yerde bulunmamaktadır. Bu husus ekte sunduğum belgelerle sabittir. Aracımın plakasının başka bir araçta kullanılmış olabileceği ihtimali de değerlendirilerek ihlalin aracım tarafından gerçekleştirilmediğinin tespitini talep ederim."
+    },
+    {
+      "id": "isaret_yok",
+      "baslik": "Trafik işareti yoktu veya görünmüyordu",
+      "aciklama": "Yasak ya da sınırı gösteren levha/işaret yoktu, görünmez durumdaydı ya da işaretler birbiriyle çelişiyordu.",
+      "guc": "orta",
+      "kanit": "Olay yerinin tarihli fotoğrafları, video",
+      "metin": "İhlalin gerçekleştiği belirtilen yerde, ilgili kuralı sürücülere bildiren trafik işareti bulunmamakta / görülemeyecek durumdadır. Sürücünün bilmesi mümkün olmayan bir kuralın ihlalinden söz edilemez. Ekteki fotoğraflar bu durumu göstermektedir; gerekirse yerinde keşif yapılmasını talep ederim."
+    },
+    {
+      "id": "zorunluluk",
+      "baslik": "Zorunluluk hâli vardı",
+      "aciklama": "Ambulansa yol vermek, kazayı önlemek ya da acil bir sağlık durumu nedeniyle kuralı ihlal etmek zorunda kaldınız.",
+      "guc": "orta",
+      "kanit": "Hastane kaydı, araç içi kamera kaydı, tanık bilgileri",
+      "metin": "Söz konusu davranış, kendimin veya başkasının hayatına yönelik ağır ve yakın bir tehlikeden korunmak amacıyla zorunluluk hâli içinde gerçekleşmiştir. Bu durumu ekteki belgeler doğrulamaktadır. Zorunluluk hâlinde gerçekleştirilen davranış nedeniyle kabahat sorumluluğu doğmaz."
+    },
+    {
+      "id": "olcum",
+      "baslik": "Radar / EDS ölçümüne güvenmiyorum",
+      "aciklama": "Hız ya da kırmızı ışık tespiti elektronik cihazla yapıldı; ölçüm görüntüsünü ve cihazın kalibrasyon belgesini görmek istiyorsunuz.",
+      "guc": "orta",
+      "kanit": "Tespit fotoğrafı (e-Devlet'te görülebiliyorsa), yoldaki hız levhasının fotoğrafı",
+      "metin": "İhlal elektronik denetleme sistemi ile tespit edilmiştir. Tespitin dayanağı olan görüntü kayıtlarının, ölçümü yapan cihazın tip onay ve geçerli kalibrasyon belgelerinin dosyaya getirtilmesini talep ederim. Bu belgeler sunulmadan yapılan tespite dayanılarak ceza verilemez."
+    },
+    {
+      "id": "surucu_degil",
+      "baslik": "Aracı ben kullanmıyordum",
+      "aciklama": "Plakaya (araç sahibine) yazılan cezada aracı başka biri kullanıyordu.",
+      "guc": "zayif",
+      "kanit": "Aracı kullanan kişinin yazılı beyanı, kiralama/teslim tutanağı",
+      "metin": "İhlal tarihinde aracı ben kullanmamaktaydım; aracı kullanan kişinin kimliği ve beyanı ekte sunulmuştur. Bu durumun değerlendirilmesini talep ederim."
+    },
+    {
+      "id": "teblig",
+      "baslik": "Tebligat usulsüz yapıldı",
+      "aciklama": "Ceza size usulüne uygun tebliğ edilmedi; başkasına teslim edildi ya da eski adresinize gönderildi.",
+      "guc": "orta",
+      "kanit": "Tebligat zarfı/mazbatası, adres kayıt belgesi (e-Devlet)",
+      "metin": "İdari para cezası kararı tarafıma usulüne uygun olarak tebliğ edilmemiştir. Usulsüz tebligat itiraz süresini başlatmayacağından itirazım süresindedir. Kararı fiilen öğrendiğim tarih dilekçemde belirtilmiştir."
+    },
+    {
+      "id": "yanlis_madde",
+      "baslik": "Yanlış ihlal / madde uygulandı",
+      "aciklama": "Yaptığınız davranış tutanaktaki maddeye uymuyor (ör. duraklama yerine park cezası, farklı hız sınırı).",
+      "guc": "orta",
+      "kanit": "Olay yerinin fotoğrafı, tutanak sureti",
+      "metin": "Tutanakta uygulanan kanun maddesi gerçekleşen olayla örtüşmemektedir. Olayın gerçek niteliği dikkate alındığında bu maddeye dayanılarak idari para cezası verilmesi hukuka aykırıdır."
+    }
+  ],
+  "zayif": [
+    "Cezanın yüksek olması ya da ödeme gücünüzün olmaması tek başına itiraz gerekçesi değildir. Bunun yerine 1 ay içinde %25 indirimli ödeme ya da taksit seçeneğini değerlendirin.",
+    "\"Herkes yapıyor\", \"kimse zarar görmedi\" gibi gerekçeler hukuken sonuç doğurmaz.",
+    "Kanıtsız iddialar genellikle reddedilir. Elinizdeki her belgeyi (fotoğraf, kayıt, fiş) dilekçeye ekleyin."
+  ],
+  "sss": [
+    {
+      "s": "Trafik cezasına itiraz süresi kaç gündür?",
+      "c": "İtiraz süresi, cezanın tebliğ edildiği (yüze karşı yazıldıysa tutanağın verildiği) günden itibaren 15 gündür (Kabahatler Kanunu m.27). Tebliğ günü sayılmaz; son gün resmî tatile denk gelirse süre izleyen ilk iş gününün sonunda biter. Süre kaçırılırsa ceza kesinleşir."
+    },
+    {
+      "s": "Trafik cezasına itiraz nereye yapılır?",
+      "c": "İtiraz, cezanın yazıldığı yerdeki Sulh Ceza Hâkimliği'ne dilekçeyle yapılır. Dilekçe adliyenin ön bürosuna (tevzi bürosu) verilebilir ya da e-imza veya mobil imzanız varsa UYAP Vatandaş Portalı (vatandas.uyap.gov.tr) üzerinden gönderilebilir."
+    },
+    {
+      "s": "Trafik cezasına itiraz ücretli mi?",
+      "c": "Trafik idari para cezasına itiraz için başvuru harcı alınmaz. Bazı adliyeler tebligat için posta gideri isteyebilir; güncel tutarı ön bürodan öğrenebilirsiniz."
+    },
+    {
+      "s": "Cezayı ödersem itiraz hakkım kaybolur mu?",
+      "c": "Hayır. Kabahatler Kanunu m.17/6'ya göre peşin ödeme, karara karşı kanun yoluna başvurma hakkını etkilemez. Pek çok kişi %25 indirimi kaçırmamak için cezayı 1 ay içinde öder ve itirazını ayrıca yapar. İtiraz kabul edilirse ödenen tutarın iadesi istenebilir."
+    },
+    {
+      "s": "İtirazım reddedilirse ne yapabilirim?",
+      "c": "Sulh Ceza Hâkimliği kararına karşı, kararın tebliğinden itibaren 7 gün içinde itiraz edilebilir (Kabahatler Kanunu m.29, CMK m.268). Kararın altında başvurulacak merci ve süre yazılıdır."
+    },
+    {
+      "s": "İtiraz için avukat tutmak zorunlu mu?",
+      "c": "Hayır. İtirazı kendiniz dilekçeyle yapabilirsiniz. Yüksek tutarlı cezalarda, sürücü belgesinin geri alındığı durumlarda (alkol, ileri kademe kırmızı ışık veya hız) ya da ceza davası ihtimali olan olaylarda bir avukattan destek almanız önerilir."
+    },
+    {
+      "s": "İtiraz sonucu ne kadar sürede çıkar?",
+      "c": "Sulh Ceza Hâkimliği genellikle duruşma yapmadan dosya üzerinden karar verir. Süre adliyenin iş yüküne göre değişir; karar size tebliğ edilir ve UYAP Vatandaş Portalı'ndan da takip edilebilir."
+    }
+  ]
+}

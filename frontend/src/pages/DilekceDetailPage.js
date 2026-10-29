@@ -186,6 +186,13 @@ export default function DilekceDetailPage() {
         </h1>
         <p style={{ color:'#666', marginBottom:20 }}>{sablon.aciklama}</p>
 
+        {/* Trafik cezası itirazında adım adım oluşturucu (gerekçe + süre + hazır metin) */}
+        {sablon.slug === 'trafik-cezasi-itiraz-dilekce-ornegi' && (
+          <Link to="/itiraz#dilekce" className="it-cta-mini">
+            ⚖️ Daha kolayı: gerekçenizi seçin, süreniz hesaplansın, dilekçe hazır çıksın — <strong>Adım adım itiraz oluşturucu →</strong>
+          </Link>
+        )}
+
         {sablon.ilgili_kanun && (
           <div style={{ background:'#dce6f1', borderRadius:8, padding:'10px 16px', marginBottom:20, fontSize:14 }}>
             📚 İlgili mevzuat: <strong>{sablon.ilgili_kanun}</strong>

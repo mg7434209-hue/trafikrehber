@@ -61,6 +61,8 @@ export const cezaApi = {
   sayfalar: () => api.get('/api/ceza-turleri/sayfalar'),
   // Veri yılı + son doğrulama + eskime uyarısı (admin paneli kartı)
   guncellik: () => api.get('/api/ceza-turleri/guncellik'),
+  // Hız cezası kademeleri (KTK m.51) — /araclar/hiz-cezasi-hesapla
+  hizKademeleri: () => api.get('/api/ceza-turleri/hiz-kademeleri'),
   hesapla: (id) => api.get(`/api/ceza-turleri/${id}/hesapla`),
 };
 

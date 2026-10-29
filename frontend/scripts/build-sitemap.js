@@ -20,6 +20,8 @@ const OUT = path.join(__dirname, '..', 'public', 'sitemap.xml');
 const ROTALAR = [
   ['/', '1.0', 'daily'],
   ['/trafik-cezalari-2026', '0.9', 'weekly'],
+  ['/itiraz', '0.9', 'monthly'],
+  ['/araclar/hiz-cezasi-hesapla', '0.9', 'monthly'],
   ['/araclar/ceza-hesapla', '0.9', 'monthly'],
   ['/dilekce-ornekleri', '0.9', 'weekly'],
   ['/blog', '0.8', 'daily'],

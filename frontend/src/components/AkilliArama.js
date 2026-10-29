@@ -26,6 +26,8 @@ const norm = (s) => (s || '')
 const SAYFALAR = [
   { baslik: `${YIL} trafik cezaları listesi`, alt: 'Tüm tutarlar tek tabloda', href: '/trafik-cezalari-2026', anahtar: `liste tum cezalar tutar ${YIL} ne kadar` },
   { baslik: 'Ceza hesaplama aracı', alt: 'Erken ödeme indirimi ve taksit', href: '/araclar/ceza-hesapla', anahtar: 'hesapla hesaplama indirim erken odeme taksit ne kadar oderim yuzde 25' },
+  { baslik: 'Haksız cezaya itiraz: yol haritası', alt: 'Süre hesabı + dilekçe oluşturucu', href: '/itiraz', anahtar: 'itiraz haksiz ceza dilekce nasil itiraz edilir sulh ceza uyap sure 15 gun nereye basvurulur avukat' },
+  { baslik: 'Hız cezası hesaplama', alt: 'Kaç km aştım, ne kadar ceza?', href: '/araclar/hiz-cezasi-hesapla', anahtar: 'hiz cezasi hesapla radar km asim kac km tolerans ehliyet el koyma' },
   { baslik: 'İtiraz dilekçesi örnekleri', alt: 'Hazır şablonlar', href: '/dilekce-ornekleri', anahtar: 'itiraz dilekce sablon ornek mahkeme sulh ceza' },
   { baslik: 'Sigorta rehberi', alt: 'Trafik sigortası, kasko, hasar', href: '/sigorta', anahtar: 'sigorta kasko hasar kaza tazminat zmss' },
   { baslik: 'Ehliyet işlemleri', alt: 'Puan, sınav, yenileme', href: '/ehliyet', anahtar: 'ehliyet surucu belgesi puan sinav yenileme iptal' },
@@ -36,7 +38,7 @@ const SAYFALAR = [
 const ES = {
   radar: 'hiz', telefon: 'cep telefonu', promil: 'alkol', ickili: 'alkol',
   kemer: 'emniyet kemeri', isik: 'kirmizi isik', sigortasiz: 'sigorta',
-  ehliyetsiz: 'ehliyetsiz', drift: 'drift makas', makas: 'drift makas',
+  ehliyetsiz: 'ehliyetsiz', haksiz: 'itiraz', drift: 'drift makas', makas: 'drift makas',
 };
 
 const tl = (v) => Number(v).toLocaleString('tr-TR', { maximumFractionDigits: 0 }) + ' ₺';

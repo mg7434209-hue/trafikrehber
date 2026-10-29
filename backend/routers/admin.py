@@ -240,6 +240,33 @@ CEZA_DAYANAK = "27 Şubat 2026 tarihli 7574 sayılı Kanun ve 2026 yeniden değe
 # (utils/icerik.py veri_yili) — takvimden değil. Listeyi güncelleyip bu tarihi
 # ilerletmek, başlıkları da yeni yıla taşır.
 
+# HIZ CEZASI KADEMELERİ (KTK m.51, 7574 s.K. ile değişik) — TEK KAYNAK.
+# /araclar/hiz-cezasi-hesapla aracı ve hız ceza sayfaları buradan okur.
+# Satır: (aşım alt km/s, aşım üst km/s | None = üstü yok, ceza ₺, belge geri alma günü)
+# Kaynak: 7574 s.K. (RG 27.02.2026) KTK m.51 tablosu; hukuk büroları ve basındaki
+# özetlerle karşılaştırıldı (29.10.2026). Bu tutarlar SABİTTİR, yeniden
+# değerlemeye tabi değildir. Değişiklikte H2/H3 kademe_notu'nu da güncelle.
+HIZ_KADEMELERI = {
+    "ici": {
+        "ad": "Yerleşim yeri içi",
+        "kod": "H2",
+        "kademeler": [
+            (6, 10, 2000, 0), (11, 15, 4000, 0), (16, 20, 6000, 0),
+            (21, 25, 8000, 0), (26, 35, 12000, 0), (36, 45, 15000, 0),
+            (46, 55, 20000, 30), (56, 65, 25000, 60), (66, None, 30000, 90),
+        ],
+    },
+    "disi": {
+        "ad": "Yerleşim yeri dışı / şehirlerarası / otoyol",
+        "kod": "H3",
+        "kademeler": [
+            (11, 15, 2000, 0), (16, 20, 4000, 0), (21, 25, 6000, 0),
+            (26, 30, 8000, 0), (31, 40, 12000, 0), (41, 50, 15000, 0),
+            (51, 60, 20000, 30), (61, 70, 25000, 60), (71, None, 30000, 90),
+        ],
+    },
+}
+
 CEZALAR_2026 = [
     {"kod": "H1", "aciklama": "Kırmızı ışık ihlali", "taban_ceza_tl": 5000.0, "puan": 20,
      "kanun_maddesi": "KTK m.47 (7574 s.K. ile değişik)",
@@ -247,11 +274,11 @@ CEZALAR_2026 = [
 
     {"kod": "H2", "aciklama": "Hız sınırı aşımı — yerleşim yeri içi", "taban_ceza_tl": 2000.0, "puan": 0,
      "kanun_maddesi": "KTK m.51 (7574 s.K. ile değişik)",
-     "kademe_notu": "7574 ile yüzde bazlı kademeler (%10-30 / %30-50 / %50+) KALDIRILDI. Ceza aşılan km/s'ye göre 9 kademede 2.000 ₺'den 30.000 ₺'ye kadar uygulanır; yerleşim yeri içinde tolerans 5 km/s'dir (6 km/s aşımdan itibaren ceza)."},
+     "kademe_notu": "7574 ile yüzde bazlı kademeler (%10-30 / %30-50 / %50+) KALDIRILDI. Tolerans 5 km/s. Kademeler: 6-10 km/s 2.000 ₺ · 11-15 km/s 4.000 ₺ · 16-20 km/s 6.000 ₺ · 21-25 km/s 8.000 ₺ · 26-35 km/s 12.000 ₺ · 36-45 km/s 15.000 ₺ · 46-55 km/s 20.000 ₺ (belge 30 gün) · 56-65 km/s 25.000 ₺ (60 gün) · 66 km/s ve üzeri 30.000 ₺ (90 gün)."},
 
     {"kod": "H3", "aciklama": "Hız sınırı aşımı — yerleşim yeri dışı / otoyol", "taban_ceza_tl": 2000.0, "puan": 0,
      "kanun_maddesi": "KTK m.51 (7574 s.K. ile değişik)",
-     "kademe_notu": "Tolerans 10 km/s. Kademeler: 11-15 km/s 2.000 ₺ · 16-20 km/s 4.000 ₺ · 21-25 km/s 6.000 ₺ · 26-30 km/s 8.000 ₺ · 31-40 km/s 12.000 ₺ · 41-50 km/s 15.000 ₺; üst kademelerde 30.000 ₺'ye kadar ve sürücü belgesine el koyma."},
+     "kademe_notu": "Tolerans 10 km/s. Kademeler: 11-15 km/s 2.000 ₺ · 16-20 km/s 4.000 ₺ · 21-25 km/s 6.000 ₺ · 26-30 km/s 8.000 ₺ · 31-40 km/s 12.000 ₺ · 41-50 km/s 15.000 ₺ · 51-60 km/s 20.000 ₺ (belge 30 gün) · 61-70 km/s 25.000 ₺ (60 gün) · 71 km/s ve üzeri 30.000 ₺ (90 gün)."},
 
     {"kod": "H5", "aciklama": "Seyir hâlinde cep telefonu kullanma", "taban_ceza_tl": 5000.0, "puan": 0,
      "kanun_maddesi": "KTK m.73 (7574 s.K. ile değişik)",

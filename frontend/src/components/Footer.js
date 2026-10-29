@@ -30,6 +30,8 @@ export default function Footer() {
               [`${YIL} Ceza Listesi`, '/trafik-cezalari-2026'],
               ['Trafik Cezaları', '/trafik-cezalari'],
               ['Ceza Hesapla', '/araclar/ceza-hesapla'],
+              ['Hız Cezası Hesaplama', '/araclar/hiz-cezasi-hesapla'],
+              ['Cezaya İtiraz (Yol Haritası)', '/itiraz'],
               ['İtiraz Dilekçeleri', '/dilekce-ornekleri'],
             ].map(([label, path]) => (
               <div key={path} style={{ marginBottom: 9 }}>

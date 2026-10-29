@@ -20,7 +20,8 @@ boşsa aynı origin varsayılır. CORS backend'de `*` (çerez kullanılmaz).
 
 ## Rotalar (`frontend/src/App.js`)
 `/` · `/blog` `/blog/:slug` · `/dilekce-ornekleri` `/dilekce-ornekleri/:slug` ·
-`/araclar/ceza-hesapla` · `/trafik-cezalari-2026` (2026 ceza listesi) ·
+`/araclar/ceza-hesapla` · `/araclar/hiz-cezasi-hesapla` · `/itiraz` ·
+`/trafik-cezalari-2026` (2026 ceza listesi) ·
 kategori grupları `/trafik-cezalari` `/sigorta` `/ehliyet` `/arac-islemleri`
 (+ `/:sub` alt rotaları) · `/hakkimizda` `/iletisim` `/gizlilik-politikasi` ·
 `/admin` (Navbar/Footer YOK, JWT ile korunur, robots'ta engelli) · SPA 404.
@@ -73,6 +74,8 @@ Arama + niyet kartları + ziyaretçi şeridi; kurallar: @docs/ana-sayfa.md
 
 ## Güncel kalma (yıl · tutar · rehber metni)
 Yıl/tutar ELLE YAZILMAZ — `{{yil}}`, `{{ceza:H1}}`, `YIL`: @docs/guncellik.md
+## İtiraz yolculuğu · dilekçe oluşturucu · avukat · hız aracı
+KVKK + Avukatlık K. m.55 sınırları ve süre kuralları: @docs/itiraz.md
 
 ## Ceza Sayfaları (`/ceza/:slug`) — trafiğin ana kaynağı
 Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız cezası
@@ -81,16 +84,13 @@ Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız
   (SEO H1/title) + `ozet` (özgün giriş) + `sss` (soru-cevap).
 - TUTAR/PUAN BURAYA YAZILMAZ — veritabanından (CEZALAR_2026) gelir. İki yere
   yazılırsa biri mutlaka güncellenmeden kalır.
-- Uçlar: `GET /api/ceza-turleri/sayfa/<slug>` (tek sayfa + ilgili cezalar),
-  `GET /api/ceza-turleri/sayfalar` (liste). Liste ucu da `slug` döndürür.
+- Uçlar: `GET /api/ceza-turleri/sayfa/<slug>` (tek sayfa + ilgili), `/sayfalar` (liste).
 - `server.js` bu rotaya başlık/açıklama + BreadcrumbList + FAQPage şeması basar
   (zengin sonuç). Sitemap'e ceza başına bir URL girer.
 - YENİ CEZA: CEZALAR_2026'ya satır + `ceza_icerik.py`'ye aynı `kod` ile kayıt.
   Kodu `ICERIK`'te olmayan ceza listede kalır, sayfası üretilmez (zararsız).
-- KOPYA İÇERİK: `/trafik-cezalari/:sub`, `/sigorta/:sub` … üst kategoriyle
-  BİREBİR aynı sayfayı basıyordu (kod `:sub`'ı hiç okumuyordu) ve sitemap'teydi.
-  Artık server.js 301 ile üst kategoriye yollar; sitemap'ten çıkarıldı. Bu
-  rotalara yeniden içerik verilecekse önce `CategoryPage` `:sub`'ı okumalı.
+- KOPYA İÇERİK: `/<kategori>/:sub` üst kategoriyle aynıydı → server.js 301, sitemap'te
+  yok. Bu rotalara içerik verilecekse önce `CategoryPage` `:sub`'ı okumalı.
 
 ## AdSense (gelir)
 `frontend/src/adsense.js` → `AD_SLOTS` TEK DOĞRU KAYNAKTIR; birim kimlikleri

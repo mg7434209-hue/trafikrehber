@@ -122,6 +122,18 @@ const ROTALAR = {
     aciklama: 'Trafik cezasına itiraz, sigorta hasar ihbarı ve ehliyet iptali için hazır dilekçe şablonları. Doldurun, indirin. Başvuru süresini ve usulünü güncel mevzuattan doğrulayın.',
     ad: 'Dilekçe Örnekleri',
   },
+  '/itiraz': {
+    baslik: 'Haksız Trafik Cezasına İtiraz {YIL}: Adım Adım Yol Haritası ve Dilekçe | CezaRehberi',
+    aciklama: 'Haksız trafik cezasına nasıl itiraz edilir? 15 günlük süreyi hesaplayın, gerekçenizi seçin, itiraz dilekçenizi ücretsiz oluşturun; Sulh Ceza Hâkimliği ve UYAP başvurusu adım adım.',
+    ad: 'İtiraz Yol Haritası',
+    sss: 'itiraz.json',
+  },
+  '/araclar/hiz-cezasi-hesapla': {
+    baslik: 'Hız Cezası Hesaplama {YIL}: Kaç km Aşarsam Ne Kadar Ceza? | CezaRehberi',
+    aciklama: 'Hız sınırını ve hızınızı girin; aşım kademesini, ceza tutarını, 1 ay içinde %25 indirimli tutarı ve ehliyete el koyma süresini hemen görün. Şehir içi ve şehirlerarası tablo.',
+    ad: 'Hız Cezası Hesaplama',
+    sss: 'hiz.json',
+  },
   '/blog': {
     baslik: 'Trafik, Sigorta ve Ehliyet Rehberleri — CezaRehberi Blog',
     aciklama: 'Trafik cezaları, sigorta, ehliyet ve araç işlemleri üzerine güncel rehber yazıları.',
@@ -158,6 +170,19 @@ const ROTALAR = {
 };
 
 const KATEGORI_KOKU = ['/trafik-cezalari', '/sigorta', '/ehliyet', '/arac-islemleri'];
+
+// Sayfaya özel SSS (ROTALAR[yol].sss = src/data/<dosya>.json → { sss: [{s, c}] })
+function sayfaSssYukle(dosya) {
+  const anahtar = 'sss:' + dosya;
+  const onbellekli = cacheAl(anahtar);
+  if (onbellekli !== undefined) return onbellekli;
+  try {
+    const ham = JSON.parse(fs.readFileSync(path.join(__dirname, 'src', 'data', dosya), 'utf8'));
+    return cacheYaz(anahtar, Array.isArray(ham.sss) ? ham.sss : [], 3600000);
+  } catch (e) {
+    return cacheYaz(anahtar, [], 3600000);
+  }
+}
 
 function sssYukle() {
   const onbellekli = cacheAl('sss');
@@ -287,6 +312,16 @@ async function metaCoz(yol) {
       }
     } else {
       ld.push(breadcrumbLd([{ ad: 'Ana Sayfa', yol: '/' }, { ad: Y(r.ad), yol }]));
+      const sss = r.sss ? sayfaSssYukle(r.sss) : [];
+      if (sss.length) {
+        ld.push({
+          '@type': 'FAQPage',
+          mainEntity: sss.map((x) => ({
+            '@type': 'Question', name: x.s,
+            acceptedAnswer: { '@type': 'Answer', text: x.c },
+          })),
+        });
+      }
     }
     return { baslik: Y(r.baslik), aciklama: Y(r.aciklama), ld };
   }

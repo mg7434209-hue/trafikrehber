@@ -6,7 +6,9 @@ const NAV_ITEMS = [
   { label: 'Sigorta', path: '/sigorta' },
   { label: 'Ehliyet', path: '/ehliyet' },
   { label: 'Araç İşlemleri', path: '/arac-islemleri' },
+  { label: 'İtiraz Et', path: '/itiraz', vurgu: true }, // ana dönüşüm sayfası: turuncu düğme
   { label: 'Dilekçeler', path: '/dilekce-ornekleri' },
+  { label: 'Hız Cezası', path: '/araclar/hiz-cezasi-hesapla' },
   { label: 'Ceza Hesapla', path: '/araclar/ceza-hesapla' },
 ];
 
@@ -41,6 +43,13 @@ export default function Navbar() {
         {/* Desktop nav */}
         <div style={{ display: 'flex', gap: 2, alignItems: 'center' }} className="desktop-nav">
           {NAV_ITEMS.map(item => (
+            item.vurgu ? (
+              <Link key={item.path} to={item.path} style={{
+                padding: '7px 13px', borderRadius: 8, textDecoration: 'none', margin: '0 4px',
+                fontSize: 14, fontWeight: 700, color: '#fff', background: '#e65c00',
+                boxShadow: isActive(item.path) ? '0 0 0 2px #ffd700' : 'none',
+              }}>{item.label}</Link>
+            ) : (
             <Link key={item.path} to={item.path} style={{
               padding: '8px 12px', borderRadius: 6, textDecoration: 'none',
               fontSize: 14, fontWeight: 500,
@@ -51,6 +60,7 @@ export default function Navbar() {
               onMouseEnter={e => { if (!isActive(item.path)) { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#fff'; }}}
               onMouseLeave={e => { if (!isActive(item.path)) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#e2e8f0'; }}}
             >{item.label}</Link>
+            )
           ))}
         </div>
 
@@ -74,8 +84,8 @@ export default function Navbar() {
           {NAV_ITEMS.map(item => (
             <Link key={item.path} to={item.path} style={{
               display: 'block', padding: '12px 4px',
-              color: isActive(item.path) ? '#ffd700' : '#e2e8f0',
-              textDecoration: 'none', fontWeight: 500, fontSize: 15,
+              color: item.vurgu ? '#fdba74' : isActive(item.path) ? '#ffd700' : '#e2e8f0',
+              textDecoration: 'none', fontWeight: item.vurgu ? 700 : 500, fontSize: 15,
               borderBottom: '1px solid rgba(255,255,255,0.08)',
             }}>{item.label}</Link>
           ))}
@@ -83,7 +93,9 @@ export default function Navbar() {
       )}
 
       <style>{`
-        @media (max-width: 768px) {
+        .desktop-nav a { white-space: nowrap; }
+        /* 8 öğe 1060 px altında sığmıyor (yazılar iki satıra kırılıyordu) */
+        @media (max-width: 1060px) {
           .desktop-nav { display: none !important; }
           .hamburger { display: block !important; }
         }
