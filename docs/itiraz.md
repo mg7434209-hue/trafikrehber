@@ -19,9 +19,9 @@ kutusu ve hız aracı bu adresle gelir. Menüde turuncu "İtiraz Et" düğmesidi
   mobil imza gerekir (yalnız e-Devlet şifresi yetmeyebilir).
 
 ## Dilekçe oluşturucu (`components/DilekceOlusturucu.js`)
-- KVKK: ad, T.C. no, adres, telefon YALNIZ tarayıcıda işlenir — ağ isteği,
-  localStorage ve analitik YOK (Playwright testi ağ trafiğinde T.C. no arar).
-  Bu bileşene sunucuya gönderen kod EKLEME.
+- KVKK: ad, T.C. no, adres, telefon YALNIZ tarayıcıda işlenir — form verisi
+  ağa, localStorage'a ve analitiğe GİTMEZ (Playwright testi ağ trafiğinde T.C.
+  no arar). Tek istek dilekçe sayacıdır ve yalnız eylem türünü taşır.
 - Çıktı: önizleme, yazdır/PDF (yeni pencere), Word (.doc = HTML blob),
   kopyala. Başlık "<İL> NÖBETÇİ SULH CEZA HÂKİMLİĞİ'NE". Madde metni
   `kanun_maddesi`'nden ("KTK " öneki atılır). Ödedim seçiliyse KK m.17/6 +
