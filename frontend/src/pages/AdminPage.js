@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { adminApi, cezaApi } from '../services/api';
+import { adminApi, cezaApi, statsApi } from '../services/api';
 
 export default function AdminPage() {
   const [token, setToken] = useState(localStorage.getItem('admin_token') || '');
@@ -13,8 +13,9 @@ export default function AdminPage() {
   const [ydoOran, setYdoOran] = useState('');
   const [editCeza, setEditCeza] = useState(null);
   const [guncellik, setGuncellik] = useState(null);
+  const [dilekceSay, setDilekceSay] = useState(null);
 
-  useEffect(() => { if (token) { loadStats(); loadCezalar(); cezaApi.guncellik().then(setGuncellik).catch(() => {}); } }, [token]);
+  useEffect(() => { if (token) { loadStats(); loadCezalar(); cezaApi.guncellik().then(setGuncellik).catch(() => {}); statsApi.getDilekce().then(setDilekceSay).catch(() => {}); } }, [token]);
 
   const loadStats = async () => {
     try { const d = await adminApi.getStats(token); setStats(d.stats); } catch {}
@@ -143,6 +144,9 @@ export default function AdminPage() {
               ['👥', (stats.ziyaretci_toplam ?? 0).toLocaleString('tr-TR'), 'Toplam Ziyaretçi'],
               ['📅', stats.ziyaretci_bugun ?? 0, 'Bugün (tekil)'],
               ['🟢', stats.ziyaretci_online ?? 0, 'Şu An Sitede'],
+              // Dilekçe hazırlayan kişi: sitede eşiğe ulaşınca görünür (admin her zaman görür)
+              ...(dilekceSay ? [['🖨️', (dilekceSay.toplam ?? 0).toLocaleString('tr-TR'),
+                dilekceSay.goster ? 'Dilekçe Hazırlayan (sitede görünüyor)' : `Dilekçe Hazırlayan (sitede ${dilekceSay.esik}'de görünür)`]] : []),
             ].map(([icon, val, label]) => (
               <div key={label} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '18px 16px', textAlign: 'center' }}>
                 <div style={{ fontSize: 22 }}>{icon}</div>

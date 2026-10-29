@@ -27,6 +27,15 @@ kutusu ve hız aracı bu adresle gelir. Menüde turuncu "İtiraz Et" düğmesidi
   `kanun_maddesi`'nden ("KTK " öneki atılır). Ödedim seçiliyse KK m.17/6 +
   iade talebi ve "Ödeme dekontu" eki girer.
 
+## Dilekçe sayacı (`components/DilekceSayaci.js` · `routers/stats.py`)
+- "X kişi itiraz dilekçesini CezaRehberi'nde hazırladı": ana sayfa ve /itiraz
+  hero'su. GERÇEK sayı: oluşturucu ve şablon sayfasındaki yazdır/indir/kopyala
+  (`dilekceSay(tur)`), kişi başı günde 1 (`dilekce_keys` karma, 7 gün), bot ve
+  headless sayılmaz. TABAN YOK — şişirilemez.
+- `DILEKCE_SAYAC_ESIK` (env, varsayılan 50) altında `goster:false` → bileşen
+  hiçbir şey çizmez. Admin "Genel" kartı sayıyı her zaman gösterir.
+- POST gövdesi YALNIZ `{"tur": …}`; form verisi bu çağrıya eklenmez (test eder).
+
 ## Avukat yönlendirme (`src/avukat.js` · `components/AvukatDestegi.js`)
 - `AVUKATLAR` BOŞKEN avukat adı basılmaz; kutu "ne zaman avukat gerekir +
   baro + adli yardım bürosu" anlatır. Ad + baro + sicil no olmayan satır

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { statsApi } from '../services/api';
-import { ziyaretciYayinla } from '../ziyaretci';
 
 /**
  * Footer ziyaretçi sayacı.
@@ -28,7 +27,7 @@ export default function VisitCounter() {
   useEffect(() => {
     let iptal = false;
     statsApi.visit(location.pathname)
-      .then(d => { if (!iptal) { setVeri(d); setHata(false); ziyaretciYayinla(d); sonPing.current = Date.now(); } })
+      .then(d => { if (!iptal) { setVeri(d); setHata(false); sonPing.current = Date.now(); } })
       .catch(() => { if (!iptal) setHata(true); });
     return () => { iptal = true; };
   }, [location.pathname]);
@@ -39,7 +38,7 @@ export default function VisitCounter() {
       if (document.hidden) return;
       if (Date.now() - sonPing.current < HEARTBEAT_MS - 1000) return;
       sonPing.current = Date.now();
-      statsApi.visit(null).then(d => { setVeri(d); setHata(false); ziyaretciYayinla(d); }).catch(() => setHata(true));
+      statsApi.visit(null).then(d => { setVeri(d); setHata(false); }).catch(() => setHata(true));
     };
     const id = setInterval(tik, HEARTBEAT_MS);
     document.addEventListener('visibilitychange', tik);

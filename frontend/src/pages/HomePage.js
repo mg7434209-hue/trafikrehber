@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi, cezaApi, dilekceApi } from '../services/api';
 import AkilliArama from '../components/AkilliArama';
-import ZiyaretciSeridi from '../components/ZiyaretciSeridi';
+import DilekceSayaci from '../components/DilekceSayaci';
 // SSS verisi paylaşılır: sunucu (server.js) bunu okuyup FAQPage JSON-LD basar
 import SSS from '../data/sss.json';
 import { YIL } from '../yil';
@@ -126,7 +126,7 @@ export default function HomePage() {
             ))}
           </nav>
 
-          <ZiyaretciSeridi />
+          <DilekceSayaci />
 
           <p className="hm-not">
             Bağımsız bilgilendirme platformudur; resmî kurum veya hukuk bürosu değildir. Süreleri ve tutarları resmî kaynaklardan doğrulayın.

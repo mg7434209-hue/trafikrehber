@@ -219,16 +219,13 @@ html { scroll-behavior: smooth; }
 .hm-cip:hover { background: #e65c00; border-color: #e65c00; }
 .hm-not { font-size: 12px; opacity: 0.7; max-width: 590px; margin: 16px auto 0; line-height: 1.5; }
 
-/* Ziyaretçi şeridi (components/ZiyaretciSeridi.js) */
-.hz-visit {
-  display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 14px;
-  background: rgba(15,35,71,0.55); border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 14px; padding: 9px 18px; font-size: 14px;
-}
-.hz-visit b { font-weight: 800; color: #fbbf24; font-variant-numeric: tabular-nums; }
-.hz-visit-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.hz-visit-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.25); }
-.hz-visit-live b { color: #6ee7a8; }
+/* Dilekçe sayacı (components/DilekceSayaci.js) — eşik altında hiç çizilmez */
+.ds { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 8px; border-radius: 14px; padding: 9px 18px; font-size: 14px; }
+.ds b { font-weight: 800; font-variant-numeric: tabular-nums; }
+.ds-koyu { background: rgba(15,35,71,0.55); border: 1px solid rgba(255,255,255,0.18); color: #fff; }
+.ds-koyu b { color: #fbbf24; }
+.ds-acik { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+.ds-alt { opacity: .8; font-size: 13px; }
 
 /* Akıllı arama (components/AkilliArama.js) */
 .ak-form { position: relative; max-width: 620px; margin: 0 auto; text-align: left; z-index: 20; }
@@ -401,8 +398,7 @@ html { scroll-behavior: smooth; }
   .hm-ceza-tutar { font-size: 19px; }
   .ak-input { padding: 15px 10px; }
   .ak-btn { padding: 0 18px; }
-  .hz-visit { font-size: 13px; padding: 8px 12px; }
-  .hz-visit-sep { display: none; }
+  .ds { font-size: 13px; padding: 8px 12px; }
   /* İlk ekranda niyet kartları görünsün: hero kısalır */
   .hm-lead { display: none; }
   .hm-rozet { margin-bottom: 12px; }
@@ -590,3 +586,5 @@ html { scroll-behavior: smooth; }
   .it-sss { padding-top: 10px !important; }
   .hz-tablolar { padding-top: 0 !important; padding-bottom: 0 !important; }
 }
+.it-ds { margin: -6px 0 16px; }
+.it-ds:empty { display: none; }

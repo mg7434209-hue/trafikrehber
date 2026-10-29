@@ -62,7 +62,7 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   taşımak içindir, sayıyı şişirmek için değil.
 - Uçlar: `POST /api/stats/visit` (`{"sayfa":"/blog"}` → görüntülenme de sayar;
   `{}` → yalnız "şu an sitede" tazeleme), `GET /api/stats/visitors`,
-  `GET /api/stats/public` (ana sayfa şeridi de bunu okur).
+  `GET /api/stats/public`. Sayaç YALNIZ sayfa altındadır (hero'da yok).
 - İstemci: `VisitCounter` footer alt barına rozeti basar (`.visit-counter`
   stilleri `App.css`'te), rota değişiminde ping atar, 60 sn'de bir (sekme
   görünürken) online sayısını tazeler. **API yanıt vermezse rozet gizlenir —

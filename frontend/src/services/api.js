@@ -79,6 +79,9 @@ export const statsApi = {
   // null ise yalnız "şu an sitede" tazeleme pingidir.
   visit: (sayfa = null) => api.post('/api/stats/visit', { sayfa }),
   getVisitors: () => api.get('/api/stats/visitors'),
+  // Dilekçe sayacı: yalnız eylem türü gider, dilekçe içeriği ASLA gönderilmez
+  dilekce: (tur) => api.post('/api/stats/dilekce', { tur }),
+  getDilekce: () => api.get('/api/stats/dilekce'),
 };
 
 export const adminApi = {

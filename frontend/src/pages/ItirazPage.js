@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { cezaApi } from '../services/api';
 import DilekceOlusturucu from '../components/DilekceOlusturucu';
 import AvukatDestegi from '../components/AvukatDestegi';
+import DilekceSayaci from '../components/DilekceSayaci';
 import VERI from '../data/itiraz.json';
 import { YIL } from '../yil';
 import { birAySonra, gunSuresi, kalanGun, tarihOku, trTarih } from '../sure';
@@ -91,6 +92,7 @@ export default function ItirazPage() {
             <div><b>Harç yok</b><span>itiraz için başvuru harcı alınmaz</span></div>
             <div><b>Avukat şart değil</b><span>dilekçeyi kendiniz verebilirsiniz</span></div>
           </div>
+          <div className="it-ds"><DilekceSayaci /></div>
           <div className="it-hero-btn">
             <a href="#sure" className="hm-btn hm-btn-tur">Süremi hesapla →</a>
             <a href="#dilekce" className="hm-btn hm-btn-cam">Doğrudan dilekçe yaz</a>

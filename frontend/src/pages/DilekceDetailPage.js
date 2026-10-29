@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { dilekceApi } from '../services/api';
+import { dilekceSay } from '../components/DilekceSayaci';
 
 const PLACEHOLDER_LABELS = {
   'AD SOYAD': 'Ad Soyad',
@@ -151,6 +152,7 @@ export default function DilekceDetailPage() {
   const handleChange = (key, val) => setValues(prev => ({ ...prev, [key]: val }));
 
   const handleTxt = () => {
+    dilekceSay('txt');
     const blob = new Blob([filledContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -159,6 +161,7 @@ export default function DilekceDetailPage() {
   };
 
   const handleCopy = () => {
+    dilekceSay('sablon-kopya');
     navigator.clipboard.writeText(filledContent).then(() => {
       setCopied(true); setTimeout(() => setCopied(false), 2000);
     });
@@ -260,7 +263,7 @@ export default function DilekceDetailPage() {
 
                 {/* PDF İndir butonu */}
                 <button
-                  onClick={() => openPdfPrint(filledContent, sablon.baslik)}
+                  onClick={() => { openPdfPrint(filledContent, sablon.baslik); dilekceSay('sablon-yazdir'); }}
                   style={{
                     width:'100%', padding:'14px',
                     background: isComplete ? '#c0392b' : '#1a3a6b',
@@ -335,7 +338,7 @@ export default function DilekceDetailPage() {
 
             <div style={{ display:'flex', gap:8, marginTop:12 }}>
               <button
-                onClick={() => openPdfPrint(filledContent, sablon.baslik)}
+                onClick={() => { openPdfPrint(filledContent, sablon.baslik); dilekceSay('sablon-yazdir'); }}
                 style={{ flex:1, padding:'11px', background:'#c0392b', color:'#fff', border:'none', borderRadius:8, fontSize:13, fontWeight:700, cursor:'pointer' }}
               >
                 📄 PDF İndir

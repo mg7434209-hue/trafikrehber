@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { kisaTarih, tarihOku } from '../sure';
+import { dilekceSay } from './DilekceSayaci';
 
 /**
  * Trafik cezasına itiraz dilekçesi oluşturucu.
  *
  * KVKK: girilen ad, T.C. kimlik no, adres ve telefon YALNIZ ziyaretçinin
  * tarayıcısında işlenir — sunucuya gönderilmez, tarayıcı deposuna yazılmaz,
- * analitiğe girmez. Bu bileşene ağ isteği EKLEME.
+ * analitiğe girmez. Tek ağ isteği dilekceSay(): yalnız eylem türü
+ * ("yazdir"/"word"/"kopya") gider; form verisini bu çağrıya EKLEME.
  *
  * Çıktı: önizleme + yazdır/PDF + Word (.doc) + kopyala. Metin, seçilen
  * gerekçelerin `metin` alanlarından (src/data/itiraz.json) kurulur.
@@ -112,6 +114,7 @@ export default function DilekceOlusturucu({ ceza, teblig, gerekceler = [], itira
     if (!w) return;
     w.document.write(sayfaHtml(metin) + '<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>');
     w.document.close();
+    dilekceSay('yazdir');
   };
   const word = () => {
     const blob = new Blob(['﻿' + sayfaHtml(metin)], { type: 'application/msword' });
@@ -120,9 +123,10 @@ export default function DilekceOlusturucu({ ceza, teblig, gerekceler = [], itira
     a.download = 'trafik-cezasi-itiraz-dilekcesi.doc';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    dilekceSay('word');
   };
   const kopyala = async () => {
-    try { await navigator.clipboard.writeText(metin); setKopya(true); setTimeout(() => setKopya(false), 2000); } catch { /* izin yok */ }
+    try { await navigator.clipboard.writeText(metin); dilekceSay('kopya'); setKopya(true); setTimeout(() => setKopya(false), 2000); } catch { /* izin yok */ }
   };
 
   const alan = (k, etiket, props = {}) => (

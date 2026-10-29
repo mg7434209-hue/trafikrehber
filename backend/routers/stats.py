@@ -35,7 +35,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Article, DilecceSablon, SiteVisit, VisitorKey
+from models import Article, DilecceSablon, SiteVisit, VisitorKey, DilekceGun, DilekceKey
 
 router = APIRouter()
 
@@ -222,3 +222,68 @@ def get_public_stats(db: Session = Depends(get_db)):
             "ziyaretci_online": _online_count(),
         },
     }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DİLEKÇE SAYACI — "X kişi dilekçesini burada hazırladı" (sosyal kanıt)
+#
+# Gerçek sayı: dilekçe oluşturucu ve şablon sayfasındaki yazdır / indir /
+# kopyala eylemi, kişi başı günde 1 kez. Bot ve UA'sız istek sayılmaz.
+# DILEKCE_SAYAC_ESIK'e (varsayılan 50) ulaşmadan `goster: false` döner ve
+# arayüz sayıyı HİÇ göstermez — küçük ya da uydurma sayı yayınlanmaz.
+# Taban (base) YOKTUR: bu sayı şişirilemez.
+# ─────────────────────────────────────────────────────────────────────────────
+DILEKCE_ESIK = int(os.getenv("DILEKCE_SAYAC_ESIK", "50") or 50)
+DILEKCE_TURLER = {"yazdir", "word", "kopya", "txt", "sablon-yazdir", "sablon-kopya"}
+_dilekce_cache = {"t": 0.0, "veri": None}
+
+
+class DilekceOlay(BaseModel):
+    tur: str
+
+
+def _dilekce_cevap(db: Session, force: bool = False) -> dict:
+    simdi = time.time()
+    if not force and _dilekce_cache["veri"] and simdi - _dilekce_cache["t"] < CACHE_TTL_SEC:
+        return _dilekce_cache["veri"]
+    toplam = int(db.query(func.coalesce(func.sum(DilekceGun.kisi), 0)).scalar() or 0)
+    son30 = int(db.query(func.coalesce(func.sum(DilekceGun.kisi), 0)).filter(
+        DilekceGun.gun > tr_bugun() - timedelta(days=30)).scalar() or 0)
+    veri = {"success": True, "toplam": toplam, "son_30_gun": son30,
+            "esik": DILEKCE_ESIK, "goster": toplam >= DILEKCE_ESIK}
+    _dilekce_cache.update(t=simdi, veri=veri)
+    return veri
+
+
+@router.post("/dilekce")
+def kaydet_dilekce(olay: DilekceOlay, request: Request, db: Session = Depends(get_db)):
+    ua = request.headers.get("user-agent", "")
+    if olay.tur not in DILEKCE_TURLER or not ua or BOT_RE.search(ua):
+        return _dilekce_cevap(db)
+    gun = tr_bugun()
+    ham = f"dilekce|{_client_ip(request)}|{ua}|{gun.isoformat()}|{VISITOR_SALT}"
+    anahtar = hashlib.sha256(ham.encode("utf-8")).hexdigest()
+    try:
+        yeni = db.execute(
+            pg_insert(DilekceKey.__table__)
+            .values(id=uuid.uuid4(), gun=gun, anahtar=anahtar)
+            .on_conflict_do_nothing(index_elements=["gun", "anahtar"])
+        ).rowcount
+        if yeni:
+            tablo = DilekceGun.__table__
+            db.execute(
+                pg_insert(tablo).values(id=uuid.uuid4(), gun=gun, kisi=1)
+                .on_conflict_do_update(index_elements=["gun"], set_={"kisi": tablo.c.kisi + 1})
+            )
+            db.query(DilekceKey).filter(DilekceKey.gun < gun - timedelta(days=KEY_RETENTION_DAYS)).delete(synchronize_session=False)
+        db.commit()
+    except Exception as exc:  # sayaç hatası dilekçe yazdırmayı engellemez
+        db.rollback()
+        print(f"[dilekce-sayac] yazılamadı: {type(exc).__name__}: {exc}")
+        return {"success": False}
+    return _dilekce_cevap(db, force=bool(yeni))
+
+
+@router.get("/dilekce")
+def get_dilekce(db: Session = Depends(get_db)):
+    return _dilekce_cevap(db)
