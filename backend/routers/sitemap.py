@@ -101,12 +101,45 @@ def sitemap(db: Session = Depends(get_db)):
                     headers={"Cache-Control": "public, max-age=900"})
 
 
+# Yapay zekâ asistanlarının kullandığı tarayıcılar (robots.txt'te AÇIKÇA izinli).
+# Arama/yanıt botları kullanıcı sorusuna kaynak göstermek için sayfayı çeker;
+# eğitim botları modelin bilgisine girer. İkisine de izin = "AI görünürlüğü".
+# EĞİTİME izin vermek bir İŞ KARARIDIR: kapatmak için GPTBot, ClaudeBot,
+# anthropic-ai, CCBot, Bytespider, cohere-ai, Meta-ExternalAgent, Diffbot,
+# Applebot-Extended satırlarını AI_EGITIM_BOTLARI'ndan çıkarıp `Disallow: /`
+# grubuna taşıyın ve Content-Signal'de ai-train=no yazın.
+AI_ARAMA_BOTLARI = [
+    "OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "Claude-Web",
+    "PerplexityBot", "Perplexity-User", "DuckAssistBot", "MistralAI-User",
+    "Meta-ExternalFetcher", "Amazonbot", "Google-Extended", "GoogleOther",
+]
+AI_EGITIM_BOTLARI = [
+    "GPTBot", "ClaudeBot", "anthropic-ai", "CCBot", "Bytespider", "cohere-ai",
+    "Meta-ExternalAgent", "Diffbot", "Applebot-Extended",
+]
+
+
 @router.get("/robots.txt", response_class=Response)
 def robots():
+    ai = "\n".join(f"User-agent: {b}" for b in AI_ARAMA_BOTLARI + AI_EGITIM_BOTLARI)
     content = f"""User-agent: *
 Allow: /
-Disallow: /api/
 Disallow: /admin
+Disallow: /api/admin/
+Disallow: /api/chat/
+Disallow: /md/
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+# /api/ KAPATILMAZ: Googlebot sayfayı çizerken içeriği /api'den çeker; engellenirse
+# çizilen sayfa boş kalır. JSON yanıtları X-Robots-Tag: noindex taşır (server.js).
+
+# Yapay zekâ tarayıcıları: tüm sayfalar + Markdown kopyaları (/md/) + llms.txt
+{ai}
+Allow: /
+Allow: /md/
+Disallow: /admin
+Disallow: /api/admin/
+Disallow: /api/chat/
 
 Sitemap: {SITE_URL}/sitemap.xml
 """

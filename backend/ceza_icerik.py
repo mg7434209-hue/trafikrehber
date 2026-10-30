@@ -71,7 +71,7 @@ ICERIK = {
     },
     "H5": {
         "slug": "cep-telefonu-cezasi",
-        "baslik": "Araç Kullanırken Telefon Cezası {{yil}}: Tutar ve Ehliyete El Koyma",
+        "baslik": "Telefonla Araç Kullanma Cezası {{yil}}: Tutar, Ehliyet",
         "ozet": (
             "Seyir hâlinde elde telefon kullanmak 7574 sayılı Kanun'la birlikte <strong>kademeli cezaya</strong> "
             "bağlandı ve her ihlalde sürücü belgesine 30 gün el konulması yaptırımı eklendi. Tekrarlayan "
@@ -89,7 +89,7 @@ ICERIK = {
     },
     "H7": {
         "slug": "alkollu-arac-kullanma-cezasi",
-        "baslik": "Alkollü Araç Kullanma Cezası {{yil}}: Promil Sınırı ve Ehliyet",
+        "baslik": "Alkollü Araç Cezası {{yil}}: Promil Sınırı ve Ehliyet",
         "ozet": (
             "Alkollü araç kullanma, 7574 sayılı Kanun'la en sert artırılan ihlallerden biri oldu. Ceza "
             "<strong>tekrara göre katlanır</strong> ve para cezasının yanında sürücü belgesine el koyma süresi de "
@@ -107,7 +107,7 @@ ICERIK = {
     },
     "H12": {
         "slug": "trafikte-saldirgan-davranis-cezasi",
-        "baslik": "Trafikte Saldırgan Davranış Cezası {{yil}} (Yol Kesme, Araçtan İnme)",
+        "baslik": "Saldırgan Davranış Cezası {{yil}}: Yol Kesme, Araçtan İnme",
         "ozet": (
             "7574 sayılı Kanun'un en yüksek tutarlı maddelerinden biridir. Aracı kasten yavaşlatıp yol kesmek, "
             "taciz amacıyla ısrarla takip etmek, araçtan inerek diğer sürücünün üzerine yürümek gibi davranışlar "
