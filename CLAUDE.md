@@ -69,13 +69,11 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   tahmini/uydurma sayı basılmaz.** Admin panelinde toplam/bugün/online kartları
   ve son 7 gün grafiği vardır. "Bugün" TÜRKİYE günüdür (`tr_bugun()`).
 
-## Ana sayfa
-Arama + niyet kartları + ziyaretçi şeridi; kurallar: @docs/ana-sayfa.md
-
-## Güncel kalma (yıl · tutar · rehber metni)
-Yıl/tutar ELLE YAZILMAZ — `{{yil}}`, `{{ceza:H1}}`, `YIL`: @docs/guncellik.md
-## İtiraz yolculuğu · dilekçe oluşturucu · avukat · hız aracı
-KVKK + Avukatlık K. m.55 sınırları ve süre kuralları: @docs/itiraz.md
+## Alt belgeler (ayrıntı burada)
+- Ana sayfa: arama + niyet kartları + dilekçe sayacı — @docs/ana-sayfa.md
+- Yıl/tutar ELLE YAZILMAZ — `{{yil}}`, `{{ceza:H1}}`, `YIL` — @docs/guncellik.md
+- İtiraz yolculuğu, dilekçe oluşturucu (KVKK), avukat (Av. K. m.55), hız aracı — @docs/itiraz.md
+- SEO + AI görünürlüğü: sunucuda sayfa gövdesi, llms.txt, /md, robots, bot sayacı — @docs/seo-ai.md
 
 ## Ceza Sayfaları (`/ceza/:slug`) — trafiğin ana kaynağı
 Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız cezası
@@ -185,16 +183,17 @@ Backend: `DATABASE_URL` · `JWT_SECRET` (+`JWT_ALGORITHM`, `JWT_EXPIRE_HOURS`) �
 `GEMINI_API_KEY` · `SITE_URL` (varsayılan https://www.cezarehberi.com) · `ADMIN_EMAIL` / `ADMIN_PASSWORD` ·
 `VISITORS_BASE` (sayaç tabanı, varsayılan 1000) · `VISITOR_SALT` (karma tuzu;
 boşsa `JWT_SECRET` kullanılır — **değiştirilirse o günün tekilliği sıfırlanır**) ·
-`INDEXNOW_KEY` (isteğe bağlı).
+`INDEXNOW_KEY` (isteğe bağlı) · `BOT_SAYAC_KEY` (gizli; frontend ile AYNI; AI tarayıcı sayacı) ·
+`DILEKCE_SAYAC_ESIK` (varsayılan 50).
 Frontend: `REACT_APP_BACKEND_URL` · `REACT_APP_SITE_URL` · `INDEXNOW_KEY`
-(backend'dekiyle AYNI değer).
+(backend'dekiyle AYNI değer) · `BOT_SAYAC_KEY`.
 
 ## Test (commit öncesi)
 - Backend söz dizimi: `python3 -m py_compile backend/main.py backend/models.py backend/routers/*.py`
 - Frontend derleme: `cd frontend && CI=true npm run build` (uyarı = hata).
-- Bot görünümü: `node server.js` çalışırken
-  `curl -A facebookexternalhit http://localhost:3000/blog/<slug> | grep -E '<title>|canonical'`
-  → rotaya özel başlık gelmeli; tarayıcıda canonical/description **tek** olmalı.
+- SEO + AI denetimi: sunucu açıkken `cd frontend && PORT=<port> npm run seo:kontrol` (0 hata olmalı).
+- Bot görünümü: `curl -A GPTBot localhost:3000/blog/<slug>` → rotaya özel `<title>`, tek canonical
+  ve `#seo-static` içinde sayfa metni gelmeli (seo:kontrol bunu her sayfada denetler).
 - Sayaç: API'yi Postgres'e bağlayıp `POST /api/stats/visit`'i farklı
   `X-Forwarded-For` + UA ile çağır; aynı IP+UA ikinci kez tekil ARTIRMAMALI,
   `Googlebot` UA'sı hiç saymamalı.

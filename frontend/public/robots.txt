@@ -1,7 +1,39 @@
+# Yedek kopya: canlıda server.js backend'in dinamik /robots.txt çıktısını servis eder
+# (backend/routers/sitemap.py). Backend'e ulaşılamazsa bu dosya kullanılır.
 User-agent: *
 Allow: /
-
 Disallow: /admin
-Disallow: /api/
+Disallow: /api/admin/
+Disallow: /api/chat/
+Disallow: /md/
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: Claude-Web
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+User-agent: Meta-ExternalFetcher
+User-agent: Amazonbot
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: cohere-ai
+User-agent: Meta-ExternalAgent
+User-agent: Diffbot
+User-agent: Applebot-Extended
+Allow: /
+Allow: /md/
+Disallow: /admin
+Disallow: /api/admin/
+Disallow: /api/chat/
 
 Sitemap: https://www.cezarehberi.com/sitemap.xml

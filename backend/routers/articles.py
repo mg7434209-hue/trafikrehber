@@ -119,11 +119,21 @@ def get_by_category(category: str, db: Session = Depends(get_db)):
 
 
 @router.get("/{slug}")
-def get_article(slug: str, db: Session = Depends(get_db)):
+def get_article(slug: str, say: int = Query(1), db: Session = Depends(get_db)):
+    # say=0: okunma sayılmaz. frontend server.js başlık/gövde üretmek için
+    # makaleyi bot ve önbellek yenilemesiyle de çeker; bunlar "görüntülenme"
+    # olarak sayılmasın (admin panelindeki sayılar gerçek ziyaretçi olsun).
     slug = ESKI_SLUG.get(slug, slug)
     article = db.query(Article).filter(Article.slug == slug, Article.is_published == True).first()
     if not article:
         raise HTTPException(status_code=404, detail="Makale bulunamadı")
+    if not say:
+        return {
+            "success": True,
+            "article": article_to_dict(article, db=db),
+            "related": [article_to_dict(a, include_content=False, db=db) for a in db.query(Article).filter(
+                Article.is_published == True, Article.category == article.category, Article.id != article.id).limit(3).all()],
+        }
 
     # Görüntülenme sayısını artır. updated_at AÇIKÇA korunur: kolonun
     # onupdate=now() kuralı her okumada "güncellendi" damgası basıyor, sitemap

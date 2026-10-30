@@ -16,10 +16,30 @@
     
     <meta name="description" content="Trafik cezası sorgulama, güncel sigorta ücretleri, ehliyet yenileme ve araç işlemleri hakkında en güncel bilgiler. Sorunlarınıza hızlı ve net çözümler bulun." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Yazı tipi sayfa çizimini engellemesin (render-blocking CSS idi): print→all hilesi -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    <style>
+      /* Sunucunun #root'a bastığı içerik (server.js + prerender.js). React mount olunca yerini alır. */
+      body{margin:0}
+      #seo-static{max-width:860px;margin:0 auto;padding:16px 18px 48px;font-family:Inter,-apple-system,"Segoe UI",sans-serif;color:#1a1a2e;line-height:1.7}
+      #seo-static header{border-bottom:1px solid #e2e8f0;padding-bottom:10px;margin-bottom:18px}
+      #seo-static .seo-marka{display:block;font-weight:800;font-size:20px;color:#1a3a6b;text-decoration:none;margin-bottom:6px}
+      #seo-static nav{font-size:13px;color:#64748b}
+      #seo-static a{color:#1a3a6b}
+      #seo-static h1{font-size:28px;line-height:1.25;color:#142c4f;margin:8px 0 14px}
+      #seo-static h2{font-size:21px;color:#1a3a6b;margin:26px 0 10px}
+      #seo-static h3{font-size:16px;margin:16px 0 4px}
+      #seo-static table{display:block;overflow-x:auto;border-collapse:collapse;width:100%;font-size:14px;margin:12px 0}
+      #seo-static th,#seo-static td{border:1px solid #e2e8f0;padding:8px 10px;text-align:left}
+      #seo-static th{background:#1a3a6b;color:#fff}
+      #seo-static pre{white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;padding:12px}
+      #seo-static footer{margin-top:30px;font-size:12px;color:#64748b}
+    </style>
   </head>
   <body>
-    <noscript>Bu siteyi görüntülemek için JavaScript etkinleştirilmelidir.</noscript>
+    <noscript><p style="margin:0;padding:8px 18px;font:13px sans-serif;color:#64748b">Hesaplama araçları ve dilekçe oluşturucu için JavaScript gerekir; sayfa metni JavaScript olmadan da okunabilir.</p></noscript>
     <div id="root"></div>
   </body>
 </html>

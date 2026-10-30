@@ -90,6 +90,9 @@ export const adminApi = {
 
   getStats: (token) =>
     api.get('/api/admin/stats', token),
+  // AI ve arama tarayıcıları (frontend server.js sayar; BOT_SAYAC_KEY gerekir)
+  getAiBotlar: (token) =>
+    api.get('/api/admin/ai-botlar', token),
 
   // Makaleler
   articles2026Guncelle: (token) =>

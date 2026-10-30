@@ -45,7 +45,7 @@ export default function HizCezasiPage() {
     <>
       <Helmet>
         <title>{`Hız Cezası Hesaplama ${YIL}: Kaç km Aşarsam Ne Kadar Ceza? | CezaRehberi`}</title>
-        <meta name="description" content="Hız sınırını ve hızınızı girin; aşım kademesini, ceza tutarını, 1 ay içinde %25 indirimli tutarı ve ehliyete el koyma süresini hemen görün. Şehir içi ve şehirlerarası tablo." />
+        <meta name="description" content="Hız sınırını ve hızınızı girin; aşım kademesini, ceza tutarını, %25 indirimli tutarı ve ehliyete el koyma süresini görün. Şehir içi ve şehirlerarası tablo." />
       </Helmet>
 
       <section className="it-hero">

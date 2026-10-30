@@ -14,7 +14,8 @@
     "build": "react-scripts build",
     "serve": "node server.js",
     "prebuild": "node scripts/build-sitemap.js",
-    "start:prod": "node server.js"
+    "start:prod": "node server.js",
+    "seo:kontrol": "node scripts/seo-kontrol.js"
   },
   "browserslist": {
     "production": [

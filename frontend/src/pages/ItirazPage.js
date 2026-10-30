@@ -74,8 +74,8 @@ export default function ItirazPage() {
   return (
     <>
       <Helmet>
-        <title>{`Haksız Trafik Cezasına İtiraz ${YIL}: Adım Adım Yol Haritası ve Dilekçe | CezaRehberi`}</title>
-        <meta name="description" content={`Haksız trafik cezasına nasıl itiraz edilir? ${itirazGun} günlük süreyi hesaplayın, gerekçenizi seçin, itiraz dilekçenizi ücretsiz oluşturun; Sulh Ceza Hâkimliği ve UYAP başvurusu adım adım.`} />
+        <title>{`Haksız Ceza İtirazı ${YIL}: Yol Haritası ve Dilekçe | CezaRehberi`}</title>
+        <meta name="description" content={`Haksız trafik cezasına nasıl itiraz edilir? ${itirazGun} günlük süreyi hesaplayın, gerekçenizi seçin, dilekçenizi ücretsiz oluşturun. Sulh Ceza Hâkimliği ve UYAP adımları.`} />
       </Helmet>
 
       {/* ─── HERO ─── */}
