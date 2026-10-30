@@ -108,11 +108,18 @@ export default function CezaDetayPage() {
               İtiraz süresi ödeme süresinden <strong>ayrıdır ve daha kısadır</strong>. Sulh Ceza
               Hâkimliği'ne {itiraz_suresi_gun} gün içinde başvurmanız gerekir.
             </p>
-            <Link to="/dilekce-ornekleri/trafik-cezasi-itiraz-dilekce-ornegi" style={{ fontWeight: 700, color: '#c2410c', fontSize: 14, textDecoration: 'none' }}>
-              Hazır itiraz dilekçesi →
+            <Link to={`/itiraz?ceza=${ceza.slug}`} style={{ fontWeight: 700, color: '#c2410c', fontSize: 14, textDecoration: 'none' }}>
+              Haksızsa: adım adım itiraz + dilekçe oluştur →
             </Link>
           </div>
         </div>
+
+        {/* Hız cezalarında kademe hesaplayıcı (aranan soru: "kaç km aşarsam ne kadar?") */}
+        {ceza.slug && ceza.slug.startsWith('hiz-cezasi') && (
+          <Link to="/araclar/hiz-cezasi-hesapla" className="it-cta-mini">
+            🚗 Hızınızı girin, cezanızı hesaplayın: <strong>Hız cezası hesaplama aracı →</strong>
+          </Link>
+        )}
 
         {/* ── SSS ── */}
         {sayfa.sss.length > 0 && (

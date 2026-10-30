@@ -24,7 +24,7 @@ EŞİTLEME (`esitle()`, main.py açılışta çağırır)
   301 ile gider (articles.ESKI_SLUG + frontend server.js).
 """
 
-SURUM = "2026-10-21"
+SURUM = "2026-10-29"
 
 _UYARI = ('<p><em>⚖️ Bu yazı genel bilgilendirme amaçlıdır, hukuki danışmanlık '
           'yerine geçmez. İşlem yapmadan önce güncel bilgiyi resmî kaynaktan '
@@ -53,7 +53,7 @@ MAKALELER = [
 <li><strong>Tutanağı inceleyin.</strong> Plaka, tarih, saat, yer, ihlal maddesi ve tutanağı düzenleyenin bilgileri doğru mu? Maddi hata en güçlü itiraz gerekçelerindendir.</li>
 <li><strong>Tebliğ tarihini not edin.</strong> Süre bu tarihten başlar; tebligat zarfını ya da e-Devlet'teki tebliğ kaydını saklayın.</li>
 <li><strong>Kanıt toplayın.</strong> Fotoğraf, araç içi kamera kaydı, tanık bilgileri, otopark fişi, aracın o saatte başka yerde olduğunu gösteren belge.</li>
-<li><strong>Dilekçeyi yazın.</strong> Hazır örneğimizi kendi olayınıza göre düzenleyebilirsiniz: <a href="/dilekce-ornekleri/trafik-cezasi-itiraz-dilekce-ornegi">trafik cezası itiraz dilekçesi örneği</a>.</li>
+<li><strong>Dilekçeyi yazın.</strong> <a href="/itiraz">Adım adım itiraz oluşturucumuzda</a> gerekçenizi seçip dilekçenizi hazır alabilir ya da <a href="/dilekce-ornekleri/trafik-cezasi-itiraz-dilekce-ornegi">dilekçe örneğini</a> kendi olayınıza göre düzenleyebilirsiniz.</li>
 <li><strong>Sulh Ceza Hâkimliği'ne verin.</strong> Dilekçe, cezanın yazıldığı yerdeki Sulh Ceza Hâkimliği'ne hitaben yazılır; adliyelerin ön bürosuna verilebilir. Başka şehirdeyseniz bulunduğunuz yer adliyesi aracılığıyla göndermenin mümkün olup olmadığını ön bürodan sorun.</li>
 <li><strong>Kararı bekleyin.</strong> Hâkimlik genellikle dosya üzerinden karar verir. Karar size tebliğ edilir.</li>
 </ol>
@@ -109,8 +109,10 @@ MAKALELER = [
 <li><strong>Kırmızı ışık:</strong> {{not:H1}}</li>
 <li><strong>Seyir hâlinde telefon:</strong> {{not:H5}}</li>
 <li><strong>Alkollü araç kullanma:</strong> {{not:H7}}</li>
+<li><strong>Hız (şehir içi):</strong> {{not:H2}}</li>
 <li><strong>Hız (şehirlerarası/otoyol):</strong> {{not:H3}}</li>
 </ul>
+<p>Kendi hızınızla hesaplamak için: <a href="/araclar/hiz-cezasi-hesapla">hız cezası hesaplama aracı</a>. Cezanın haksız olduğunu düşünüyorsanız: <a href="/itiraz">adım adım itiraz yol haritası</a>.</p>
 
 <h2>Erken ödeme indirimi</h2>
 <p>Ceza, tebliğden itibaren <strong>1 ay ({{odeme_gun}} gün)</strong> içinde ödenirse <strong>{{indirim}}</strong> indirim uygulanır. Örneğin {{ceza:H1}} tutarındaki kırmızı ışık cezası süresinde ödenirse {{indirimli:H1}} olur. Kendi cezanızı <a href="/araclar/ceza-hesapla">ceza hesaplama aracıyla</a> hesaplayabilirsiniz.</p>

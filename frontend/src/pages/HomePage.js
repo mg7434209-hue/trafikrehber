@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { articlesApi, cezaApi, dilekceApi } from '../services/api';
 import AkilliArama from '../components/AkilliArama';
-import ZiyaretciSeridi from '../components/ZiyaretciSeridi';
+import DilekceSayaci from '../components/DilekceSayaci';
 // SSS verisi paylaşılır: sunucu (server.js) bunu okuyup FAQPage JSON-LD basar
 import SSS from '../data/sss.json';
 import { YIL } from '../yil';
@@ -41,10 +41,10 @@ const CIPLER = [
 // yoksa `ara` ile rehberlerde arama açılır (kırık bağlantı oluşmaz).
 const NIYETLER = [
   { ikon: '💸', baslik: 'Cezam ne kadar?', alt: `${YIL} güncel tutarlar ve ceza puanları`, href: '/trafik-cezalari-2026' },
+  { ikon: '⚖️', baslik: 'Haksız ceza aldım, itiraz edeceğim', alt: 'Adım adım yol haritası + dilekçe oluşturucu', href: '/itiraz' },
+  { ikon: '🚗', baslik: 'Hız cezam ne kadar?', alt: 'Kaç km aştım, ne ödeyeceğim, ehliyet?', href: '/araclar/hiz-cezasi-hesapla' },
   { ikon: '🧮', baslik: 'İndirimli ne kadar öderim?', alt: 'Erken ödeme indirimi ve taksit hesabı', href: '/araclar/ceza-hesapla' },
-  { ikon: '📄', baslik: 'Cezaya itiraz etmek istiyorum', alt: 'Hazır itiraz dilekçesi örnekleri', href: '/dilekce-ornekleri' },
   { ikon: '🔎', baslik: 'Cezamı nasıl sorgularım?', alt: 'e-Devlet ile adım adım sorgulama', yazi: ['trafik-cezasi-sorgulama-e-devlet', 'trafik-cezasi-e-devlet-sorgulama'], ara: 'sorgulama' },
-  { ikon: '🪪', baslik: 'Ehliyet puanım / el koyma', alt: '100 puan, geri alma, psikoteknik', yazi: ['ehliyet-puan-sistemi-sorgulama'], href: '/ehliyet' },
   { ikon: '🚑', baslik: 'Kaza yaptım, ne yapmalıyım?', alt: 'Tutanak, sigorta ve hasar süreci', yazi: ['trafik-kazasi-sonrasi-ne-yapilir'], href: '/sigorta' },
 ];
 
@@ -126,7 +126,7 @@ export default function HomePage() {
             ))}
           </nav>
 
-          <ZiyaretciSeridi />
+          <DilekceSayaci />
 
           <p className="hm-not">
             Bağımsız bilgilendirme platformudur; resmî kurum veya hukuk bürosu değildir. Süreleri ve tutarları resmî kaynaklardan doğrulayın.
@@ -176,7 +176,7 @@ export default function HomePage() {
               <p>
                 Tebliğden itibaren {itirazGun} gün içinde Sulh Ceza Hâkimliği'ne yazılı başvurursunuz. Süre kaçarsa ceza kesinleşir.
               </p>
-              <Link to="/dilekce-ornekleri" className="hm-btn hm-btn-lac">İtiraz dilekçesi örnekleri →</Link>
+              <Link to="/itiraz" className="hm-btn hm-btn-lac">İtiraz yol haritası ve dilekçe →</Link>
             </article>
           </div>
           <p className="hm-alt-not">Peşin ödeme itiraz hakkınızı ortadan kaldırmaz (Kabahatler Kanunu m.17/6). İki süreyi karıştırmayın; kişisel durumunuz için bir avukata danışabilirsiniz.</p>

@@ -21,6 +21,8 @@ STATIC_URLS = [
     "/arac-islemleri",
     "/dilekce-ornekleri",
     "/araclar/ceza-hesapla",
+    "/itiraz",
+    "/araclar/hiz-cezasi-hesapla",
     "/hakkimizda",
     "/iletisim",
     "/gizlilik-politikasi",

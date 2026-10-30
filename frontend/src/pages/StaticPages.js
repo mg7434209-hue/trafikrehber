@@ -64,6 +64,13 @@ export function GizlilikPage() {
           karma (hash) üretilir; <strong>ham IP adresi hiçbir şekilde kaydedilmez</strong> ve bu kayıtlar
           7 gün sonra otomatik silinir.
         </p>
+        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Dilekçe Oluşturucu</h2>
+        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
+          Dilekçe oluşturucuya yazdığınız ad, T.C. kimlik numarası, adres ve telefon yalnızca kendi
+          tarayıcınızda işlenir; sunucumuza gönderilmez ve kaydedilmez. Dilekçeyi yazdırdığınızda, indirdiğinizde
+          ya da kopyaladığınızda yalnızca "bir dilekçe hazırlandı" bilgisi sayılır (kişi başı günde bir kez,
+          ziyaretçi sayacındaki gibi geri döndürülemez karma ile); dilekçe içeriği bu sayıma girmez.
+        </p>
         <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Veri Toplama</h2>
         <p style={{ color: '#444', lineHeight: 1.8 }}>
           Dilekçe indirme veya iletişim formu aracılığıyla toplanan e-posta adresleri yalnızca belirtilen amaçla kullanılır, üçüncü taraflarla paylaşılmaz.

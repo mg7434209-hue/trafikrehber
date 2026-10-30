@@ -19,6 +19,8 @@ import ChatWidget from './components/ChatWidget';
 import AdminPage from './pages/AdminPage';
 import CezaListesiPage from './pages/CezaListesiPage';
 import CezaDetayPage from './pages/CezaDetayPage';
+import ItirazPage from './pages/ItirazPage';
+import HizCezasiPage from './pages/HizCezasiPage';
 import SeoDefaults from './seo';
 import './App.css';
 
@@ -44,6 +46,8 @@ function App() {
                   <Route path="/dilekce-ornekleri" element={<DilekceListPage />} />
                   <Route path="/dilekce-ornekleri/:slug" element={<DilekceDetailPage />} />
                   <Route path="/araclar/ceza-hesapla" element={<CezaHesaplaPage />} />
+                  <Route path="/araclar/hiz-cezasi-hesapla" element={<HizCezasiPage />} />
+                  <Route path="/itiraz" element={<ItirazPage />} />
                   <Route path="/trafik-cezalari-2026" element={<CezaListesiPage />} />
                   {/* Her ceza kendi sayfası — ayrı arama sorgusu, ayrı URL */}
                   <Route path="/ceza/:slug" element={<CezaDetayPage />} />

@@ -1,0 +1,25 @@
+{
+  "_aciklama": "Hız cezası hesaplama sayfası (/araclar/hiz-cezasi-hesapla) SSS'i. server.js FAQPage basar. Tutarlar backend HIZ_KADEMELERI ile AYNI olmalı; değişirse burayı da güncelle.",
+  "sss": [
+    {
+      "s": "Hız cezası ne kadar?",
+      "c": "7574 sayılı Kanun'la hız cezası aşılan kilometreye göre 9 kademeye ayrıldı. Şehir içinde 6-10 km/s aşım 2.000 TL'den başlar, 66 km/s ve üzeri aşımda 30.000 TL'ye çıkar. Şehirlerarası yollarda kademeler 11 km/s aşımdan başlar ve 71 km/s ve üzerinde 30.000 TL olur."
+    },
+    {
+      "s": "Hız sınırında tolerans var mı?",
+      "c": "Yüzde bazlı tolerans kaldırıldı. Yerleşim yeri içinde 5 km/s'ye kadar, yerleşim yeri dışında 10 km/s'ye kadar aşım cezalandırılmaz; şehir içinde 6, şehir dışında 11 km/s aşımdan itibaren ceza yazılır."
+    },
+    {
+      "s": "Hız cezasında ehliyete ne zaman el konur?",
+      "c": "Şehir içinde 46-55 km/s aşımda 30 gün, 56-65 km/s'de 60 gün, 66 km/s ve üzerinde 90 gün; şehirlerarası yollarda 51-60 km/s aşımda 30 gün, 61-70 km/s'de 60 gün, 71 km/s ve üzerinde 90 gün sürücü belgesi geri alınır."
+    },
+    {
+      "s": "Hız cezasını indirimli ödeyebilir miyim?",
+      "c": "Evet. Ceza tebliğden itibaren 1 ay içinde ödenirse %25 indirim uygulanır. Örneğin 2.000 TL'lik ceza 1.500 TL olur."
+    },
+    {
+      "s": "Radar cezasına nasıl itiraz edilir?",
+      "c": "Tebliğden itibaren 15 gün içinde Sulh Ceza Hâkimliği'ne dilekçeyle itiraz edilir. Dilekçede ölçüm görüntülerinin ve cihazın kalibrasyon belgesinin dosyaya getirtilmesi istenebilir. Adım adım yol haritası ve hazır dilekçe için itiraz sayfamızı kullanabilirsiniz."
+    }
+  ]
+}

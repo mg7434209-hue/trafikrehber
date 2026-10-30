@@ -139,3 +139,31 @@ class VisitorKey(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (UniqueConstraint("gun", "anahtar", name="uq_visitor_gun_anahtar"),)
+
+
+class DilekceGun(Base):
+    """Günlük "dilekçesini hazırlayan kişi" sayısı (tek satır = tek gün).
+
+    Sayılan eylem: dilekçe oluşturucuda/şablon sayfasında yazdır, Word/TXT
+    indir ya da kopyala. Kişi başı günde EN FAZLA 1 (DilekceKey). Dilekçe
+    İÇERİĞİ sunucuya hiç gelmez; yalnız eylem türü gelir.
+    """
+    __tablename__ = "dilekce_gunluk"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    gun = Column(Date, unique=True, index=True, nullable=False)
+    kisi = Column(Integer, default=0, nullable=False)
+
+
+class DilekceKey(Base):
+    """Dilekçe sayacının günlük tekillik anahtarı (ziyaretçi anahtarından AYRI
+    tablo: visitor_keys "son 24 saat" sayımına karışmasın). Ham IP saklanmaz;
+    7 gün sonra silinir."""
+    __tablename__ = "dilekce_keys"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    gun = Column(Date, index=True, nullable=False)
+    anahtar = Column(String(64), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (UniqueConstraint("gun", "anahtar", name="uq_dilekce_gun_anahtar"),)

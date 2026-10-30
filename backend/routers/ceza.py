@@ -129,6 +129,29 @@ def get_guncellik():
     }
 
 
+@router.get("/hiz-kademeleri")
+def get_hiz_kademeleri():
+    """Hız cezası hesaplama aracının verisi (KTK m.51 kademeleri)."""
+    from routers.admin import HIZ_KADEMELERI, CEZA_SON_DOGRULAMA
+    return {
+        "success": True,
+        "son_dogrulama": CEZA_SON_DOGRULAMA,
+        "odeme_suresi_gun": ODEME_SURESI_GUN,
+        "indirim_orani": INDIRIM_ORANI,
+        "yollar": {
+            k: {
+                "ad": v["ad"],
+                "slug": (ICERIK.get(v["kod"]) or {}).get("slug"),
+                "kademeler": [
+                    {"alt": a, "ust": u, "ceza_tl": t, "belge_gun": g}
+                    for a, u, t, g in v["kademeler"]
+                ],
+            }
+            for k, v in HIZ_KADEMELERI.items()
+        },
+    }
+
+
 @router.get("/sayfalar")
 def get_ceza_sayfalari(db: Session = Depends(get_db)):
     """Tüm ceza sayfalarının listesi (sitemap, iç bağlantı ve sunucu meta'sı için)."""
