@@ -2,7 +2,6 @@
 
 > Repo kök dizinindedir; Claude Code her oturum başında otomatik okur.
 > 200 satırı geçirme; uzayan içerikleri `@dosya/yolu.md` ile import et.
-
 ## Proje
 **www.cezarehberi.com** — trafik cezaları, sigorta, ehliyet ve araç işlemleri
 üzerine **organik trafik (SEO) odaklı içerik platformu**. Gelir modeli Google
@@ -69,6 +68,7 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
   tahmini/uydurma sayı basılmaz.** Admin panelinde toplam/bugün/online kartları
   ve son 7 gün grafiği vardır. "Bugün" TÜRKİYE günüdür (`tr_bugun()`).
 
+## Ajan düzeni (maliyet) — Fable yalnız planlama/denetim: @docs/ajanlar.md
 ## Ana sayfa
 Arama + niyet kartları + ziyaretçi şeridi; kurallar: @docs/ana-sayfa.md
 
