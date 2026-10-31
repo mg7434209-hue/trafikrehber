@@ -14,8 +14,9 @@ export default function AdminPage() {
   const [editCeza, setEditCeza] = useState(null);
   const [guncellik, setGuncellik] = useState(null);
   const [dilekceSay, setDilekceSay] = useState(null);
+  const [aiBot, setAiBot] = useState(null);
 
-  useEffect(() => { if (token) { loadStats(); loadCezalar(); cezaApi.guncellik().then(setGuncellik).catch(() => {}); statsApi.getDilekce().then(setDilekceSay).catch(() => {}); } }, [token]);
+  useEffect(() => { if (token) { loadStats(); loadCezalar(); cezaApi.guncellik().then(setGuncellik).catch(() => {}); statsApi.getDilekce().then(setDilekceSay).catch(() => {}); adminApi.getAiBotlar(token).then(setAiBot).catch(() => {}); } }, [token]);
 
   const loadStats = async () => {
     try { const d = await adminApi.getStats(token); setStats(d.stats); } catch {}
@@ -202,6 +203,48 @@ export default function AdminPage() {
         </div>
 
         {/* ── GENEL SEKMESİ ── */}
+        {/* AI ve arama tarayıcıları: AI görünürlüğünün ölçüsü */}
+        {tab === 'genel' && aiBot && (
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 20, marginBottom: 16 }}>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1a3a6b', marginBottom: 6 }}>🤖 AI ve arama tarayıcı ziyaretleri (son {aiBot.gun_sayisi} gün)</h3>
+            {!aiBot.acik ? (
+              <p style={{ fontSize: 13, color: '#b45309', lineHeight: 1.6 }}>
+                Sayaç kapalı. Railway'de <b>frontend</b> ve <b>backend</b> servislerine aynı gizli değerle <code>BOT_SAYAC_KEY</code> ekleyin
+                (rastgele uzun bir metin); sonraki dağıtımdan itibaren hangi botun hangi sayfayı çektiği burada görünür.
+              </p>
+            ) : aiBot.botlar.length === 0 ? (
+              <p style={{ fontSize: 13, color: '#64748b' }}>Henüz kayıt yok. Botlar geldikçe burada görünür.</p>
+            ) : (
+              <>
+                <p style={{ fontSize: 13, color: '#475569', marginBottom: 10 }}>
+                  Yapay zekâ botları: <b>{aiBot.ai_toplam.toLocaleString('tr-TR')}</b> istek · Arama motorları: <b>{aiBot.arama_toplam.toLocaleString('tr-TR')}</b> istek
+                </p>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                    <thead><tr style={{ background: '#f8fafc' }}>
+                      {['Bot', 'Tür', 'İstek', 'Son gün', 'En çok çekilen sayfalar'].map(h => (
+                        <th key={h} style={{ padding: '8px 10px', textAlign: 'left', color: '#64748b', borderBottom: '1px solid #e2e8f0' }}>{h}</th>
+                      ))}
+                    </tr></thead>
+                    <tbody>
+                      {aiBot.botlar.map(b => (
+                        <tr key={b.bot}>
+                          <td style={{ padding: '8px 10px', fontWeight: 700, borderBottom: '1px solid #f1f5f9' }}>{b.bot}</td>
+                          <td style={{ padding: '8px 10px', borderBottom: '1px solid #f1f5f9' }}>{b.tur === 'ai' ? '🤖 AI' : '🔎 Arama'}</td>
+                          <td style={{ padding: '8px 10px', borderBottom: '1px solid #f1f5f9' }}>{b.toplam.toLocaleString('tr-TR')}</td>
+                          <td style={{ padding: '8px 10px', borderBottom: '1px solid #f1f5f9' }}>{new Date(b.son_gun).toLocaleDateString('tr-TR')}</td>
+                          <td style={{ padding: '8px 10px', borderBottom: '1px solid #f1f5f9', color: '#64748b' }}>{b.yollar.map(y => `${y.yol} (${y.sayi})`).join(' · ')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 8 }}>Sayılar User-Agent'a dayanır (taklit edilebilir); doğrulanmış tarayıcı sayısı değildir.</p>
+              </>
+            )}
+          </div>
+        )}
+
         {/* Veri güncelliği: yıl etiketleri ve rehber tutarları ceza listesinden türer */}
         {tab === 'genel' && guncellik && (
           <div style={{ background: guncellik.uyari ? '#fef2f2' : '#f0fdf4', border: `1px solid ${guncellik.uyari ? '#fecaca' : '#bbf7d0'}`, borderRadius: 12, padding: 16, marginBottom: 16, fontSize: 13, lineHeight: 1.6 }}>

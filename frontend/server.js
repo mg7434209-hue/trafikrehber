@@ -28,6 +28,8 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
+const prerender = require('./prerender');
 
 const PORT = process.env.PORT || 3000;
 const BUILD = path.join(__dirname, 'build');
@@ -35,6 +37,7 @@ const API = (process.env.BACKEND_URL || process.env.REACT_APP_BACKEND_URL || '')
 const SITE = (process.env.REACT_APP_SITE_URL || 'https://www.cezarehberi.com').replace(/\/$/, '');
 const INDEXNOW_KEY = (process.env.INDEXNOW_KEY || '').trim();
 const OG_IMAGE = SITE + '/og-default.png';
+const SITE_HOST = (() => { try { return new URL(SITE).host; } catch (e) { return ''; } })();
 const MARKA = 'CezaRehberi';
 
 const MIME = {
@@ -57,6 +60,12 @@ function cacheAl(anahtar) {
   return undefined;
 }
 function cacheYaz(anahtar, deger, ttlMs) {
+  // Tarayıcıların rastgele adresleri (/blog/xyz…) önbelleği şişirmesin
+  if (cache.size >= 3000) {
+    const simdi = Date.now();
+    for (const [k, v] of cache) if (v.sonGecerlilik < simdi) cache.delete(k);
+    if (cache.size >= 3000) cache.clear();
+  }
   cache.set(anahtar, { deger, sonGecerlilik: Date.now() + ttlMs });
   return deger;
 }
@@ -104,7 +113,7 @@ const ESKI_BLOG = {
 const ROTALAR = {
   '/': {
     baslik: 'Trafik Cezası Ne Kadar? {YIL} Güncel Tutarlar ve İtiraz | CezaRehberi',
-    aciklama: '{YIL} güncel trafik cezası tutarları: kırmızı ışık, hız, cep telefonu, alkol, park. %25 erken ödeme indirimi hesaplama, ücretsiz itiraz dilekçesi örnekleri ve e-Devlet sorgulama rehberi.',
+    aciklama: '{YIL} güncel trafik cezası tutarları: kırmızı ışık, hız, telefon, alkol, park. %25 indirim hesaplama, ücretsiz itiraz dilekçesi ve e-Devlet sorgulama rehberi.',
     ad: 'Ana Sayfa',
   },
   '/trafik-cezalari-2026': {
@@ -119,18 +128,18 @@ const ROTALAR = {
   },
   '/dilekce-ornekleri': {
     baslik: 'Trafik Cezası İtiraz Dilekçe Örnekleri ({YIL}) — CezaRehberi',
-    aciklama: 'Trafik cezasına itiraz, sigorta hasar ihbarı ve ehliyet iptali için hazır dilekçe şablonları. Doldurun, indirin. Başvuru süresini ve usulünü güncel mevzuattan doğrulayın.',
+    aciklama: 'Trafik cezasına itiraz, sigorta hasar ihbarı ve ehliyet iptali için hazır dilekçe şablonları. Doldurun, indirin; süre ve usulü güncel mevzuattan doğrulayın.',
     ad: 'Dilekçe Örnekleri',
   },
   '/itiraz': {
-    baslik: 'Haksız Trafik Cezasına İtiraz {YIL}: Adım Adım Yol Haritası ve Dilekçe | CezaRehberi',
-    aciklama: 'Haksız trafik cezasına nasıl itiraz edilir? 15 günlük süreyi hesaplayın, gerekçenizi seçin, itiraz dilekçenizi ücretsiz oluşturun; Sulh Ceza Hâkimliği ve UYAP başvurusu adım adım.',
+    baslik: 'Haksız Ceza İtirazı {YIL}: Yol Haritası ve Dilekçe | CezaRehberi',
+    aciklama: 'Haksız trafik cezasına nasıl itiraz edilir? 15 günlük süreyi hesaplayın, gerekçenizi seçin, dilekçenizi ücretsiz oluşturun. Sulh Ceza Hâkimliği ve UYAP adımları.',
     ad: 'İtiraz Yol Haritası',
     sss: 'itiraz.json',
   },
   '/araclar/hiz-cezasi-hesapla': {
     baslik: 'Hız Cezası Hesaplama {YIL}: Kaç km Aşarsam Ne Kadar Ceza? | CezaRehberi',
-    aciklama: 'Hız sınırını ve hızınızı girin; aşım kademesini, ceza tutarını, 1 ay içinde %25 indirimli tutarı ve ehliyete el koyma süresini hemen görün. Şehir içi ve şehirlerarası tablo.',
+    aciklama: 'Hız sınırını ve hızınızı girin; aşım kademesini, ceza tutarını, %25 indirimli tutarı ve ehliyete el koyma süresini görün. Şehir içi ve şehirlerarası tablo.',
     ad: 'Hız Cezası Hesaplama',
     sss: 'hiz.json',
   },
@@ -165,7 +174,7 @@ const ROTALAR = {
     ad: 'Araç İşlemleri',
   },
   '/hakkimizda': { baslik: 'Hakkımızda — CezaRehberi', aciklama: 'CezaRehberi; trafik cezaları, sigorta, ehliyet ve araç işlemleri üzerine güncel ve güvenilir Türkçe rehber sunar.', ad: 'Hakkımızda' },
-  '/iletisim': { baslik: 'İletişim — CezaRehberi', aciklama: 'Görüş, öneri ve sorularınız için CezaRehberi iletişim sayfası.', ad: 'İletişim' },
+  '/iletisim': { baslik: 'İletişim — CezaRehberi', aciklama: 'CezaRehberi iletişim sayfası: görüş, öneri, düzeltme ve sorularınızı iletin; içerikleri resmî kaynaklarla birlikte güncelliyoruz.', ad: 'İletişim' },
   '/gizlilik-politikasi': { baslik: 'Gizlilik Politikası — CezaRehberi', aciklama: 'KVKK kapsamında kişisel verilerin işlenmesi, çerezler ve ziyaretçi sayacı hakkında bilgilendirme.', ad: 'Gizlilik Politikası' },
 };
 
@@ -202,6 +211,26 @@ function organizationLd() {
   };
 }
 
+function howToItirazLd() {
+  const adimlar = [
+    ['Tebliğ tarihini ve süreyi belirleyin', 'Süre, cezanın tebliğ edildiği günden başlar. İtiraz süresi tebliğden itibaren 15 gündür; %25 indirimli ödeme süresi 1 aydır.', '#sure'],
+    ['İtiraz gerekçenizi seçin', 'Tutanakta hata, aracın başka yerde olması, trafik işaretinin yokluğu, zorunluluk hâli, ölçüm itirazı veya usulsüz tebligat gibi somut ve kanıtlanabilir bir gerekçe belirleyin.', '#gerekce'],
+    ['Ödeme kararınızı verin', 'Peşin ödeme itiraz hakkını ortadan kaldırmaz; indirimi kaçırmamak için cezayı 1 ay içinde ödeyip itirazı ayrıca yapabilirsiniz.', '#odeme'],
+    ['İtiraz dilekçesini hazırlayın', 'Dilekçeyi cezanın yazıldığı yerdeki Sulh Ceza Hâkimliği\'ne hitaben yazın; ad, T.C. kimlik no, tutanak bilgileri, tebliğ tarihi, gerekçe, ekler ve talebi ekleyin.', '#dilekce'],
+    ['Dilekçeyi Sulh Ceza Hâkimliği\'ne verin', 'Adliyenin ön bürosuna elden verin ya da e-imza veya mobil imza ile UYAP Vatandaş Portalı üzerinden gönderin. Başvuru harca tabi değildir.', '#basvuru'],
+    ['Kararı bekleyin ve gerekirse karara itiraz edin', 'Hâkimlik genellikle dosya üzerinden karar verir. Ret hâlinde kararın tebliğinden itibaren 7 gün içinde karara itiraz edilebilir.', '#sonra'],
+  ];
+  return {
+    '@type': 'HowTo', '@id': SITE + '/itiraz#nasil',
+    name: 'Haksız trafik cezasına nasıl itiraz edilir?',
+    description: 'Trafik idari para cezasına itirazın adımları: süre, gerekçe, dilekçe, başvuru yeri ve sonrası.',
+    inLanguage: 'tr-TR',
+    estimatedCost: { '@type': 'MonetaryAmount', currency: 'TRY', value: '0' },
+    step: adimlar.map(([ad, metin, bag], i) => ({
+      '@type': 'HowToStep', position: i + 1, name: ad, text: metin, url: SITE + '/itiraz' + bag,
+    })),
+  };
+}
 function breadcrumbLd(parcalar) {
   return {
     '@type': 'BreadcrumbList',
@@ -217,7 +246,7 @@ async function metaCoz(yol) {
   // Makale detayı
   let m = yol.match(/^\/blog\/([^/]+)$/);
   if (m) {
-    const veri = await apiGet('/api/articles/' + encodeURIComponent(m[1]), 600000);
+    const veri = await apiGet('/api/articles/' + encodeURIComponent(m[1]) + '?say=0', 600000);
     const a = veri && veri.article;
     if (!a) return { baslik: 'Makale bulunamadı — ' + MARKA, aciklama: '', noindex: true, bulunamadi: true, ld: [] };
     const ld = {
@@ -235,7 +264,7 @@ async function metaCoz(yol) {
     return {
       baslik: a.title + ' — ' + MARKA,
       aciklama: a.meta_description || '',
-      tip: 'article',
+      tip: 'article', yayin: a.created_at, guncelleme: a.updated_at || a.created_at,
       ld: [ld, breadcrumbLd([{ ad: 'Ana Sayfa', yol: '/' }, { ad: 'Blog', yol: '/blog' }, { ad: a.title, yol }])],
     };
   }
@@ -265,7 +294,13 @@ async function metaCoz(yol) {
         })),
       });
     }
-    return { baslik: sf.baslik + ' | ' + MARKA, aciklama, ld };
+    ld.push({
+      '@type': 'Article', '@id': SITE + yol + '#makale', headline: sf.baslik, description: aciklama,
+      inLanguage: 'tr-TR', mainEntityOfPage: { '@type': 'WebPage', '@id': SITE + yol }, image: OG_IMAGE,
+      author: organizationLd(), publisher: organizationLd(),
+      dateModified: veri.son_dogrulama || undefined, datePublished: veri.son_dogrulama || undefined,
+    });
+    return { baslik: sf.baslik + ' | ' + MARKA, aciklama, ld, tip: 'article', guncelleme: veri.son_dogrulama };
   }
 
   // Dilekçe detayı
@@ -323,6 +358,28 @@ async function metaCoz(yol) {
         });
       }
     }
+    if (yol === '/itiraz') ld.push(howToItirazLd());
+    if (yol === '/araclar/hiz-cezasi-hesapla' || yol === '/araclar/ceza-hesapla') {
+      ld.push({
+        '@type': 'WebApplication', '@id': SITE + yol + '#arac', name: Y(r.ad), url: SITE + yol,
+        applicationCategory: 'UtilitiesApplication', operatingSystem: 'Any', inLanguage: 'tr-TR',
+        browserRequirements: 'JavaScript gerekir', isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'TRY' }, publisher: organizationLd(),
+      });
+    }
+    if (yol === '/trafik-cezalari-2026') {
+      const liste = await apiGet('/api/ceza-turleri/sayfalar', 600000);
+      const sayfalar = (liste && liste.sayfalar) || [];
+      if (sayfalar.length) {
+        ld.push({
+          '@type': 'ItemList', '@id': SITE + yol + '#liste', name: Y('{YIL} trafik cezaları'),
+          numberOfItems: sayfalar.length,
+          itemListElement: sayfalar.map((x, i) => ({
+            '@type': 'ListItem', position: i + 1, name: x.aciklama, url: SITE + '/ceza/' + x.slug,
+          })),
+        });
+      }
+    }
     return { baslik: Y(r.baslik), aciklama: Y(r.aciklama), ld };
   }
 
@@ -365,6 +422,13 @@ function headEnjekte(html, yol, meta) {
     `<meta name="twitter:description" content="${esc(meta.aciklama)}" />`,
     `<meta name="twitter:image" content="${esc(OG_IMAGE)}" />`,
   ];
+  if (meta.tip === 'article') {
+    if (meta.yayin) etiketler.push(`<meta property="article:published_time" content="${esc(meta.yayin)}" />`);
+    if (meta.guncelleme) etiketler.push(`<meta property="article:modified_time" content="${esc(meta.guncelleme)}" />`);
+  }
+  if (!meta.noindex && !meta.bulunamadi) {
+    etiketler.push(`<link rel="alternate" type="text/markdown" href="${esc(SITE + mdYolu(yol))}" />`);
+  }
   if (meta.noindex) etiketler.push('<meta name="robots" content="noindex, follow" />');
   else etiketler.push('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />');
 
@@ -397,12 +461,172 @@ function guvenliYol(kok, istenen) {
   return tam.startsWith(kok) ? tam : null;
 }
 
+
+// ---- Sıkıştırma (br/gzip): eskiden HİÇ yoktu; JS+CSS+HTML 3-4 kat küçülür ----
+const SIKISTIRILIR = new Set(['.js', '.css', '.json', '.svg', '.txt', '.xml', '.html', '.webmanifest', '.map']);
+const sikCache = new Map(); // "dosya:mtime:kod" → Buffer (statik varlıklar bir kez sıkıştırılır)
+function kodlama(req) {
+  const ae = String(req.headers['accept-encoding'] || '');
+  if (/\bbr\b/.test(ae)) return 'br';
+  if (/\bgzip\b/.test(ae)) return 'gzip';
+  return null;
+}
+function sikistir(buf, kod, dinamik) {
+  if (kod === 'br') {
+    return zlib.brotliCompressSync(buf, { params: {
+      [zlib.constants.BROTLI_PARAM_QUALITY]: dinamik ? 4 : 11,
+      [zlib.constants.BROTLI_PARAM_SIZE_HINT]: buf.length,
+    } });
+  }
+  return zlib.gzipSync(buf, { level: dinamik ? 6 : 9 });
+}
+/** Metin gövdeli yanıt: uygunsa sıkıştırır, Vary/Content-Length yazar. */
+function yanit(req, res, durum, basliklar, govde, onbellekAnahtari) {
+  let buf = Buffer.isBuffer(govde) ? govde : Buffer.from(String(govde), 'utf8');
+  const h = { ...basliklar };
+  const vary = new Set(String(h.Vary || '').split(',').map((x) => x.trim()).filter(Boolean));
+  vary.add('Accept-Encoding');
+  h.Vary = [...vary].join(', ');
+  const kod = kodlama(req);
+  if (kod && buf.length > 1024) {
+    if (onbellekAnahtari) {
+      const ak = onbellekAnahtari + ':' + kod;
+      if (!sikCache.has(ak)) sikCache.set(ak, sikistir(buf, kod, false));
+      buf = sikCache.get(ak);
+    } else {
+      buf = sikistir(buf, kod, true);
+    }
+    h['Content-Encoding'] = kod;
+  }
+  h['Content-Length'] = buf.length;
+  res.writeHead(durum, h);
+  return res.end(req.method === 'HEAD' ? undefined : buf);
+}
+
+// ---- Sayfa gövdesi + Markdown (prerender.js) ----
+const bCtx = () => ({ apiGet, Y, site: SITE });
+/** { meta, b } — b null olabilir (gövde üretilmeyen rota). Bulunamayan rota → null. */
+async function belgeAl(yol) {
+  const anahtar = 'belge:' + yol;
+  const onb = cacheAl(anahtar);
+  if (onb !== undefined) return onb;
+  await yilYenile();
+  const meta = await metaCoz(yol);
+  if (meta.bulunamadi) return cacheYaz(anahtar, null, 120000);
+  const b = await prerender.belge(yol, bCtx()).catch((e) => { console.error('[prerender]', yol, e && e.message); return null; });
+  return cacheYaz(anahtar, { meta, b }, 300000);
+}
+const mdYolu = (yol) => '/md' + (yol === '/' ? '/index' : yol) + '.md';
+const baslikTemiz = (t) => String(t || '').replace(/\s*[—|]\s*(CezaRehberi|TrafikRehber)\s*$/i, '').trim();
+function mdMetin(yol, d) {
+  const kanonik = SITE + (yol === '/' ? '/' : yol);
+  const fm = ['---', `title: ${JSON.stringify(baslikTemiz(d.meta.baslik))}`,
+    `description: ${JSON.stringify(d.meta.aciklama || '')}`, `canonical: ${kanonik}`, 'lang: tr',
+    d.b.guncelleme ? `dateModified: ${d.b.guncelleme}` : null, `publisher: ${MARKA}`, '---'].filter(Boolean).join('\n');
+  return fm + '\n\n' + prerender.bloklariMd(d.b.bloklar, SITE) + '\n';
+}
+
+// ---- llms.txt / llms-full.txt (yapay zekâ asistanları için site haritası ve tam metin) ----
+async function tumBelgeler() {
+  const anahtar = 'tum-belgeler';
+  const onb = cacheAl(anahtar);
+  if (onb !== undefined) return onb;
+  const t = await prerender.tumYollar(apiGet);
+  const grup = (yollar, ad) => Promise.all(yollar.map(async (yol) => ({ yol, d: await belgeAl(yol) })))
+    .then((l) => ({ ad, l: l.filter((x) => x.d && x.d.b) }));
+  const sonuc = await Promise.all([
+    grup(t.sabit.filter((y) => !['/blog', '/trafik-cezalari', '/sigorta', '/ehliyet', '/arac-islemleri'].includes(y)), 'Araçlar ve yol haritaları'),
+    grup(t.ceza, `Trafik cezaları (${veriYili} tutarları)`),
+    grup(t.blog, 'Rehber yazıları'),
+    grup(t.dilekce, 'Dilekçe örnekleri'),
+    grup(['/blog', '/trafik-cezalari', '/sigorta', '/ehliyet', '/arac-islemleri'], 'Kategoriler'),
+  ]);
+  return cacheYaz(anahtar, sonuc, 600000);
+}
+async function llmsMetni() {
+  const gruplar = await tumBelgeler();
+  const g = await apiGet('/api/ceza-turleri/guncellik', 3600000);
+  const s = [
+    `# ${MARKA}`, '',
+    `> Türkiye'de trafik cezası tutarları (${veriYili}), haksız cezaya itiraz yol haritası, hazır dilekçe oluşturucu, hız cezası hesaplama ve sigorta / ehliyet / araç işlemleri rehberi. Bağımsız bilgilendirme platformudur; resmî kurum veya hukuk bürosu değildir.`, '',
+    `- Site: ${SITE}`, '- Dil: Türkçe · Bölge: Türkiye',
+    `- Veri yılı: ${veriYili}${g && g.son_dogrulama ? ` · ceza tutarları son doğrulama: ${prerender.tarihTR(g.son_dogrulama)}` : ''}`,
+    '- Dayanak: 2918 sayılı Karayolları Trafik Kanunu, 7574 sayılı Kanun (RG 27.02.2026), 5326 sayılı Kabahatler Kanunu',
+    `- Tam metin: ${SITE}/llms-full.txt`,
+    '- Süreler: indirimli ödeme tebliğden itibaren 1 ay (%25), itiraz tebliğden itibaren 15 gün (Sulh Ceza Hâkimliği)', '',
+  ];
+  gruplar.forEach((gr) => {
+    if (!gr.l.length) return;
+    s.push(`## ${gr.ad}`);
+    gr.l.forEach(({ yol, d }) => s.push(`- [${baslikTemiz(d.meta.baslik)}](${SITE}${mdYolu(yol)})${d.meta.aciklama ? `: ${d.meta.aciklama}` : ''}`));
+    s.push('');
+  });
+  s.push('## Not', '- Tutarlar bilgilendirme amaçlıdır; kesin tutar için e-Devlet kaydı ve tutanak esastır.',
+    '- Hukuki danışmanlık verilmez; kişisel durumlar için avukata danışılmalıdır.');
+  return s.join('\n') + '\n';
+}
+async function llmsTamMetin() {
+  const gruplar = await tumBelgeler();
+  const s = [`# ${MARKA} — Tam Metin`, '',
+    `> ${SITE} sitesindeki tüm rehber, ceza ve araç sayfalarının Markdown metni. Özet için ${SITE}/llms.txt.`, ''];
+  gruplar.forEach((gr) => gr.l.forEach(({ yol, d }) => {
+    s.push('---', '', `Kaynak: ${SITE}${yol === '/' ? '/' : yol}`, d.b.guncelleme ? `Güncelleme: ${d.b.guncelleme}` : '', '',
+      prerender.bloklariMd(d.b.bloklar, SITE), '');
+  }));
+  return s.filter((x) => x !== undefined).join('\n') + '\n';
+}
+
+
+// ---- AI / arama tarayıcı sayacı ----
+// User-Agent'tan tanınır (taklit edilebilir; "bot kimliğiyle gelen istek"). Bellekte toplanır,
+// dakikada bir backend'e (/api/stats/bot-toplu) toplu gönderilir. BOT_SAYAC_KEY iki serviste
+// AYNI gizli değer olmalı; yoksa sayaç kapalıdır (hiçbir şey gönderilmez).
+const BOT_KEY = (process.env.BOT_SAYAC_KEY || '').trim();
+const BOTLAR = [
+  ['GPTBot', 'ai'], ['OAI-SearchBot', 'ai'], ['ChatGPT-User', 'ai'], ['ClaudeBot', 'ai'], ['Claude-SearchBot', 'ai'],
+  ['Claude-User', 'ai'], ['Claude-Web', 'ai'], ['anthropic-ai', 'ai'], ['PerplexityBot', 'ai'], ['Perplexity-User', 'ai'],
+  ['DuckAssistBot', 'ai'], ['MistralAI-User', 'ai'], ['Meta-ExternalAgent', 'ai'], ['Meta-ExternalFetcher', 'ai'],
+  ['Amazonbot', 'ai'], ['Bytespider', 'ai'], ['CCBot', 'ai'], ['cohere-ai', 'ai'], ['Diffbot', 'ai'],
+  ['Google-CloudVertexBot', 'ai'], ['Googlebot', 'arama'], ['bingbot', 'arama'], ['YandexBot', 'arama'],
+  ['DuckDuckBot', 'arama'], ['Applebot', 'arama'], ['Baiduspider', 'arama'], ['SeznamBot', 'arama'],
+];
+const BOT_RE = new RegExp(BOTLAR.map((b) => b[0].replace(/[-.]/g, '\\$&')).join('|'), 'i');
+const botSay = new Map(); // "bot|tur|yol" → adet
+function botKaydet(req, yol) {
+  if (!BOT_KEY) return;
+  const m = String(req.headers['user-agent'] || '').match(BOT_RE);
+  if (!m) return;
+  const b = BOTLAR.find((x) => x[0].toLowerCase() === m[0].toLowerCase());
+  const anahtar = `${b[0]}|${b[1]}|${String(yol).slice(0, 160)}`;
+  if (botSay.size < 2000 || botSay.has(anahtar)) botSay.set(anahtar, (botSay.get(anahtar) || 0) + 1);
+}
+async function botGonder() {
+  if (!BOT_KEY || !API || !botSay.size) return;
+  const satirlar = [...botSay].map(([k, n]) => { const [bot, tur, yol] = k.split('|'); return { bot, tur, yol, n }; });
+  botSay.clear();
+  try {
+    await fetch(API + '/api/stats/bot-toplu', {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-bot-key': BOT_KEY },
+      body: JSON.stringify({ satirlar }),
+    });
+  } catch (e) { /* sayaç kaybı kabul edilir; siteyi etkilemez */ }
+}
+setInterval(botGonder, 60000).unref();
+
 const indexHtml = () => fs.readFileSync(path.join(BUILD, 'index.html'), 'utf8');
 
 const sunucu = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost');
     let yol = decodeURIComponent(url.pathname);
+
+    // cezarehberi.com → www.cezarehberi.com (aynı içerik iki host'tan servis edilmesin;
+    // canonical/sitemap/JSON-LD zaten www). Yalnız GET/HEAD; API POST'ları etkilenmez.
+    const istekHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase().replace(/:\d+$/, '');
+    if ((req.method === 'GET' || req.method === 'HEAD') && SITE_HOST.startsWith('www.') && istekHost === SITE_HOST.slice(4)) {
+      res.writeHead(301, { Location: SITE + req.url, 'Cache-Control': 'public, max-age=86400' });
+      return res.end();
+    }
 
     // Aynı-origin API geçidi: React build sırasında backend URL tanımlı olmasa
     // bile /api çağrıları backend'e ulaşır. CORS bağımlılığını azaltır.
@@ -443,6 +667,9 @@ const sunucu = http.createServer(async (req, res) => {
           'Content-Type': contentType,
           'Cache-Control': 'no-store',
           'X-Content-Type-Options': 'nosniff',
+          // /api/ robots.txt'te açık (Googlebot sayfayı çizerken içeriği buradan çeker);
+          // JSON adresleri arama sonuçlarına girmesin
+          'X-Robots-Tag': 'noindex',
         });
         return res.end(Buffer.from(await upstream.arrayBuffer()));
       } catch (err) {
@@ -474,14 +701,52 @@ const sunucu = http.createServer(async (req, res) => {
     }
 
     if (yol === '/sitemap.xml' || yol === '/robots.txt') {
+      botKaydet(req, yol);
       const govde = await metinVarlik(yol, yol === '/sitemap.xml' ? 900000 : 3600000);
       if (govde) {
-        res.writeHead(200, {
+        return yanit(req, res, 200, {
           'Content-Type': yol.endsWith('.xml') ? MIME['.xml'] : MIME['.txt'],
           'Cache-Control': 'public, max-age=900',
-        });
-        return res.end(govde);
+        }, govde);
       }
+    }
+
+    // Sondaki "/" → kalıcı yönlendirme (aynı sayfa iki URL'den indekslenmesin)
+    if (yol.length > 1 && yol.endsWith('/') && !yol.startsWith('/api/')) {
+      res.writeHead(301, { Location: yol.replace(/\/+$/, '') + url.search, 'Cache-Control': 'public, max-age=86400' });
+      return res.end();
+    }
+
+    // Yapay zekâ asistanları için: llms.txt (özet + bağlantılar), llms-full.txt (tam metin)
+    if (yol === '/llms.txt' || yol === '/llms-full.txt') {
+      botKaydet(req, yol);
+      await yilYenile();
+      const metin = yol === '/llms.txt' ? await llmsMetni() : await llmsTamMetin();
+      return yanit(req, res, 200, {
+        'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=3600',
+        'X-Content-Type-Options': 'nosniff',
+      }, metin);
+    }
+
+    // Markdown kopyaları: /md/<yol>.md  (ve Accept: text/markdown ile HTML adresi)
+    const mdIstek = yol.match(/^\/md(\/.*)\.md$/);
+    const mdIste = /(^|,)\s*text\/markdown\b/i.test(String(req.headers.accept || '')) && !yol.startsWith('/md/') && !path.extname(yol);
+    if (mdIstek || mdIste) {
+      const hedef = mdIstek ? (mdIstek[1] === '/index' ? '/' : mdIstek[1]) : yol;
+      const d = await belgeAl(hedef);
+      if (d && d.b) botKaydet(req, mdYolu(hedef));
+      if (!d || !d.b) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', 'X-Robots-Tag': 'noindex' });
+        return res.end('Bulunamadı');
+      }
+      const basl = {
+        'Content-Type': 'text/markdown; charset=utf-8', 'Cache-Control': 'public, max-age=900',
+        // Markdown kopyası arama sonuçlarında yinelenen içerik sayılmasın; esas sayfa HTML'dir
+        'X-Robots-Tag': 'noindex', 'Link': `<${SITE}${hedef === '/' ? '/' : hedef}>; rel="canonical"`,
+        'X-Content-Type-Options': 'nosniff', 'Vary': 'Accept',
+      };
+      if (mdIste) basl['Content-Location'] = mdYolu(hedef);
+      return yanit(req, res, 200, basl, mdMetin(hedef, d));
     }
 
     // Statik dosya
@@ -490,18 +755,24 @@ const sunucu = http.createServer(async (req, res) => {
       if (dosya && fs.existsSync(dosya) && fs.statSync(dosya).isFile()) {
         const uzanti = path.extname(dosya).toLowerCase();
         const hashli = /\.[0-9a-f]{8,}\.(js|css|woff2?|png|jpg|jpeg|webp|svg)$/i.test(dosya);
-        res.writeHead(200, {
+        const basl = {
           'Content-Type': MIME[uzanti] || 'application/octet-stream',
           'Cache-Control': hashli ? 'public, max-age=31536000, immutable' : 'public, max-age=3600',
           'X-Content-Type-Options': 'nosniff',
-        });
+        };
+        if (SIKISTIRILIR.has(uzanti)) {
+          const st = fs.statSync(dosya);
+          return yanit(req, res, 200, basl, fs.readFileSync(dosya), `${dosya}:${st.mtimeMs}`);
+        }
+        res.writeHead(200, { ...basl, 'Content-Length': fs.statSync(dosya).size });
         return fs.createReadStream(dosya).pipe(res);
       }
     }
 
     // SPA — head'i rotaya göre doldurulmuş index.html
-    if (yol.length > 1 && yol.endsWith('/')) yol = yol.slice(0, -1);
-    const meta = await metaCoz(yol);
+    const belge = await belgeAl(yol);
+    // Kopya: aşağıdaki ?q= dalı meta'yı değiştirir; önbellekteki nesne bozulmasın
+    const meta = { ...(belge ? belge.meta : await metaCoz(yol)) };
 
     // Site içi arama sonuçları dizine girmemeli (ince/yinelenen içerik).
     // canonical zaten sorgu dizesi olmadan basılır → /blog'a işaret eder.
@@ -509,15 +780,22 @@ const sunucu = http.createServer(async (req, res) => {
       meta.noindex = true;
       meta.baslik = `"${url.searchParams.get('q')}" için arama sonuçları — ${MARKA}`;
     }
-    const html = headEnjekte(indexHtml(), yol, meta);
+    let html = headEnjekte(indexHtml(), yol, meta);
+    // Sayfa gövdesi: JS çalıştırmayan okuyucular (AI botları, paylaşım kazıyıcıları)
+    // içeriği görsün. React mount olunca bu içeriği kendi çıktısıyla değiştirir.
+    if (belge && belge.b) {
+      const govde = prerender.htmlSayfa(belge.b.bloklar, bCtx());
+      html = html.replace('<div id="root"></div>', () => '<div id="root">' + govde + '</div>');
+    }
     const bilinmeyen = meta.bulunamadi === true;
-    res.writeHead(bilinmeyen ? 404 : 200, {
+    if (!bilinmeyen) botKaydet(req, yol);
+    return yanit(req, res, bilinmeyen ? 404 : 200, {
       'Content-Type': MIME['.html'],
       'Cache-Control': 'public, max-age=300',
       'X-Content-Type-Options': 'nosniff',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
-    });
-    return res.end(html);
+      'Vary': 'Accept',
+    }, html);
   } catch (e) {
     console.error('[sunucu]', e && e.message);
     res.writeHead(500, { 'Content-Type': MIME['.html'] });

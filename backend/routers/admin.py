@@ -367,6 +367,13 @@ def indexnow_ping(db: Session = Depends(get_db), _=Depends(require_admin)):
 
 
 # --- İstatistikler ---
+@router.get("/ai-botlar")
+def get_ai_botlar(db: Session = Depends(get_db), _=Depends(require_admin)):
+    """AI ve arama tarayıcılarının son 30 günlük ziyareti (frontend server.js sayar)."""
+    from routers.stats import bot_rapor
+    return bot_rapor(db, 30)
+
+
 @router.get("/stats")
 def get_stats(db: Session = Depends(get_db), _=Depends(require_admin)):
     from sqlalchemy import func

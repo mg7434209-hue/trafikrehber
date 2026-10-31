@@ -21,6 +21,7 @@ Uçlar:
 """
 
 import hashlib
+import hmac
 import os
 import re
 import time
@@ -35,7 +36,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Article, DilecceSablon, SiteVisit, VisitorKey, DilekceGun, DilekceKey
+from models import Article, DilecceSablon, SiteVisit, VisitorKey, DilekceGun, DilekceKey, AiBotHit
 
 router = APIRouter()
 
@@ -287,3 +288,80 @@ def kaydet_dilekce(olay: DilekceOlay, request: Request, db: Session = Depends(ge
 @router.get("/dilekce")
 def get_dilekce(db: Session = Depends(get_db)):
     return _dilekce_cevap(db)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AI / ARAMA TARAYICI SAYACI — frontend server.js'ten toplu giriş
+# Kimlik: BOT_SAYAC_KEY (iki serviste AYNI değer, gizli). Yoksa uç kapalıdır.
+# ─────────────────────────────────────────────────────────────────────────────
+BOT_SAYAC_KEY = (os.getenv("BOT_SAYAC_KEY") or "").strip()
+BOT_AD_RE = re.compile(r"^[A-Za-z0-9_.\-]{2,40}$")
+BOT_SAKLAMA_GUN = 90
+
+
+class BotSatir(BaseModel):
+    bot: str
+    tur: str = "ai"
+    yol: str
+    n: int
+
+
+class BotToplu(BaseModel):
+    satirlar: list[BotSatir]
+
+
+@router.post("/bot-toplu")
+def kaydet_botlar(govde: BotToplu, request: Request, db: Session = Depends(get_db)):
+    anahtar = request.headers.get("x-bot-key", "")
+    if not BOT_SAYAC_KEY or not hmac.compare_digest(anahtar, BOT_SAYAC_KEY):
+        raise HTTPException(status_code=403, detail="Yetkisiz")
+    gun = tr_bugun()
+    tablo = AiBotHit.__table__
+    kaydedilen = 0
+    try:
+        for r in govde.satirlar[:500]:
+            if not BOT_AD_RE.match(r.bot) or not r.yol.startswith("/") or len(r.yol) > 160 or not (1 <= r.n <= 10000):
+                continue
+            tur = "ai" if r.tur == "ai" else "arama"
+            db.execute(
+                pg_insert(tablo).values(id=uuid.uuid4(), gun=gun, bot=r.bot, tur=tur, yol=r.yol, sayi=r.n)
+                .on_conflict_do_update(index_elements=["gun", "bot", "yol"], set_={"sayi": tablo.c.sayi + r.n})
+            )
+            kaydedilen += 1
+        db.query(AiBotHit).filter(AiBotHit.gun < gun - timedelta(days=BOT_SAKLAMA_GUN)).delete(synchronize_session=False)
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        print(f"[bot-sayac] yazılamadı: {type(exc).__name__}: {exc}")
+        raise HTTPException(status_code=503, detail="Yazılamadı") from exc
+    return {"success": True, "kaydedilen": kaydedilen}
+
+
+def bot_rapor(db: Session, gun_sayisi: int = 30) -> dict:
+    """Admin paneli için özet: bot başına toplam, son görülme, en çok çekilen yollar."""
+    bas = tr_bugun() - timedelta(days=gun_sayisi - 1)
+    satirlar = db.query(AiBotHit).filter(AiBotHit.gun >= bas).all()
+    botlar: dict = {}
+    gunluk: dict = {}
+    for r in satirlar:
+        b = botlar.setdefault(r.bot, {"bot": r.bot, "tur": r.tur, "toplam": 0, "son_gun": r.gun, "yollar": {}})
+        b["toplam"] += r.sayi
+        if r.gun > b["son_gun"]:
+            b["son_gun"] = r.gun
+        b["yollar"][r.yol] = b["yollar"].get(r.yol, 0) + r.sayi
+        g = gunluk.setdefault(r.gun, {"ai": 0, "arama": 0})
+        g[r.tur if r.tur in g else "arama"] += r.sayi
+    cikti = []
+    for b in botlar.values():
+        ust = sorted(b["yollar"].items(), key=lambda x: -x[1])[:5]
+        cikti.append({"bot": b["bot"], "tur": b["tur"], "toplam": b["toplam"],
+                      "son_gun": b["son_gun"].isoformat(), "yollar": [{"yol": y, "sayi": n} for y, n in ust]})
+    cikti.sort(key=lambda x: -x["toplam"])
+    return {
+        "success": True, "acik": bool(BOT_SAYAC_KEY), "gun_sayisi": gun_sayisi,
+        "ai_toplam": sum(b["toplam"] for b in cikti if b["tur"] == "ai"),
+        "arama_toplam": sum(b["toplam"] for b in cikti if b["tur"] != "ai"),
+        "botlar": cikti,
+        "gunluk": [{"gun": g.isoformat(), **v} for g, v in sorted(gunluk.items())][-14:],
+    }
+

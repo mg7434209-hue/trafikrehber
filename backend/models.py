@@ -167,3 +167,24 @@ class DilekceKey(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (UniqueConstraint("gun", "anahtar", name="uq_dilekce_gun_anahtar"),)
+
+
+class AiBotHit(Base):
+    """Arama ve yapay zekâ tarayıcılarının sayfa ziyareti (gün · bot · yol → sayı).
+
+    frontend server.js tarayıcıyı User-Agent'tan tanır, bellekte toplar ve
+    dakikada bir /api/stats/bot-toplu ile toplu gönderir (BOT_SAYAC_KEY).
+    UA taklit edilebilir; sayı "bot kimliğiyle gelen istek"tir, doğrulanmış
+    tarayıcı sayısı değildir. 90 günden eski satırlar silinir.
+    """
+    __tablename__ = "ai_bot_hits"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    gun = Column(Date, index=True, nullable=False)
+    bot = Column(String(40), nullable=False)
+    tur = Column(String(8), nullable=False, default="ai")   # "ai" | "arama"
+    yol = Column(String(160), nullable=False)
+    sayi = Column(Integer, nullable=False, default=0)
+
+    __table_args__ = (UniqueConstraint("gun", "bot", "yol", name="uq_aibot_gun_bot_yol"),)
+

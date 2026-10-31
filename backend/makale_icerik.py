@@ -24,7 +24,7 @@ EŞİTLEME (`esitle()`, main.py açılışta çağırır)
   301 ile gider (articles.ESKI_SLUG + frontend server.js).
 """
 
-SURUM = "2026-10-29"
+SURUM = "2026-10-30"
 
 _UYARI = ('<p><em>⚖️ Bu yazı genel bilgilendirme amaçlıdır, hukuki danışmanlık '
           'yerine geçmez. İşlem yapmadan önce güncel bilgiyi resmî kaynaktan '
@@ -34,7 +34,7 @@ MAKALELER = [
     # ─────────────────────────────────────────────────────────── İTİRAZ
     {
         "slug": "trafik-cezasi-itiraz-nasil-yapilir",
-        "title": "Trafik Cezasına İtiraz Nasıl Yapılır? ({{yil}} Adım Adım Rehber)",
+        "title": "Trafik Cezasına İtiraz Nasıl Yapılır? ({{yil}} Rehberi)",
         "meta_description": "Trafik cezasına itiraz süresi {{itiraz_gun}} gündür. Sulh Ceza Hâkimliği başvurusu, dilekçede yazılacaklar, kanıtlar ve ödeme indirimini kaçırmama rehberi.",
         "category": "ceza", "tags": ["itiraz", "trafik cezası", "sulh ceza"],
         "reading_time_min": 7, "is_featured": True,
@@ -129,7 +129,7 @@ MAKALELER = [
     {
         "slug": "trafik-cezasi-e-devlet-sorgulama",
         "eski": ["trafik-cezasi-sorgulama-e-devlet"],
-        "title": "Trafik Cezası Sorgulama ve Ödeme: e-Devlet Rehberi ({{yil}})",
+        "title": "Trafik Cezası Sorgulama ve Ödeme: e-Devlet ({{yil}})",
         "meta_description": "Trafik cezası e-Devlet'ten kimlik no ya da plakayla nasıl sorgulanır, nereden ödenir? 1 ayda {{indirim}} indirim, taksit ve ödenmeyen cezada ne olur?",
         "category": "ceza", "tags": ["sorgulama", "e-devlet", "ödeme"],
         "reading_time_min": 5, "is_featured": True,
@@ -251,7 +251,7 @@ MAKALELER = [
     # ─────────────────────────────────────────────────────────── KAZA
     {
         "slug": "trafik-kazasi-sonrasi-ne-yapilir",
-        "title": "Trafik Kazası Sonrası Ne Yapılır? Tutanak ve Sigorta Rehberi",
+        "title": "Trafik Kazası Sonrası Ne Yapılır? Tutanak ve Sigorta",
         "meta_description": "Kazadan sonra ilk dakikalarda yapılacaklar, polis ne zaman çağrılır, kaza tespit tutanağı nasıl doldurulur, sigortaya başvuru ve değer kaybı.",
         "category": "ceza", "tags": ["trafik kazası", "kaza tutanağı", "hasar"],
         "reading_time_min": 7, "is_featured": True,
@@ -298,7 +298,7 @@ MAKALELER = [
     # ─────────────────────────────────────────────────────────── MUAYENE
     {
         "slug": "arac-muayene-randevu-nasil-alinir",
-        "title": "Araç Muayenesi {{yil}}: TÜVTÜRK Randevusu ve Muayenesiz Araç Cezası",
+        "title": "Araç Muayenesi {{yil}}: TÜVTÜRK Randevu ve Ceza",
         "meta_description": "TÜVTÜRK muayene randevusu nasıl alınır, otomobil kaç yılda bir muayene olur, muayene günü ne gerekir? Muayenesiz araç cezası {{ceza:H10}}.",
         "category": "arac-islemleri", "tags": ["araç muayene", "TÜVTÜRK", "muayenesiz araç"],
         "reading_time_min": 6, "is_featured": True,
@@ -339,7 +339,7 @@ MAKALELER = [
     # ─────────────────────────────────────────────────────────── KASKO
     {
         "slug": "kasko-sigortasi-nedir-kapsamlari",
-        "title": "Kasko Nedir, Neleri Karşılar? Trafik Sigortasından Farkı ({{yil}})",
+        "title": "Kasko Nedir, Neleri Karşılar? Trafik Sigortasından Farkı",
         "meta_description": "Kasko neleri karşılar, trafik sigortasından farkı nedir? Teminatlar, muafiyet, hasarsızlık indirimi, kasko değer listesi ve poliçe seçimi.",
         "category": "sigorta", "tags": ["kasko", "tam kasko", "araç sigortası"],
         "reading_time_min": 6, "is_featured": False,
@@ -384,7 +384,7 @@ MAKALELER = [
     # ─────────────────────────────────────────────────────────── EHLİYET SINAVI
     {
         "slug": "ehliyet-sinavi-nasil-girilir",
-        "title": "Ehliyet Nasıl Alınır? Başvuru, Sürücü Kursu ve Sınav Aşamaları ({{yil}})",
+        "title": "Ehliyet Nasıl Alınır? Kurs, Sınav ve Başvuru ({{yil}})",
         "meta_description": "B sınıfı ehliyet için yaş şartı, sağlık raporu, sürücü kursuna kayıt, e-sınav (teorik) ve direksiyon sınavı ile sürücü belgesinin teslimi adım adım.",
         "category": "ehliyet", "tags": ["ehliyet sınavı", "sürücü kursu", "e-sınav"],
         "reading_time_min": 6, "is_featured": False,
@@ -424,7 +424,7 @@ MAKALELER = [
     # ─────────────────────────────────────────────────────────── TESCİL / DEVİR
     {
         "slug": "arac-plaka-tescil-islemleri",
-        "title": "İkinci El Araç Devri ve Tescil: Noterde Satış Adım Adım ({{yil}})",
+        "title": "İkinci El Araç Devri ve Tescil: Noterde Satış ({{yil}})",
         "meta_description": "İkinci el araç alım satımı noterde nasıl yapılır, satıştan önce neler kontrol edilir, trafik sigortası ve muayene ne olur? Araç devri ve tescil rehberi.",
         "category": "arac-islemleri", "tags": ["araç tescil", "araç devri", "noter satış"],
         "reading_time_min": 6, "is_featured": False,

@@ -98,7 +98,7 @@ export default function HomePage() {
     <>
       <Helmet>
         <title>{`Trafik Cezası Ne Kadar? ${YIL} Güncel Tutarlar ve İtiraz | CezaRehberi`}</title>
-        <meta name="description" content={`${YIL} güncel trafik cezası tutarları: kırmızı ışık, hız, cep telefonu, alkol, park. %25 erken ödeme indirimi hesaplama, ücretsiz itiraz dilekçesi örnekleri ve e-Devlet sorgulama rehberi.`} />
+        <meta name="description" content={`${YIL} güncel trafik cezası tutarları: kırmızı ışık, hız, telefon, alkol, park. %25 indirim hesaplama, ücretsiz itiraz dilekçesi ve e-Devlet sorgulama rehberi.`} />
         <meta name="keywords" content={`trafik cezası ${YIL}, trafik cezası ne kadar, trafik cezası itiraz, trafik cezası sorgulama, kırmızı ışık cezası, hız cezası, ceza hesaplama`} />
       </Helmet>
 
