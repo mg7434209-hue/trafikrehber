@@ -2,7 +2,6 @@
 
 > Repo kök dizinindedir; Claude Code her oturum başında otomatik okur.
 > 200 satırı geçirme; uzayan içerikleri `@dosya/yolu.md` ile import et.
-
 ## Proje
 **www.cezarehberi.com** — trafik cezaları, sigorta, ehliyet ve araç işlemleri
 üzerine **organik trafik (SEO) odaklı içerik platformu**. Gelir modeli Google
@@ -74,6 +73,7 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
 - Yıl/tutar ELLE YAZILMAZ — `{{yil}}`, `{{ceza:H1}}`, `YIL` — @docs/guncellik.md
 - İtiraz yolculuğu, dilekçe oluşturucu (KVKK), avukat (Av. K. m.55), hız aracı — @docs/itiraz.md
 - SEO + AI görünürlüğü: sunucuda sayfa gövdesi, llms.txt, /md, robots, bot sayacı — @docs/seo-ai.md
+- Ajan düzeni (maliyet): Fable yalnız planlama/denetimde — @docs/ajanlar.md
 
 ## Ceza Sayfaları (`/ceza/:slug`) — trafiğin ana kaynağı
 Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız cezası
