@@ -84,6 +84,11 @@ export const statsApi = {
   getDilekce: () => api.get('/api/stats/dilekce'),
 };
 
+export const iletisimApi = {
+  // Form alanları + honeypot (web) + gecen_ms; ham IP sunucuda da saklanmaz
+  gonder: (g) => api.post('/api/iletisim', g),
+};
+
 export const adminApi = {
   login: (email, password) =>
     api.post('/api/admin/login', { email, password }),
@@ -93,6 +98,10 @@ export const adminApi = {
   // AI ve arama tarayıcıları (frontend server.js sayar; BOT_SAYAC_KEY gerekir)
   getAiBotlar: (token) =>
     api.get('/api/admin/ai-botlar', token),
+  // İletişim formu mesajları
+  getMesajlar: (token) => api.get('/api/admin/mesajlar', token),
+  mesajOkundu: (token, id) => api.put(`/api/admin/mesajlar/${id}/okundu`, {}, token),
+  mesajSil: (token, id) => api.delete(`/api/admin/mesajlar/${id}`, token),
 
   // Makaleler
   articles2026Guncelle: (token) =>

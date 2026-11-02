@@ -26,7 +26,7 @@ ICERIK = {
         ),
         "sss": [
             ("Kırmızı ışık cezası kaç puan?",
-             "Kırmızı ışık ihlali sürücü belgesine 20 ceza puanı işlenmesine yol açar. Bir yıl içinde 100 ceza puanına ulaşan sürücünün belgesine geçici olarak el konulur."),
+             "Kırmızı ışık ihlali sürücü belgesine 20 ceza puanı işlenmesine yol açar. Bir yıl içinde 100 ceza puanına ulaşan sürücünün belgesi 2 ay süreyle geri alınır (KTK m.118)."),
             ("Kırmızı ışıkta geçtiğimi nasıl öğrenirim?",
              "e-Devlet üzerinden \"Trafik İdari Para Cezası Sorgulama\" hizmetiyle TC kimlik numaranızla tüm cezalarınızı görebilirsiniz. Plakaya yazılan cezalar tebliğ edilmeden önce de burada görünebilir."),
             ("Sarı ışıkta geçmek ceza mı?",

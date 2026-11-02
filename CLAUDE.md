@@ -74,6 +74,7 @@ gespaenerji.com footer sayacıyla **aynı mantık**, Postgres'e uyarlanmış hâ
 - Yıl/tutar ELLE YAZILMAZ — `{{yil}}`, `{{ceza:H1}}`, `YIL` — @docs/guncellik.md
 - İtiraz yolculuğu, dilekçe oluşturucu (KVKK), avukat (Av. K. m.55), hız aracı — @docs/itiraz.md
 - SEO + AI görünürlüğü: sunucuda sayfa gövdesi, llms.txt, /md, robots, bot sayacı — @docs/seo-ai.md
+- Güven/E-E-A-T: Hakkımızda-İletişim-Gizlilik metni (`sayfalar.json`), iletişim formu, yazar/kaynak — @docs/guven.md
 
 ## Ceza Sayfaları (`/ceza/:slug`) — trafiğin ana kaynağı
 Her ceza AYRI bir arama sorgusudur ("kırmızı ışık cezası ne kadar", "hız cezası

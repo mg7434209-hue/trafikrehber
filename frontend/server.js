@@ -204,11 +204,25 @@ function sssYukle() {
   }
 }
 
+// İletişim e-postası: src/data/iletisim.json (React da aynı dosyayı okur). Boşken şemaya
+// contactPoint EKLENMEZ; uydurma adres yazılmaz.
+function iletisimEposta() {
+  try { return String(JSON.parse(fs.readFileSync(path.join(__dirname, 'src', 'data', 'iletisim.json'), 'utf8')).eposta || '').trim(); }
+  catch (e) { return ''; }
+}
 function organizationLd() {
-  return {
+  const eposta = iletisimEposta();
+  const o = {
     '@type': 'Organization', '@id': SITE + '/#kurulus', name: MARKA, url: SITE + '/',
-    logo: { '@type': 'ImageObject', url: OG_IMAGE },
+    logo: { '@type': 'ImageObject', url: SITE + '/logo-512.png', width: 512, height: 512 },
+    description: 'Türkiye\'de trafik cezaları, itiraz, sigorta, ehliyet ve araç işlemleri üzerine bağımsız bilgilendirme platformu.',
+    // Editoryal ilkeler, kaynak ve düzeltme politikası (E-E-A-T)
+    publishingPrinciples: SITE + '/hakkimizda#editoryal',
+    knowsAbout: ['Trafik cezaları', 'Trafik cezasına itiraz', 'Trafik sigortası', 'Ehliyet işlemleri', 'Araç işlemleri'],
+    areaServed: { '@type': 'Country', name: 'Türkiye' },
   };
+  if (eposta) o.contactPoint = { '@type': 'ContactPoint', contactType: 'customer support', email: eposta, availableLanguage: 'tr' };
+  return o;
 }
 
 function howToItirazLd() {
@@ -359,6 +373,12 @@ async function metaCoz(yol) {
       }
     }
     if (yol === '/itiraz') ld.push(howToItirazLd());
+    if (yol === '/hakkimizda' || yol === '/iletisim') {
+      ld.push({
+        '@type': yol === '/hakkimizda' ? 'AboutPage' : 'ContactPage', '@id': SITE + yol + '#sayfa',
+        url: SITE + yol, name: Y(r.baslik), inLanguage: 'tr-TR', about: { '@id': SITE + '/#kurulus' }, publisher: organizationLd(),
+      });
+    }
     if (yol === '/araclar/hiz-cezasi-hesapla' || yol === '/araclar/ceza-hesapla') {
       ld.push({
         '@type': 'WebApplication', '@id': SITE + yol + '#arac', name: Y(r.ad), url: SITE + yol,

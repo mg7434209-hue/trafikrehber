@@ -40,7 +40,7 @@ class Article(Base):
     is_featured = Column(Boolean, default=False)
     view_count = Column(Integer, default=0)
     reading_time_min = Column(Integer, default=5)
-    author = Column(String, default="TrafikRehber Hukuk Ekibi")
+    author = Column(String, default="CezaRehberi Editörlüğü")
     featured_image_url = Column(String)
     schema_type = Column(String, default="Article")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -187,4 +187,32 @@ class AiBotHit(Base):
     sayi = Column(Integer, nullable=False, default=0)
 
     __table_args__ = (UniqueConstraint("gun", "bot", "yol", name="uq_aibot_gun_bot_yol"),)
+
+
+class IletisimMesaji(Base):
+    """İletişim formundan gelen mesaj. E-posta adresi olmadan çalışan gerçek bir
+    iletişim kanalı: mesaj veritabanına yazılır, yönetici panelinde "Mesajlar"
+    sekmesinde okunur. 12 ay sonra silinir (gizlilik politikasında yazılıdır).
+    Ham IP saklanmaz."""
+    __tablename__ = "iletisim_mesajlari"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    konu = Column(String(20), nullable=False)
+    ad = Column(String(80))
+    eposta = Column(String(120))
+    mesaj = Column(Text, nullable=False)
+    okundu = Column(Boolean, default=False, nullable=False)
+
+
+class IletisimGunluk(Base):
+    """İletişim formu günlük gönderim sınırı (karma anahtar başına). 2 günden eskisi silinir."""
+    __tablename__ = "iletisim_gunluk"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    gun = Column(Date, index=True, nullable=False)
+    anahtar = Column(String(64), nullable=False)
+    sayi = Column(Integer, nullable=False, default=0)
+
+    __table_args__ = (UniqueConstraint("gun", "anahtar", name="uq_iletisim_gun_anahtar"),)
 

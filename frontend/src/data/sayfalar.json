@@ -1,0 +1,69 @@
+{
+  "_aciklama": "Hakkımızda, İletişim ve Gizlilik sayfalarının metni. React (SayfaBloklari) ve sunucu (prerender.js) AYNI dosyayı okur — metin tek yerde. Blok: {t: h2|p|ul|uyari, x|items, id?}. Satır içi: **kalın**, [metin](/yol). {YIL} veri yılıyla değişir.",
+  "hakkimizda": {
+    "baslik": "Hakkımızda",
+    "bloklar": [
+      { "t": "p", "x": "CezaRehberi, Türkiye'deki sürücüler ve araç sahipleri için trafik cezaları, itiraz süreçleri, sigorta, ehliyet ve araç işlemleri hakkında sade, güncel ve kaynaklı bilgi sunan **bağımsız bir bilgilendirme platformudur**." },
+      { "t": "h2", "id": "ne-yapiyoruz", "x": "Ne yapıyoruz?" },
+      { "t": "ul", "items": [
+        "{YIL} güncel ceza tutarlarını, %25 erken ödeme indirimini ve ceza puanlarını tek listede yayımlarız: [ceza listesi](/trafik-cezalari-2026).",
+        "Haksız ceza aldığını düşünenler için [itiraz yol haritası](/itiraz) sunarız: süre hesabı, gerekçe seçimi ve dilekçe oluşturucu.",
+        "[Hız cezası](/araclar/hiz-cezasi-hesapla) ve [ceza hesaplama](/araclar/ceza-hesapla) araçlarını ücretsiz sunarız.",
+        "Sigorta, ehliyet ve araç işlemleri için adım adım [rehberler](/blog) yazarız."
+      ] },
+      { "t": "h2", "id": "ne-yapmiyoruz", "x": "Ne yapmıyoruz?" },
+      { "t": "ul", "items": [
+        "Hukuki danışmanlık vermeyiz; bir hukuk bürosu değiliz. Sayfalardaki bilgiler genel bilgilendirmedir ve kişisel durumunuzun yerine geçmez.",
+        "Resmî kurum değiliz; Emniyet Genel Müdürlüğü, Gelir İdaresi Başkanlığı, adliyeler veya sigorta şirketleriyle bir bağımız yoktur.",
+        "Sizin adınıza ceza ödemez, dilekçe vermez, başvuru yapmayız.",
+        "Şu anda ücretli bir hizmet sunmuyoruz; sitede ödeme alınan bir bölüm yoktur."
+      ] },
+      { "t": "h2", "id": "kaynaklar", "x": "Bilgileri nereden alıyoruz?" },
+      { "t": "p", "x": "Hukuki dayanak olarak 2918 sayılı Karayolları Trafik Kanunu, 5326 sayılı Kabahatler Kanunu ve 7574 sayılı Kanun (Resmî Gazete, 27.02.2026) esas alınır. Mevzuat metinleri [Mevzuat Bilgi Sistemi](https://www.mevzuat.gov.tr/) ve [Resmî Gazete](https://www.resmigazete.gov.tr/) üzerinden, süreçler ise [e-Devlet](https://www.turkiye.gov.tr/), [Gelir İdaresi Başkanlığı](https://www.gib.gov.tr/) ve [UYAP Vatandaş Portalı](https://vatandas.uyap.gov.tr/) üzerinden kontrol edilir." },
+      { "t": "p", "x": "Ceza tutarları tek bir listede tutulur; mevzuat ve birden fazla bağımsız kaynakla karşılaştırılır ve listenin **son doğrulama tarihi** sayfada yazar. Kaynaklar arasında çelişki olan ve doğrulayamadığımız bir tutarı yayımlamayız." },
+      { "t": "h2", "id": "editoryal", "x": "Editoryal ilkeler" },
+      { "t": "ul", "items": [
+        "Yazılar \"CezaRehberi Editörlüğü\" adıyla yayımlanır; her biri kaynaklara dayanan genel bilgidir, kişisel hukuki görüş değildir.",
+        "Ceza tutarı, süre ve oranlar tek yerden yönetilir; yazılar bu veriden otomatik güncellenir. Böylece aynı bilgi iki sayfada farklı görünmez.",
+        "Başlıklardaki yıl, takvime göre değil ceza listesinin doğrulandığı yıla göre değişir; yeni yılın tutarları doğrulanmadan başlıklar değişmez.",
+        "Her yazıda son güncelleme tarihi görünür; yazıların sonunda kullanılan kaynaklar listelenir.",
+        "Sitede Google AdSense reklamları gösterilebilir. Reklamlar \"Reklam\" etiketi taşır; içeriği reklamverenler belirlemez."
+      ] },
+      { "t": "h2", "id": "duzeltme", "x": "Hata bildirimi ve düzeltme politikası" },
+      { "t": "p", "x": "Yanlış, eksik ya da eski bir bilgi gördüyseniz [iletişim formundan](/iletisim) \"Hata / düzeltme bildirimi\" konusuyla yazın. Doğrulanan hatalar düzeltilir; düzeltme yazının son güncelleme tarihine yansır." },
+      { "t": "h2", "id": "avukat", "x": "Avukat desteği" },
+      { "t": "p", "x": "İtirazı kendiniz yapabilirsiniz; avukat zorunlu değildir. Gerektiğinde bulunduğunuz ilin barosundan ya da [Türkiye Barolar Birliği](https://www.barobirlik.org.tr/) üzerinden avukat bilgisine ulaşabilirsiniz." },
+      { "t": "uyari", "x": "⚖️ CezaRehberi hukuki danışmanlık hizmeti vermemektedir. Tüm içerikler genel bilgilendirme amaçlıdır. Hukuki işlemleriniz için bir avukattan destek almanızı öneririz." }
+    ]
+  },
+  "iletisim": {
+    "baslik": "İletişim",
+    "ust": [
+      { "t": "p", "x": "Görüş, öneri ve **düzeltme bildirimleriniz** için aşağıdaki formu kullanabilirsiniz. Mesajınız doğrudan editörlüğümüze ulaşır." }
+    ],
+    "alt": [
+      { "t": "p", "x": "Yanıt almak istiyorsanız e-posta adresinizi yazın; yazmazsanız mesajınıza yanıt veremeyiz. Mesajlar yalnızca size dönüş yapmak ve içeriği düzeltmek için kullanılır, 12 ay sonra silinir. Ayrıntı: [Gizlilik Politikası](/gizlilik-politikasi)." },
+      { "t": "p", "x": "**Veri sorumlusu:** CezaRehberi / Göksoylar İletişim" },
+      { "t": "p", "x": "Acil bir ceza ya da dilekçe sorunuz varsa [itiraz yol haritasına](/itiraz) bakın; kişisel hukuki sorular için bir avukata danışın." }
+    ]
+  },
+  "gizlilik": {
+    "baslik": "Gizlilik Politikası",
+    "bloklar": [
+      { "t": "h2", "x": "Kişisel Verilerin Korunması (KVKK)" },
+      { "t": "p", "x": "CezaRehberi olarak 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında kişisel verilerinizi korumaya önem veriyoruz. Veri sorumlusu: CezaRehberi / Göksoylar İletişim. KVKK kapsamındaki taleplerinizi [iletişim formundan](/iletisim) \"KVKK başvurusu\" konusuyla iletebilirsiniz; başvurular en geç otuz gün içinde sonuçlandırılır." },
+      { "t": "h2", "x": "Çerezler" },
+      { "t": "p", "x": "Sitemizde Google Analytics gibi analitik araçlar için çerezler kullanılmaktadır. Bu çerezler yalnızca onayınız ile aktif hale gelir." },
+      { "t": "h2", "x": "Ziyaretçi Sayacı" },
+      { "t": "p", "x": "Sayfa altındaki ziyaretçi sayacı çerez kullanmaz ve kimlik bilgisi saklamaz. Aynı ziyaretçinin gün içinde bir kez sayılabilmesi için IP adresi ve tarayıcı bilgisinden geri döndürülemez bir karma (hash) üretilir; **ham IP adresi hiçbir şekilde kaydedilmez** ve bu kayıtlar 7 gün sonra otomatik silinir." },
+      { "t": "h2", "x": "Dilekçe Oluşturucu" },
+      { "t": "p", "x": "Dilekçe oluşturucuya yazdığınız ad, T.C. kimlik numarası, adres ve telefon yalnızca kendi tarayıcınızda işlenir; sunucumuza gönderilmez ve kaydedilmez. Dilekçeyi yazdırdığınızda, indirdiğinizde ya da kopyaladığınızda yalnızca \"bir dilekçe hazırlandı\" bilgisi sayılır (kişi başı günde bir kez, ziyaretçi sayacındaki gibi geri döndürülemez karma ile); dilekçe içeriği bu sayıma girmez." },
+      { "t": "h2", "x": "İletişim Formu" },
+      { "t": "p", "x": "İletişim formuna yazdığınız konu, mesaj ve isteğe bağlı olarak ad ile e-posta adresiniz, mesajınızı yanıtlamak ve içeriği düzeltmek amacıyla veritabanımızda saklanır; üçüncü taraflarla paylaşılmaz ve 12 ay sonra otomatik silinir. Spam'i önlemek için ham IP adresi kaydedilmez; günlük gönderim sınırı geri döndürülemez bir karma ile uygulanır." },
+      { "t": "h2", "x": "Yardım Asistanı" },
+      { "t": "p", "x": "Sayfanın köşesindeki yardım asistanına yazdığınız mesajlar yanıt üretmek için Google Gemini servisine iletilir; sohbet geçmişi veritabanımızda 90 gün saklanır ve sonra silinir. Asistana **T.C. kimlik numarası, adres, telefon gibi kişisel bilgi yazmayın.**" },
+      { "t": "h2", "x": "Veri Toplama" },
+      { "t": "p", "x": "Sitemiz üyelik ya da ödeme istemez. Ceza hesaplama ve hız cezası araçları kişisel veri toplamaz." }
+    ]
+  }
+}

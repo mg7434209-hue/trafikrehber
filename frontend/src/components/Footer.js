@@ -66,6 +66,7 @@ export default function Footer() {
             <div style={{ fontWeight: 700, color: '#e2e8f0', marginBottom: 14, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Kurumsal</div>
             {[
               ['Hakkımızda', '/hakkimizda'],
+              ['Editoryal İlkeler', '/hakkimizda#editoryal'],
               ['İletişim', '/iletisim'],
               ['Gizlilik Politikası', '/gizlilik-politikasi'],
             ].map(([label, path]) => (
