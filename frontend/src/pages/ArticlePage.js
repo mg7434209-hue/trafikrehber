@@ -46,10 +46,10 @@ export default function ArticlePage() {
           "inLanguage": "tr-TR",
           "datePublished": article.created_at || undefined,
           "dateModified": article.updated_at || article.created_at || undefined,
-          "author": { "@type": "Organization", "name": article.author || 'TrafikRehber' },
+          "author": { "@type": "Organization", "name": article.author || 'CezaRehberi Editörlüğü', "url": abs('/hakkimizda#editoryal') },
           "publisher": {
-            "@type": "Organization", "name": "TrafikRehber",
-            "logo": { "@type": "ImageObject", "url": abs('/og-default.png') }
+            "@type": "Organization", "name": "CezaRehberi",
+            "logo": { "@type": "ImageObject", "url": abs('/logo-512.png') }
           }
         })}</script>
       </Helmet>
@@ -65,7 +65,7 @@ export default function ArticlePage() {
         <h1 style={{ fontSize: 'clamp(22px,4vw,34px)', fontWeight: 800, color: '#1a3a6b', marginBottom: 16, lineHeight: 1.3 }}>{article.title}</h1>
 
         <div style={{ display: 'flex', gap: 16, fontSize: 13, color: '#666', marginBottom: 32, flexWrap: 'wrap' }}>
-          <span>✍️ {article.author}</span>
+          <span>✍️ <Link to="/hakkimizda#editoryal" style={{ color: 'inherit' }}>{article.author}</Link></span>
           <span>⏱ {article.reading_time_min} dk okuma</span>
           <span>👁 {article.view_count} görüntülenme</span>
           {(article.updated_at || article.created_at) && (

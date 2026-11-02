@@ -28,7 +28,7 @@ export default function ArticlePage() {
         <script type="application/ld+json">{JSON.stringify({
           "@context":"https://schema.org","@type":article.schema_type||"Article",
           "headline":article.title,"author":{"@type":"Organization","name":article.author},
-          "publisher":{"@type":"Organization","name":"TrafikRehber"}
+          "publisher":{"@type":"Organization","name":"CezaRehberi"}
         })}</script>
       </Helmet>
       <div className="container-sm" style={{padding:'40px 20px'}}>

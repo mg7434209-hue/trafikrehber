@@ -24,7 +24,35 @@ EŞİTLEME (`esitle()`, main.py açılışta çağırır)
   301 ile gider (articles.ESKI_SLUG + frontend server.js).
 """
 
-SURUM = "2026-10-30"
+SURUM = "2026-11-02"
+
+_M = "https://www.mevzuat.gov.tr/"
+_KAYNAK = {
+    "ktk": ("2918 sayılı Karayolları Trafik Kanunu", _M, "Mevzuat Bilgi Sistemi"),
+    "kabahatler": ("5326 sayılı Kabahatler Kanunu (m.17, 27, 29)", _M, "Mevzuat Bilgi Sistemi"),
+    "k7574": ("7574 sayılı Kanun (Resmî Gazete, 27.02.2026)", "https://www.resmigazete.gov.tr/", "Resmî Gazete"),
+    "cmk": ("5271 sayılı Ceza Muhakemesi Kanunu (m.268)", _M, "Mevzuat Bilgi Sistemi"),
+    "edevlet": ("e-Devlet Kapısı", "https://www.turkiye.gov.tr/", "ceza ve ceza puanı sorgulama, kaza tutanağı"),
+    "gib": ("Gelir İdaresi Başkanlığı", "https://www.gib.gov.tr/", "trafik cezası ödeme"),
+    "uyap": ("UYAP Vatandaş Portalı", "https://vatandas.uyap.gov.tr/", "itiraz başvurusu"),
+    "egm": ("Emniyet Genel Müdürlüğü", "https://www.egm.gov.tr/", "trafik hizmetleri ve duyurular"),
+    "tuvturk": ("TÜVTÜRK", "https://www.tuvturk.com.tr/", "muayene randevusu ve periyotlar"),
+    "tsb": ("Türkiye Sigorta Birliği", "https://www.tsb.org.tr/", "sigorta bilgileri"),
+    "meb": ("Millî Eğitim Bakanlığı", "https://www.meb.gov.tr/", "sürücü kursu ve sınav duyuruları"),
+    "baro": ("Türkiye Barolar Birliği", "https://www.barobirlik.org.tr/", "avukat ve adli yardım"),
+    "noter": ("Türkiye Noterler Birliği", "https://www.tnb.org.tr/", "araç satış ve devri"),
+}
+
+
+def _kaynaklar(*anahtarlar):
+    """Yazının sonuna "Kaynaklar" bölümü (resmî kurum bağlantıları; E-E-A-T)."""
+    li = "".join(
+        f'<li><a href="{u}" rel="noopener">{ad}</a> — {ack}</li>'
+        for ad, u, ack in (_KAYNAK[k] for k in anahtarlar)
+    )
+    return ("<h2>Kaynaklar</h2><ul>" + li + "</ul>"
+            "<p>Mevzuat için ilgili kanun numarasını Mevzuat Bilgi Sistemi'nde arayın; güncel metin her zaman bağlayıcı olan metindir.</p>")
+
 
 _UYARI = ('<p><em>⚖️ Bu yazı genel bilgilendirme amaçlıdır, hukuki danışmanlık '
           'yerine geçmez. İşlem yapmadan önce güncel bilgiyi resmî kaynaktan '
@@ -87,7 +115,7 @@ MAKALELER = [
 <li>Yanlış mercie (ör. valiliğe) başvurmak</li>
 </ul>
 <p>Cezanın güncel tutarını görmek için <a href="/trafik-cezalari-2026">{{yil}} trafik cezaları listesine</a>, indirimli tutarı hesaplamak için <a href="/araclar/ceza-hesapla">ceza hesaplama aracına</a> bakabilirsiniz.</p>
-""" + _UYARI,
+""" + _kaynaklar('kabahatler', 'cmk', 'uyap', 'edevlet', 'baro') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── TUTARLAR
     {
@@ -123,7 +151,7 @@ MAKALELER = [
 <h2>İtiraz süresi ayrıdır</h2>
 <p>Cezaya itiraz süresi tebliğden itibaren <strong>{{itiraz_gun}} gün</strong>dür. Ayrıntı için <a href="/blog/trafik-cezasi-itiraz-nasil-yapilir">itiraz rehberimize</a> bakın. Her cezanın ayrıntılı sayfası için <a href="/trafik-cezalari-2026">{{yil}} ceza listesi</a> sayfasını kullanabilirsiniz.</p>
 <p><em>Kesin tutar için e-Devlet'teki ceza kaydınızı ve tutanağı esas alın.</em></p>
-""" + _UYARI,
+""" + _kaynaklar('ktk', 'k7574', 'kabahatler', 'edevlet', 'gib', 'egm') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── E-DEVLET
     {
@@ -161,7 +189,7 @@ MAKALELER = [
 <h2>Tebliğ edilmemiş ceza görünüyor</h2>
 <p>EDS cezaları adrese tebliğ edilir. Listede görünen ama size henüz ulaşmamış bir ceza için süreler tebliğ tarihinden başlar. Adresinizin MERNİS'te güncel olduğundan emin olun; adres eskiyse tebligat sizden habersiz yapılmış sayılabilir.</p>
 <p>İlgili: <a href="/blog/trafik-cezasi-itiraz-nasil-yapilir">trafik cezasına itiraz</a> · <a href="/araclar/ceza-hesapla">ceza hesaplama</a> · <a href="/trafik-cezalari-2026">{{yil}} ceza tutarları</a></p>
-""" + _UYARI,
+""" + _kaynaklar('edevlet', 'gib', 'kabahatler') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── EHLİYET PUAN
     {
@@ -171,19 +199,19 @@ MAKALELER = [
         "category": "ehliyet", "tags": ["ehliyet puan", "sorgulama", "ceza puanı"],
         "reading_time_min": 6, "is_featured": True,
         "content": """
-<p>Türkiye'de sürücülerin trafik kurallarına uyumu <strong>ceza puanı</strong> sistemiyle izlenir. Bazı ihlallerde para cezasına ek olarak sürücünün siciline puan işlenir; puanlar belirli bir sınırı aşınca sürücü belgesi geri alınır.</p>
+<p>Türkiye'de sürücülerin trafik kurallarına uyumu <strong>ceza puanı</strong> sistemiyle izlenir. Bazı ihlallerde para cezasına ek olarak sürücünün siciline puan işlenir; puanlar belirli bir sınırı aşınca sürücü belgesi geri alınır (Karayolları Trafik Kanunu m.118).</p>
 
 <h2>Sistem nasıl işler?</h2>
-<p>Puan, ihlal başına sürücüye yazılır ve bir yıllık dönem içinde toplanır. Bir yıl içinde <strong>100 ceza puanı</strong>na ulaşan sürücünün belgesi geçici olarak geri alınır. Bu sınır sürücü belgesi "sıfırlanır" anlamına gelmez; sicildeki kayıtlar yaptırımın kaçıncı kez uygulandığını belirler.</p>
+<p>Puan, ihlalin yapıldığı tarihten geriye doğru <strong>bir yıl</strong> içinde toplanır. Puanlar takvim yılına göre değil, her ihlalin kendi tarihinden bir yıl sonra düşer; yani bir yılı dolduran ihlalin puanı toplamdan çıkar. Eğitim alarak ya da cezayı ödeyerek puan düşürmek mevzuatta yoktur.</p>
 <p>Örnek puanlar: kırmızı ışık ihlali {{puan:H1}} puan, emniyet kemeri takmamak {{puan:H4}} puandır.</p>
 
 <h2>100 puan dolunca ne olur?</h2>
 <ul>
-<li><strong>İlk kez:</strong> sürücü belgesi süreli olarak geri alınır ve sürücü eğitime tabi tutulur.</li>
-<li><strong>Tekrarında:</strong> geri alma süresi uzar; belge, psikoteknik değerlendirme ve psikiyatri muayenesi sonucuna göre iade edilir.</li>
-<li><strong>Tekrarlayan ihlallerde:</strong> sürücü belgesi iptal edilebilir.</li>
+<li><strong>Bir yıl içinde 100 puan:</strong> sürücü belgesi <strong>2 ay</strong> süreyle geri alınır ve sürücü eğitime tabi tutulur (KTK m.118).</li>
+<li><strong>Aynı dönemde ikinci kez 100 puan:</strong> belge <strong>4 ay</strong> geri alınır; psikoteknik değerlendirme ve psikiyatri muayenesi istenir.</li>
+<li><strong>Aday sürücüler:</strong> sınır 100 değil <strong>75 puandır</strong>.</li>
 </ul>
-<p>Süreler ve şartlar Karayolları Trafik Kanunu m.118 ve ilgili yönetmelikte düzenlenir; işlem yapmadan önce güncel metni kontrol edin.</p>
+<p>100 puana ulaşmak ehliyetin iptali anlamına gelmez; belge süre dolunca ve şartlar yerine getirilince iade edilir. Süreler ve şartlar değişebilir; işlem yapmadan önce KTK m.118'in güncel metnini kontrol edin.</p>
 <p>Puandan bağımsız olarak bazı ihlaller doğrudan belge geri alma sonucu doğurur: alkollü araç kullanma ({{not:H7}}) ve kademeli kırmızı ışık cezasının ileri tekrarları bunlara örnektir.</p>
 
 <h2>Ceza puanı nasıl sorgulanır?</h2>
@@ -200,7 +228,7 @@ MAKALELER = [
 <li>Belgeleri belgenin teslim edildiği birime (trafik tescil/denetleme şube) sunun.</li>
 </ol>
 <p>Puan işlenen cezaya itiraz ederseniz ve ceza kaldırılırsa puan da silinir. İtiraz süresi tebliğden itibaren {{itiraz_gun}} gündür: <a href="/blog/trafik-cezasi-itiraz-nasil-yapilir">itiraz rehberi</a>.</p>
-""" + _UYARI,
+""" + _kaynaklar('ktk', 'edevlet', 'egm') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── ZMSS
     {
@@ -246,7 +274,7 @@ MAKALELER = [
 
 <h2>Araç satılınca poliçe ne olur?</h2>
 <p>Araç devredildiğinde yeni sahibin kendi adına trafik sigortası yaptırması gerekir. Ayrıntı: <a href="/blog/arac-plaka-tescil-islemleri">araç devir ve tescil rehberi</a>. Kasko ile farkı için <a href="/blog/kasko-sigortasi-nedir-kapsamlari">kasko rehberine</a> bakın.</p>
-""" + _UYARI,
+""" + _kaynaklar('ktk', 'tsb') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── KAZA
     {
@@ -271,7 +299,7 @@ MAKALELER = [
 
 <h2>Anlaşmalı kaza tespit tutanağı</h2>
 <ul>
-<li>Kâğıt tutanak (sigorta şirketlerinden ya da araç içi belgelerden) veya Türkiye Sigorta Birliği'nin mobil kaza tutanağı uygulaması kullanılabilir.</li>
+<li>Kâğıt tutanak (sigorta şirketlerinden ya da araç içi belgelerden), <strong>e-Devlet'teki "Kaza Tutanağı" hizmeti</strong> (iki sürücü de e-Devlet'e girer) ya da Sigorta Bilgi ve Gözetim Merkezi'nin (SBM) <strong>Mobil Kaza Tutanağı</strong> uygulaması kullanılabilir. Elektronik yöntemlerin kapsamı (ör. iki araçlı, maddi hasarlı kazalar) değişebilir; zincirleme kazada kâğıt tutanak gerekebilir.</li>
 <li>Kroki dikkatle çizilmeli, işaretlenen kutucuklar iki tarafça kontrol edilmelidir.</li>
 <li>Tutanak iki tarafça imzalanır; her taraf bir nüsha alır.</li>
 <li>Kabul etmediğiniz bir ifadeyi imzalamayın; anlaşamıyorsanız polis çağırın.</li>
@@ -293,7 +321,7 @@ MAKALELER = [
 <li>Sigorta işlemini aylarca bekletmek</li>
 </ul>
 <p>Ağır yaralanmalı ve ölümlü kazalarda ceza yargılaması da söz konusu olabileceğinden bir avukattan destek almanız önerilir.</p>
-""" + _UYARI,
+""" + _kaynaklar('ktk', 'edevlet', 'tsb') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── MUAYENE
     {
@@ -334,7 +362,7 @@ MAKALELER = [
 <h2>Muayenesiz araç cezası</h2>
 <p>Muayenesi geçmiş araçla trafiğe çıkmanın cezası <strong>{{ceza:H10}}</strong>dir; 1 ay içinde ödenirse {{indirimli:H10}} olur. {{not:H10}} Ayrıntı: <a href="/ceza/muayenesiz-arac-cezasi">muayenesiz araç cezası</a>.</p>
 <p>Muayeneye geç kalan araçlar için ayrıca istasyonda <strong>gecikme ücreti</strong> alınır; gecikilen süre uzadıkça artar. Tarihi kaçırmamak için randevuyu süre dolmadan alın.</p>
-""" + _UYARI,
+""" + _kaynaklar('tuvturk', 'ktk') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── KASKO
     {
@@ -379,7 +407,7 @@ MAKALELER = [
 
 <h2>Kaza olunca</h2>
 <p>Kaza tespit tutanağını düzenleyin, sigorta şirketinize bildirin, onarımı şirketin yönlendirdiği servis ve eksper süreciyle yapın. Ayrıntılı adımlar: <a href="/blog/trafik-kazasi-sonrasi-ne-yapilir">kaza sonrası ne yapılır</a>. Zorunlu sigortanın kapsamı için: <a href="/blog/zorunlu-trafik-sigortasi-rehberi">trafik sigortası rehberi</a>.</p>
-""" + _UYARI,
+""" + _kaynaklar('tsb') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── EHLİYET SINAVI
     {
@@ -419,7 +447,7 @@ MAKALELER = [
 
 <h2>Ehliyeti aldıktan sonra</h2>
 <p>Yeni sürücüler için de ceza puanı sistemi geçerlidir: <a href="/blog/ehliyet-puan-sistemi-sorgulama">ehliyet ceza puanı rehberi</a>. En sık yazılan cezalar ve güncel tutarları için <a href="/trafik-cezalari-2026">{{yil}} trafik cezaları listesine</a> bakabilirsiniz.</p>
-""" + _UYARI,
+""" + _kaynaklar('meb', 'edevlet') + _UYARI,
     },
     # ─────────────────────────────────────────────────────────── TESCİL / DEVİR
     {
@@ -456,7 +484,7 @@ MAKALELER = [
 <li>Kendi adınıza olan kasko ve trafik poliçesinin iptali ve prim iadesi için sigorta şirketinize başvurun.</li>
 <li>Ruhsatı ve anahtarları teslim ederken tarih ve saati gösteren bir teslim tutanağı imzalatın.</li>
 </ul>
-""" + _UYARI,
+""" + _kaynaklar('noter', 'edevlet', 'ktk') + _UYARI,
     },
 ]
 

@@ -15,8 +15,9 @@ export default function AdminPage() {
   const [guncellik, setGuncellik] = useState(null);
   const [dilekceSay, setDilekceSay] = useState(null);
   const [aiBot, setAiBot] = useState(null);
+  const [mesajlar, setMesajlar] = useState(null);
 
-  useEffect(() => { if (token) { loadStats(); loadCezalar(); cezaApi.guncellik().then(setGuncellik).catch(() => {}); statsApi.getDilekce().then(setDilekceSay).catch(() => {}); adminApi.getAiBotlar(token).then(setAiBot).catch(() => {}); } }, [token]);
+  useEffect(() => { if (token) { loadStats(); loadCezalar(); cezaApi.guncellik().then(setGuncellik).catch(() => {}); statsApi.getDilekce().then(setDilekceSay).catch(() => {}); adminApi.getAiBotlar(token).then(setAiBot).catch(() => {}); adminApi.getMesajlar(token).then(setMesajlar).catch(() => {}); } }, [token]);
 
   const loadStats = async () => {
     try { const d = await adminApi.getStats(token); setStats(d.stats); } catch {}
@@ -120,7 +121,7 @@ export default function AdminPage() {
     <div style={{ minHeight: '100vh', background: '#f4f7fc' }}>
       {/* Header */}
       <div style={{ background: '#1a3a6b', color: '#fff', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontWeight: 700, fontSize: 16 }}>🛡 TrafikRehber Admin</div>
+        <div style={{ fontWeight: 700, fontSize: 16 }}>🛡 CezaRehberi Admin</div>
         <button onClick={() => { localStorage.removeItem('admin_token'); setToken(''); }}
           style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', borderRadius: 7, padding: '7px 14px', cursor: 'pointer', fontSize: 13 }}>Çıkış</button>
       </div>
@@ -192,7 +193,7 @@ export default function AdminPage() {
 
         {/* Sekmeler */}
         <div style={{ display: 'flex', gap: 4, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: 4, marginBottom: 20 }}>
-          {[['genel', '🏠 Genel'], ['makaleler', '📰 Makaleler'], ['cezalar', '⚖️ Ceza Yönetimi']].map(([key, label]) => (
+          {[['genel', '🏠 Genel'], ['mesajlar', `✉️ Mesajlar${mesajlar && mesajlar.okunmamis ? ` (${mesajlar.okunmamis})` : ''}`], ['makaleler', '📰 Makaleler'], ['cezalar', '⚖️ Ceza Yönetimi']].map(([key, label]) => (
             <button key={key} onClick={() => setTab(key)} style={{
               flex: 1, background: tab === key ? '#1a3a6b' : 'transparent',
               color: tab === key ? '#fff' : '#64748b',
@@ -291,6 +292,29 @@ export default function AdminPage() {
         )}
 
         {/* ── MAKALELER SEKMESİ ── */}
+        {/* ── MESAJLAR (iletişim formu) ── */}
+        {tab === 'mesajlar' && (
+          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 20 }}>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1a3a6b', marginBottom: 12 }}>✉️ İletişim formu mesajları</h3>
+            {!mesajlar || mesajlar.mesajlar.length === 0 ? (
+              <p style={{ fontSize: 13, color: '#64748b' }}>Henüz mesaj yok. Mesajlar 12 ay sonra otomatik silinir.</p>
+            ) : mesajlar.mesajlar.map(m => (
+              <div key={m.id} style={{ border: '1px solid #e2e8f0', borderLeft: `4px solid ${m.okundu ? '#cbd5e1' : '#e65c00'}`, borderRadius: 8, padding: '12px 14px', marginBottom: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', fontSize: 12, color: '#64748b', marginBottom: 6 }}>
+                  <span><b style={{ color: '#1a3a6b' }}>{({ duzeltme: 'Hata / düzeltme', oneri: 'Öneri', kvkk: 'KVKK başvurusu', isbirligi: 'İş birliği', diger: 'Diğer' })[m.konu] || m.konu}</b>
+                    {' · '}{m.ad || 'adsız'}{m.eposta ? ` · ${m.eposta}` : ' · e-posta yok'}</span>
+                  <span>{m.tarih ? new Date(m.tarih).toLocaleString('tr-TR') : ''}</span>
+                </div>
+                <p style={{ fontSize: 14, color: '#1e293b', whiteSpace: 'pre-wrap', margin: 0, lineHeight: 1.6 }}>{m.mesaj}</p>
+                <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+                  {!m.okundu && <button onClick={async () => { await adminApi.mesajOkundu(token, m.id).catch(() => {}); adminApi.getMesajlar(token).then(setMesajlar); }} style={{ fontSize: 12, padding: '4px 10px', cursor: 'pointer' }}>Okundu</button>}
+                  <button onClick={async () => { if (window.confirm('Bu mesaj silinsin mi?')) { await adminApi.mesajSil(token, m.id).catch(() => {}); adminApi.getMesajlar(token).then(setMesajlar); } }} style={{ fontSize: 12, padding: '4px 10px', cursor: 'pointer', color: '#b91c1c' }}>Sil</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {tab === 'makaleler' && (
           <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 20 }}>
             <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1a3a6b', marginBottom: 6 }}>📝 Toplu Makale Güncelleme</h3>

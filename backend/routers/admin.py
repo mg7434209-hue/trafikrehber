@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List
 from database import get_db
-from models import Article, DilecceSablon, CezaTuru, PageStat, SiteVisit
+from models import Article, DilecceSablon, CezaTuru, PageStat, SiteVisit, IletisimMesaji
 from utils.auth import create_token, require_admin
 from utils import indexnow
 import os
@@ -39,7 +39,7 @@ class ArticleCreate(BaseModel):
     is_published: Optional[bool] = False
     is_featured: Optional[bool] = False
     reading_time_min: Optional[int] = 5
-    author: Optional[str] = "TrafikRehber Hukuk Ekibi"
+    author: Optional[str] = "CezaRehberi Editörlüğü"
     featured_image_url: Optional[str] = None
     schema_type: Optional[str] = "Article"
 
@@ -372,6 +372,37 @@ def get_ai_botlar(db: Session = Depends(get_db), _=Depends(require_admin)):
     """AI ve arama tarayıcılarının son 30 günlük ziyareti (frontend server.js sayar)."""
     from routers.stats import bot_rapor
     return bot_rapor(db, 30)
+
+
+@router.get("/mesajlar")
+def get_mesajlar(db: Session = Depends(get_db), _=Depends(require_admin)):
+    """İletişim formundan gelen mesajlar (en yeni önce, en çok 200)."""
+    satirlar = db.query(IletisimMesaji).order_by(IletisimMesaji.created_at.desc()).limit(200).all()
+    return {
+        "success": True,
+        "okunmamis": db.query(IletisimMesaji).filter(IletisimMesaji.okundu == False).count(),
+        "mesajlar": [{
+            "id": str(m.id), "konu": m.konu, "ad": m.ad, "eposta": m.eposta, "mesaj": m.mesaj,
+            "okundu": m.okundu, "tarih": m.created_at.isoformat() if m.created_at else None,
+        } for m in satirlar],
+    }
+
+
+@router.put("/mesajlar/{mesaj_id}/okundu")
+def mesaj_okundu(mesaj_id: str, db: Session = Depends(get_db), _=Depends(require_admin)):
+    m = db.query(IletisimMesaji).filter(IletisimMesaji.id == mesaj_id).first()
+    if not m:
+        raise HTTPException(status_code=404, detail="Mesaj bulunamadı")
+    m.okundu = True
+    db.commit()
+    return {"success": True}
+
+
+@router.delete("/mesajlar/{mesaj_id}")
+def mesaj_sil(mesaj_id: str, db: Session = Depends(get_db), _=Depends(require_admin)):
+    db.query(IletisimMesaji).filter(IletisimMesaji.id == mesaj_id).delete()
+    db.commit()
+    return {"success": True}
 
 
 @router.get("/stats")

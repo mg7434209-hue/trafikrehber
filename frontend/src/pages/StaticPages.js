@@ -1,84 +1,53 @@
-// HakkimizdaPage.js
+// StaticPages.js — Hakkımızda, İletişim, Gizlilik metni src/data/sayfalar.json'dadır
+// (sunucudaki prerender.js AYNI dosyayı okur; metni burada değil orada düzenleyin).
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import SayfaBloklari from '../components/SayfaBloklari';
+import IletisimFormu from '../components/IletisimFormu';
+import SAYFALAR from '../data/sayfalar.json';
+import { EPOSTA } from '../iletisim';
+
+const H1 = { color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 };
 
 export function HakkimizdaPage() {
+  const d = SAYFALAR.hakkimizda;
   return (
     <>
       <Helmet><title>Hakkımızda — CezaRehberi</title></Helmet>
       <div className="container-sm" style={{ padding: '60px 20px' }}>
-        <h1 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 }}>Hakkımızda</h1>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
-          TrafikRehber, Türkiye'deki araç sahipleri ve sürücüler için trafik hukuku, ceza sorgulama, sigorta rehberi ve araç işlemleri konularında güvenilir, güncel bilgi sunmak amacıyla kurulmuş bir platformdur.
-        </p>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
-          Amacımız; trafik cezası itirazından ehliyet puan sorgulamaya, zorunlu sigorta rehberinden araç muayene randevusuna kadar pek çok konuda vatandaşlarımızın doğru bilgiye hızlıca ulaşmasını sağlamaktır.
-        </p>
-        <div className="warning-box">
-          ⚖️ TrafikRehber, hukuki danışmanlık hizmeti vermemektedir. Tüm içerikler genel bilgilendirme amaçlıdır. Hukuki işlemleriniz için bir avukattan destek almanızı öneririz.
-        </div>
+        <h1 style={H1}>{d.baslik}</h1>
+        <SayfaBloklari bloklar={d.bloklar} />
       </div>
     </>
   );
 }
 
 export function IletisimPage() {
+  const d = SAYFALAR.iletisim;
+  const [q] = useSearchParams();
   return (
     <>
       <Helmet><title>İletişim — CezaRehberi</title></Helmet>
       <div className="container-sm" style={{ padding: '60px 20px' }}>
-        <h1 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 }}>İletişim</h1>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 24 }}>
-          Görüş, öneri ve sorularınız için sayfanın sağ alt köşesindeki <strong>yardım asistanını</strong> kullanabilirsiniz.
-        </p>
-        <div style={{ background: '#f4f7fc', borderRadius: 12, padding: 24 }}>
-          <p style={{ marginBottom: 8 }}><strong>Veri Sorumlusu:</strong> TrafikRehber / Göksoylar İletişim</p>
-          <p style={{ fontSize: 13, color: '#666', marginTop: 16 }}>
-            E-posta iletişim kanalımız kurulum aşamasındadır; hazır olduğunda bu sayfada yayımlanacaktır.
-            KVKK kapsamındaki talepleriniz için de aynı adres duyurulacaktır.
-          </p>
-        </div>
+        <h1 style={H1}>{d.baslik}</h1>
+        <SayfaBloklari bloklar={d.ust} />
+        {EPOSTA && <p className="sb-eposta"><strong>E-posta:</strong> <a href={`mailto:${EPOSTA}`}>{EPOSTA}</a></p>}
+        <div className="if-kutu"><IletisimFormu konu={q.get('konu') || 'duzeltme'} /></div>
+        <SayfaBloklari bloklar={d.alt} />
       </div>
     </>
   );
 }
 
 export function GizlilikPage() {
+  const d = SAYFALAR.gizlilik;
   return (
     <>
       <Helmet><title>Gizlilik Politikası — CezaRehberi</title></Helmet>
       <div className="container-sm" style={{ padding: '60px 20px' }}>
-        <h1 style={{ color: '#1a3a6b', marginBottom: 24, fontSize: 32, fontWeight: 800 }}>Gizlilik Politikası</h1>
-        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Kişisel Verilerin Korunması (KVKK)</h2>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
-          TrafikRehber olarak 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında kişisel verilerinizi korumaya önem veriyoruz.
-        </p>
-        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Çerezler</h2>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
-          Sitemizde Google Analytics gibi analitik araçlar için çerezler kullanılmaktadır. Bu çerezler yalnızca onayınız ile aktif hale gelir.
-        </p>
-        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Ziyaretçi Sayacı</h2>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
-          Sayfa altındaki ziyaretçi sayacı çerez kullanmaz ve kimlik bilgisi saklamaz. Aynı ziyaretçinin
-          gün içinde bir kez sayılabilmesi için IP adresi ve tarayıcı bilgisinden geri döndürülemez bir
-          karma (hash) üretilir; <strong>ham IP adresi hiçbir şekilde kaydedilmez</strong> ve bu kayıtlar
-          7 gün sonra otomatik silinir.
-        </p>
-        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Dilekçe Oluşturucu</h2>
-        <p style={{ color: '#444', lineHeight: 1.8, marginBottom: 16 }}>
-          Dilekçe oluşturucuya yazdığınız ad, T.C. kimlik numarası, adres ve telefon yalnızca kendi
-          tarayıcınızda işlenir; sunucumuza gönderilmez ve kaydedilmez. Dilekçeyi yazdırdığınızda, indirdiğinizde
-          ya da kopyaladığınızda yalnızca "bir dilekçe hazırlandı" bilgisi sayılır (kişi başı günde bir kez,
-          ziyaretçi sayacındaki gibi geri döndürülemez karma ile); dilekçe içeriği bu sayıma girmez.
-        </p>
-        <h2 style={{ color: '#1a3a6b', fontSize: 20, marginTop: 32, marginBottom: 12 }}>Veri Toplama</h2>
-        <p style={{ color: '#444', lineHeight: 1.8 }}>
-          Dilekçe indirme veya iletişim formu aracılığıyla toplanan e-posta adresleri yalnızca belirtilen amaçla kullanılır, üçüncü taraflarla paylaşılmaz.
-        </p>
-        <p style={{ color: '#444', lineHeight: 1.8, marginTop: 16 }}>
-          KVKK kapsamındaki başvuru kanalı kurulum aşamasındadır; hazır olduğunda{' '}
-          <a href="/iletisim" style={{ color: '#1a3a6b' }}>İletişim</a> sayfasında yayımlanacaktır.
-        </p>
+        <h1 style={H1}>{d.baslik}</h1>
+        <SayfaBloklari bloklar={d.bloklar} />
       </div>
     </>
   );

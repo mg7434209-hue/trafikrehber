@@ -4,7 +4,7 @@ from fastapi.responses import PlainTextResponse
 import os
 
 from database import engine, Base
-from routers import articles, dilekce, ceza, admin, chat, sitemap, stats
+from routers import articles, dilekce, ceza, admin, chat, sitemap, stats, iletisim
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,6 +25,18 @@ def _eksik_kolonlari_ekle():
                 print(f"[migrate] {tablo}.{kolon} atlandı: {e}")
 
 _eksik_kolonlari_ekle()
+
+# Yazar etiketi: sitede avukat/"hukuk ekibi" yok, "hukuk bürosu değiliz" yazıyor — çelişki
+# güven ve doğruluk sorunuydu. Eski kayıtlar bir kez düzeltilir (idempotent).
+def _yazar_duzelt():
+    from sqlalchemy import text
+    try:
+        with engine.begin() as conn:
+            conn.execute(text("UPDATE articles SET author = 'CezaRehberi Editörlüğü' WHERE author IS NULL OR author ILIKE '%hukuk ekibi%'"))
+    except Exception as e:
+        print(f"[yazar] düzeltme atlandı: {e}")
+
+_yazar_duzelt()
 
 # Rehber yazılarını koddaki güncel metinle eşitle (makale_icerik.py).
 # Sürümü değişmeyen yazıya dokunulmaz; admin düzeltmeleri korunur.
@@ -50,6 +62,7 @@ app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(chat.router, prefix="/api/chat", tags=["AI Chat"])
 app.include_router(sitemap.router, tags=["SEO"])
 app.include_router(stats.router, prefix="/api/stats", tags=["İstatistikler"])
+app.include_router(iletisim.router, prefix="/api/iletisim", tags=["İletişim"])
 
 @app.get("/")
 def root():

@@ -60,7 +60,8 @@ export default function ChatWidget() {
           <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {messages.length === 0 && (
               <div>
-                <p style={{ fontSize: 14, color: '#666', marginBottom: 12 }}>Merhaba! Trafik hukuku konularında yardımcı olabilirim.</p>
+                <p style={{ fontSize: 14, color: '#666', marginBottom: 6 }}>Merhaba! Trafik hukuku konularında yardımcı olabilirim.</p>
+                <p style={{ fontSize: 11.5, color: '#94a3b8', marginBottom: 12, lineHeight: 1.5 }}>Yapay zekâ yanıtıdır, hukuki danışmanlık değildir. T.C. kimlik no, adres gibi kişisel bilgi yazmayın.</p>
                 {PROMPTS.map(p => (
                   <button key={p} onClick={() => send(p)} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 12px', marginBottom: 8, background: '#f4f7fc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13, cursor: 'pointer', color: '#1a3a6b' }}>{p}</button>
                 ))}

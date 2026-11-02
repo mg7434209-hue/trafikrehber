@@ -588,3 +588,16 @@ html { scroll-behavior: smooth; }
 }
 .it-ds { margin: -6px 0 16px; }
 .it-ds:empty { display: none; }
+
+/* ═════════ Hakkımızda / İletişim / Gizlilik (data/sayfalar.json) · sb-* if-* ═════════ */
+.sb h2 { color: #1a3a6b; font-size: 20px; margin: 32px 0 12px; scroll-margin-top: 80px; }
+.sb p { color: #444; line-height: 1.8; margin-bottom: 16px; }
+.sb ul { color: #444; line-height: 1.8; margin: 0 0 16px 22px; }
+.sb li { margin-bottom: 6px; }
+.sb a { color: #1a3a6b; }
+.sb-eposta { margin: 0 0 16px; color: #444; }
+.if-kutu { background: #f4f7fc; border-radius: 12px; padding: 22px; margin: 8px 0 26px; }
+.if { display: flex; flex-direction: column; gap: 12px; }
+.if-bal { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.if-tamam { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; border-radius: 10px; padding: 14px 16px; line-height: 1.6; }
+.if .hm-btn { align-self: flex-start; }

@@ -6,6 +6,7 @@ from database import get_db
 from models import ChatMessage
 from utils.gemini import ask_gemini
 import uuid
+from datetime import datetime, timedelta, timezone
 
 router = APIRouter()
 
@@ -18,6 +19,10 @@ class ChatRequest(BaseModel):
 @router.post("/send")
 async def send_message(req: ChatRequest, db: Session = Depends(get_db)):
     conv_id = req.conversation_id or str(uuid.uuid4())
+    # Gizlilik politikasında yazılı saklama süresi: sohbet geçmişi 90 gün
+    db.query(ChatMessage).filter(
+        ChatMessage.created_at < datetime.now(timezone.utc) - timedelta(days=90)
+    ).delete(synchronize_session=False)
 
     # Konuşma geçmişini getir (son 10 mesaj)
     history = db.query(ChatMessage).filter(

@@ -68,7 +68,7 @@ function satirIci(x, site) {
   s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   s = s.replace(/\[([^\]]+)\]\(((?:\/|https?:)[^)\s]*)\)/g, (m, t, h) => {
     const dis = /^https?:/.test(h);
-    return `<a href="${h}"${dis ? ' rel="noopener nofollow" target="_blank"' : ''}>${t}</a>`;
+    return `<a href="${h}"${dis ? ' rel="noopener" target="_blank"' : ''}>${t}</a>`;
   });
   return s;
 }
@@ -317,7 +317,14 @@ async function makale(c, slug) {
   const a = v && v.article;
   if (!a) return null;
   // React ArticlePage meta_description'ı GÖRÜNÜR metin olarak göstermez; burada da yok.
-  const b = [B.h1(a.title), B.html(a.content || '')];
+  const tarih = (a.updated_at || a.created_at || '').slice(0, 10);
+  const AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  const tr = tarih ? `${Number(tarih.slice(8, 10))} ${AYLAR[Number(tarih.slice(5, 7)) - 1]} ${tarih.slice(0, 4)}` : '';
+  const b = [
+    B.h1(a.title),
+    B.p(`${a.author || 'CezaRehberi Editörlüğü'} · ${a.reading_time_min} dk okuma${tr ? ` · Güncellenme: ${tr}` : ''}`),
+    B.html(a.content || ''),
+  ];
   if (v.related && v.related.length) {
     b.push(B.h2('İlgili rehberler'));
     b.push(B.ul(v.related.map((r) => lnk(r.title, `/blog/${r.slug}`))));
@@ -461,8 +468,29 @@ async function cezaHesapla(c) {
   };
 }
 
-function sayfaStatik(ad, metin) {
-  return async () => ({ bloklar: [B.h1(ad), B.p(metin)] });
+/** src/data/sayfalar.json bloklarını (h2/p/ul/uyari) prerender bloklarına çevirir. */
+function jsonBloklar(bloklar, c) {
+  const y = (x) => c.Y(String(x));
+  return (bloklar || []).map((b) => {
+    if (b.t === 'h2') return B.h2(y(b.x));
+    if (b.t === 'ul') return B.ul(b.items.map(y));
+    return B.p(y(b.x));   // p ve uyari
+  });
+}
+async function sayfaJson(anahtar, c) {
+  const d = (veriDosyasi('sayfalar.json') || {})[anahtar];
+  if (!d) return null;
+  const b = [B.h1(d.baslik)];
+  if (anahtar === 'iletisim') {
+    const k = veriDosyasi('iletisim.json') || {};
+    b.push(...jsonBloklar(d.ust, c));
+    if (k.eposta) b.push(B.p(`**E-posta:** ${k.eposta}`));
+    b.push(B.p('İletişim formu: konu olarak "Hata / düzeltme bildirimi", "Öneri / görüş", "KVKK başvurusu", "İş birliği (avukat, kurum)" ya da "Diğer" seçilir; ad ve e-posta isteğe bağlıdır, mesaj zorunludur.'));
+    b.push(...jsonBloklar(d.alt, c));
+  } else {
+    b.push(...jsonBloklar(d.bloklar, c));
+  }
+  return { bloklar: b };
 }
 
 /**
@@ -482,9 +510,9 @@ async function belge(yol, ctx) {
   if ((m = yol.match(/^\/ceza\/([^/]+)$/))) return cezaDetay(ctx, m[1]);
   if ((m = yol.match(/^\/blog\/([^/]+)$/))) return makale(ctx, m[1]);
   if ((m = yol.match(/^\/dilekce-ornekleri\/([^/]+)$/))) return dilekceDetay(ctx, m[1]);
-  if (yol === '/hakkimizda') return sayfaStatik('Hakkımızda', 'CezaRehberi; trafik cezaları, sigorta, ehliyet ve araç işlemleri üzerine güncel ve güvenilir Türkçe rehber sunar. Hukuki danışmanlık hizmeti vermez; içerikler genel bilgilendirme amaçlıdır.')();
-  if (yol === '/iletisim') return sayfaStatik('İletişim', 'Görüş, öneri ve sorularınız için CezaRehberi iletişim sayfası.')();
-  if (yol === '/gizlilik-politikasi') return sayfaStatik('Gizlilik Politikası', 'KVKK kapsamında kişisel verilerin işlenmesi, çerezler ve ziyaretçi sayacı hakkında bilgilendirme.')();
+  if (yol === '/hakkimizda') return sayfaJson('hakkimizda', ctx);
+  if (yol === '/iletisim') return sayfaJson('iletisim', ctx);
+  if (yol === '/gizlilik-politikasi') return sayfaJson('gizlilik', ctx);
   return null;
 }
 

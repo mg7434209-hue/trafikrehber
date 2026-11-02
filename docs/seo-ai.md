@@ -23,7 +23,7 @@ semantik HTML ve Markdown üretir:
 | `/araclar/hiz-cezasi-hesapla` | HizCezasiPage + `data/hiz.json` | `hizAraci` |
 | `/araclar/ceza-hesapla` | CezaHesaplaPage | `cezaHesapla` |
 | `/dilekce-ornekleri[/:slug]`, `/blog`, 4 kategori | ilgili sayfalar | `dilekceListesi/Detay`, `blogListesi`, `kategori` |
-| `/hakkimizda` `/iletisim` `/gizlilik-politikasi` | StaticPages | kısa özet (`sayfaStatik`) |
+| `/hakkimizda` `/iletisim` `/gizlilik-politikasi` | StaticPages + `data/sayfalar.json` | `sayfaJson` (aynı JSON; metin tek yerde) |
 YENİ SAYFA: `App.js` + `server.js ROTALAR` + `prerender.js belge()` + `tumYollar()` (llms) +
 backend `sitemap.py STATIC_URLS` + `scripts/build-sitemap.js`; sonra `npm run seo:kontrol`.
 
@@ -66,5 +66,5 @@ Accept: text/markdown, 404. HATA çıkış kodu 1; yeni sayfa/şablondan sonra �
 ## Elle yapılacaklar (kod değil)
 Search Console + Bing Webmaster: sitemap gönder, yeni adreslerde "dizine eklenmesini iste" ·
 Railway: `INDEXNOW_KEY` (iki servis, aynı) ve `BOT_SAYAC_KEY` (iki servis, aynı, gizli) ·
-Google'ın kare logosu için ≥112×112 (öneri 512×512) PNG `organizationLd`'ye · yazar/avukat gözden
-geçirme (E-E-A-T): gerçek bir yazar ya da avukat adı + hakkında sayfası.
+Logo: `public/logo-512.png` `organizationLd`'de (yapıldı). Kalan E-E-A-T işi: avukat gözden geçirmesi
+(gerçek ad + baro bilgisi olmadan yazılmaz) ve gerçek bir iletişim e-postası (`docs/guven.md`).
